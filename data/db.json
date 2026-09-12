@@ -1,9 +1,9 @@
 {
   "meta": {
-    "taskSeq": 116,
-    "projectSeq": 26,
+    "taskSeq": 120,
+    "projectSeq": 35,
     "reqSeq": 45,
-    "kpiSchema": 5,
+    "kpiSchema": 7,
     "kpiSeq": 10
   },
   "products": [
@@ -374,8 +374,8 @@
           }
         }
       },
-      "kpi": "",
-      "kpiRole": "",
+      "kpi": "ND-ORD",
+      "kpiRole": "개선",
       "impacts": []
     },
     {
@@ -396,8 +396,8 @@
           }
         }
       },
-      "kpi": "",
-      "kpiRole": "",
+      "kpi": "K5",
+      "kpiRole": "개선",
       "impacts": []
     },
     {
@@ -440,8 +440,8 @@
           }
         }
       },
-      "kpi": "",
-      "kpiRole": "",
+      "kpi": "ND-VOC",
+      "kpiRole": "연동",
       "impacts": []
     },
     {
@@ -462,8 +462,8 @@
           }
         }
       },
-      "kpi": "",
-      "kpiRole": "",
+      "kpi": "ND-ASP-FX",
+      "kpiRole": "연동",
       "impacts": []
     },
     {
@@ -569,6 +569,246 @@
           "name": "Customer-care service campaign",
           "_src": {
             "name": "고객케어 서비스 캠페인"
+          }
+        }
+      }
+    },
+    {
+      "id": 27,
+      "name": "딜러 DMS 정비 오더(RO) 데이터 연동",
+      "dept": "Service",
+      "ms": "M1",
+      "kpi": "KPI-CSIS-1",
+      "kpiRole": "연동",
+      "owner": "최현우",
+      "prio": "P1",
+      "status": "진행중",
+      "start": "2026-09-07",
+      "end": "2026-12-11",
+      "impacts": [],
+      "i18n": {
+        "en": {
+          "name": "Dealer DMS repair-order (RO) data integration",
+          "_src": {
+            "name": "딜러 DMS 정비 오더(RO) 데이터 연동"
+          }
+        }
+      }
+    },
+    {
+      "id": 28,
+      "name": "FRFT 일발 수리 개선 (부품 사전 준비·기술 핫라인)",
+      "dept": "Service",
+      "ms": "M1",
+      "kpi": "KPI-CSIS-1",
+      "kpiRole": "개선",
+      "owner": "최현우",
+      "prio": "P1",
+      "status": "계획",
+      "start": "2026-10-12",
+      "end": "2027-02-26",
+      "impacts": [],
+      "i18n": {
+        "en": {
+          "name": "FRFT improvement (parts pre-pull & tech hotline)",
+          "_src": {
+            "name": "FRFT 일발 수리 개선 (부품 사전 준비·기술 핫라인)"
+          }
+        }
+      }
+    },
+    {
+      "id": 29,
+      "name": "서비스 리텐션 케어 프로그램 (정비 리마인더·선불 정비 패키지)",
+      "dept": "Marketing",
+      "ms": "M1",
+      "kpi": "KPI-CSIS-2",
+      "kpiRole": "개선",
+      "owner": "이서연",
+      "prio": "P1",
+      "status": "계획",
+      "start": "2026-10-19",
+      "end": "2027-03-26",
+      "impacts": [
+        {
+          "kpi": "KPI-RECUR",
+          "effect": "-",
+          "note": "무상 점검·쿠폰 프로모션 비용으로 단기 이익 감소",
+          "i18n": {
+            "en": {
+              "note": "Free inspections and coupon promotions reduce short-term profit",
+              "_src": {
+                "note": "무상 점검·쿠폰 프로모션 비용으로 단기 이익 감소"
+              }
+            }
+          }
+        }
+      ],
+      "i18n": {
+        "en": {
+          "name": "Service retention care program (maintenance reminders & prepaid packages)",
+          "_src": {
+            "name": "서비스 리텐션 케어 프로그램 (정비 리마인더·선불 정비 패키지)"
+          }
+        }
+      }
+    },
+    {
+      "id": 30,
+      "name": "미조치 리콜 아웃리치 캠페인 (오픈 리콜 완료율 제고)",
+      "dept": "Service",
+      "ms": "M1",
+      "kpi": "KPI-CSIS-3",
+      "kpiRole": "개선",
+      "owner": "최현우",
+      "prio": "P1",
+      "status": "진행중",
+      "start": "2026-08-31",
+      "end": "2026-12-18",
+      "impacts": [
+        {
+          "kpi": "K8-3",
+          "effect": "-",
+          "note": "리콜 입고 물량이 일반 정비 예약 슬롯 점유",
+          "i18n": {
+            "en": {
+              "note": "Recall inflow occupies regular service booking slots",
+              "_src": {
+                "note": "리콜 입고 물량이 일반 정비 예약 슬롯 점유"
+              }
+            }
+          }
+        }
+      ],
+      "i18n": {
+        "en": {
+          "name": "Open-recall outreach campaign",
+          "_src": {
+            "name": "미조치 리콜 아웃리치 캠페인 (오픈 리콜 완료율 제고)"
+          }
+        }
+      }
+    },
+    {
+      "id": 31,
+      "name": "인터넷 리드 15분 응답 체계 (CRM 라우팅·딜러 SLA)",
+      "dept": "Sales",
+      "ms": "M1",
+      "kpi": "KPI-CSIP-1",
+      "kpiRole": "개선",
+      "owner": "김유진",
+      "prio": "P1",
+      "status": "계획",
+      "start": "2026-10-05",
+      "end": "2027-01-29",
+      "impacts": [],
+      "i18n": {
+        "en": {
+          "name": "15-minute internet lead response (CRM routing & dealer SLA)",
+          "_src": {
+            "name": "인터넷 리드 15분 응답 체계 (CRM 라우팅·딜러 SLA)"
+          }
+        }
+      }
+    },
+    {
+      "id": 32,
+      "name": "CRM 리드 퍼널 데이터 연동",
+      "dept": "Sales",
+      "ms": "M1",
+      "kpi": "KPI-CSIP-1",
+      "kpiRole": "연동",
+      "owner": "김유진",
+      "prio": "P1",
+      "status": "진행중",
+      "start": "2026-09-14",
+      "end": "2026-11-20",
+      "impacts": [],
+      "i18n": {
+        "en": {
+          "name": "CRM lead-funnel data integration",
+          "_src": {
+            "name": "CRM 리드 퍼널 데이터 연동"
+          }
+        }
+      }
+    },
+    {
+      "id": 33,
+      "name": "온라인 시승 예약 퍼널 최적화",
+      "dept": "Sales",
+      "ms": "M1",
+      "kpi": "KPI-CSIP-2",
+      "kpiRole": "개선",
+      "owner": "김유진",
+      "prio": "P1",
+      "status": "계획",
+      "start": "2026-10-26",
+      "end": "2027-02-19",
+      "impacts": [],
+      "i18n": {
+        "en": {
+          "name": "Online test-drive booking funnel optimization",
+          "_src": {
+            "name": "온라인 시승 예약 퍼널 최적화"
+          }
+        }
+      }
+    },
+    {
+      "id": 34,
+      "name": "인센티브 지출 최적화 (모델·지역 탄력성 분석)",
+      "dept": "Finance",
+      "ms": "M1",
+      "kpi": "ND-ASP-INC",
+      "kpiRole": "개선",
+      "owner": "박민수",
+      "prio": "P1",
+      "status": "계획",
+      "start": "2026-10-12",
+      "end": "2027-01-15",
+      "impacts": [
+        {
+          "kpi": "KPI-SHARE",
+          "effect": "-",
+          "note": "인센티브 축소 시 단기 판매·점유율 하락 위험",
+          "i18n": {
+            "en": {
+              "note": "Cutting incentives risks short-term sales and share decline",
+              "_src": {
+                "note": "인센티브 축소 시 단기 판매·점유율 하락 위험"
+              }
+            }
+          }
+        }
+      ],
+      "i18n": {
+        "en": {
+          "name": "Incentive spend optimization (model/region elasticity)",
+          "_src": {
+            "name": "인센티브 지출 최적화 (모델·지역 탄력성 분석)"
+          }
+        }
+      }
+    },
+    {
+      "id": 35,
+      "name": "딜러 재고 리밸런싱 (재고 일수 DS 최적화)",
+      "dept": "Sales",
+      "ms": "M1",
+      "kpi": "ND-DS",
+      "kpiRole": "개선",
+      "owner": "김유진",
+      "prio": "P1",
+      "status": "계획",
+      "start": "2026-11-02",
+      "end": "2027-02-12",
+      "impacts": [],
+      "i18n": {
+        "en": {
+          "name": "Dealer inventory rebalancing (days-of-supply optimization)",
+          "_src": {
+            "name": "딜러 재고 리밸런싱 (재고 일수 DS 최적화)"
           }
         }
       }
@@ -783,6 +1023,36 @@
       "start": "2026-09-11",
       "end": "2026-09-22",
       "status": "planned",
+      "retro": ""
+    },
+    {
+      "id": "27:1",
+      "projectId": 27,
+      "no": 1,
+      "name": "Sprint 2026-01",
+      "start": "2026-09-07",
+      "end": "2026-09-18",
+      "status": "active",
+      "retro": ""
+    },
+    {
+      "id": "30:1",
+      "projectId": 30,
+      "no": 1,
+      "name": "Sprint 2026-01",
+      "start": "2026-09-07",
+      "end": "2026-09-18",
+      "status": "active",
+      "retro": ""
+    },
+    {
+      "id": "32:1",
+      "projectId": 32,
+      "no": 1,
+      "name": "Sprint 2026-01",
+      "start": "2026-09-07",
+      "end": "2026-09-18",
+      "status": "active",
       "retro": ""
     }
   ],
@@ -1157,6 +1427,102 @@
           "title": "Test"
         }
       }
+    },
+    {
+      "id": "DT-117",
+      "projectId": 27,
+      "sprintNo": 1,
+      "title": "딜러 DMS RO 스키마 분석·필드 매핑",
+      "owner": "최현우",
+      "stage": 1,
+      "due": "2026-09-18",
+      "done": false,
+      "carry": 0,
+      "deliverable": "RO 필드 매핑 정의서",
+      "stageAt": "2026-09-08",
+      "logs": [],
+      "i18n": {
+        "en": {
+          "title": "Dealer DMS RO schema analysis & field mapping",
+          "_src": {
+            "title": "딜러 DMS RO 스키마 분석·필드 매핑",
+            "deliverable": "RO 필드 매핑 정의서"
+          },
+          "deliverable": "RO field-mapping spec"
+        }
+      }
+    },
+    {
+      "id": "DT-118",
+      "projectId": 27,
+      "sprintNo": 1,
+      "title": "RO 일배치 적재 파이프라인 구축",
+      "owner": "최현우",
+      "stage": 4,
+      "due": "2026-09-25",
+      "done": false,
+      "carry": 0,
+      "deliverable": "일배치 적재 파이프라인 (FRFT·리텐션 산출)",
+      "stageAt": "2026-09-08",
+      "logs": [],
+      "i18n": {
+        "en": {
+          "title": "Daily RO ingestion pipeline",
+          "_src": {
+            "title": "RO 일배치 적재 파이프라인 구축",
+            "deliverable": "일배치 적재 파이프라인 (FRFT·리텐션 산출)"
+          },
+          "deliverable": "Daily ingestion pipeline (feeds FRFT & retention)"
+        }
+      }
+    },
+    {
+      "id": "DT-119",
+      "projectId": 30,
+      "sprintNo": 1,
+      "title": "오픈 리콜 대상 차량·고객 명단 정제",
+      "owner": "최현우",
+      "stage": 1,
+      "due": "2026-09-19",
+      "done": false,
+      "carry": 0,
+      "deliverable": "발송 대상 명단 (중복·폐차 제외)",
+      "stageAt": "2026-09-08",
+      "logs": [],
+      "i18n": {
+        "en": {
+          "title": "Refine open-recall vehicle & owner list",
+          "_src": {
+            "title": "오픈 리콜 대상 차량·고객 명단 정제",
+            "deliverable": "발송 대상 명단 (중복·폐차 제외)"
+          },
+          "deliverable": "Outreach list (deduped, scrapped vehicles excluded)"
+        }
+      }
+    },
+    {
+      "id": "DT-120",
+      "projectId": 30,
+      "sprintNo": 1,
+      "title": "1차 아웃리치 발송(SMS·우편) 및 응답 추적",
+      "owner": "최현우",
+      "stage": 5,
+      "due": "2026-09-25",
+      "done": false,
+      "carry": 0,
+      "deliverable": "발송 결과·입고 전환 리포트",
+      "stageAt": "2026-09-08",
+      "logs": [],
+      "i18n": {
+        "en": {
+          "title": "First outreach wave (SMS/mail) with response tracking",
+          "_src": {
+            "title": "1차 아웃리치 발송(SMS·우편) 및 응답 추적",
+            "deliverable": "발송 결과·입고 전환 리포트"
+          },
+          "deliverable": "Send results & service-visit conversion report"
+        }
+      }
     }
   ],
   "requests": [
@@ -1273,222 +1639,6 @@
     }
   ],
   "kpis": [
-    {
-      "code": "K1",
-      "name": "월 결산 소요일",
-      "unit": "일",
-      "direction": "-",
-      "target": 2,
-      "weight": 1,
-      "measures": [
-        {
-          "at": "2026-07-05",
-          "value": 5
-        },
-        {
-          "at": "2026-08-05",
-          "value": 3
-        },
-        {
-          "at": "2026-09-04",
-          "value": 2.1
-        }
-      ],
-      "i18n": {
-        "en": {
-          "name": "Days to monthly close",
-          "_src": {
-            "name": "월 결산 소요일",
-            "source": "ERP 결산 마감 로그"
-          },
-          "source": "ERP closing ledger log"
-        }
-      },
-      "area": "재무",
-      "source": "ERP 결산 마감 로그",
-      "subs": []
-    },
-    {
-      "code": "K2",
-      "name": "분기 수주 예측 오차",
-      "unit": "%",
-      "direction": "-",
-      "target": 10,
-      "weight": 2,
-      "measures": [
-        {
-          "at": "2026-07-31",
-          "value": 18
-        },
-        {
-          "at": "2026-08-31",
-          "value": 12
-        },
-        {
-          "at": "2026-09-10",
-          "value": 10.4
-        }
-      ],
-      "i18n": {
-        "en": {
-          "name": "Quarterly order forecast error",
-          "_src": {
-            "name": "분기 수주 예측 오차",
-            "source": "CRM 수주 파이프라인"
-          },
-          "source": "CRM order pipeline"
-        }
-      },
-      "area": "사업",
-      "source": "CRM 수주 파이프라인",
-      "subs": []
-    },
-    {
-      "code": "K3",
-      "name": "리드 스코어링 적용률",
-      "unit": "%",
-      "direction": "+",
-      "target": 100,
-      "weight": 1,
-      "measures": [
-        {
-          "at": "2026-07-31",
-          "value": 45
-        },
-        {
-          "at": "2026-08-31",
-          "value": 62
-        },
-        {
-          "at": "2026-09-10",
-          "value": 78
-        }
-      ],
-      "i18n": {
-        "en": {
-          "name": "Lead scoring adoption rate",
-          "_src": {
-            "name": "리드 스코어링 적용률"
-          }
-        }
-      },
-      "area": "사업",
-      "source": "",
-      "subs": []
-    },
-    {
-      "code": "K4",
-      "name": "캠페인 ROI 측정 커버리지",
-      "unit": "%",
-      "direction": "+",
-      "target": 100,
-      "weight": 1,
-      "measures": [
-        {
-          "at": "2026-08-31",
-          "value": 30
-        },
-        {
-          "at": "2026-09-10",
-          "value": 55
-        }
-      ],
-      "i18n": {
-        "en": {
-          "name": "Campaign ROI measurement coverage",
-          "_src": {
-            "name": "캠페인 ROI 측정 커버리지"
-          }
-        }
-      },
-      "area": "사업",
-      "source": "",
-      "subs": []
-    },
-    {
-      "code": "K5",
-      "name": "세그먼트 기반 캠페인 비중",
-      "unit": "%",
-      "direction": "+",
-      "target": 50,
-      "weight": 1,
-      "measures": [],
-      "i18n": {
-        "en": {
-          "name": "Share of segment-based campaigns",
-          "_src": {
-            "name": "세그먼트 기반 캠페인 비중"
-          }
-        }
-      },
-      "area": "사업",
-      "source": "",
-      "subs": []
-    },
-    {
-      "code": "K6",
-      "name": "AS 접수 자동 분류 정확도",
-      "unit": "%",
-      "direction": "+",
-      "target": 90,
-      "weight": 2,
-      "measures": [
-        {
-          "at": "2026-07-31",
-          "value": 82
-        },
-        {
-          "at": "2026-08-31",
-          "value": 86
-        },
-        {
-          "at": "2026-09-10",
-          "value": 88.5
-        }
-      ],
-      "i18n": {
-        "en": {
-          "name": "AS intake auto-classification accuracy",
-          "_src": {
-            "name": "AS 접수 자동 분류 정확도",
-            "source": "VOC 분류 모델 평가 파이프라인"
-          },
-          "source": "VOC classification model evaluation pipeline"
-        }
-      },
-      "area": "지속경영",
-      "source": "VOC 분류 모델 평가 파이프라인",
-      "subs": []
-    },
-    {
-      "code": "K7",
-      "name": "VOC 리포트 주간 자동 발행률",
-      "unit": "%",
-      "direction": "+",
-      "target": 100,
-      "weight": 1,
-      "measures": [
-        {
-          "at": "2026-08-31",
-          "value": 50
-        },
-        {
-          "at": "2026-09-10",
-          "value": 75
-        }
-      ],
-      "i18n": {
-        "en": {
-          "name": "Weekly VOC report automation rate",
-          "_src": {
-            "name": "VOC 리포트 주간 자동 발행률"
-          }
-        }
-      },
-      "area": "지속경영",
-      "source": "",
-      "subs": []
-    },
     {
       "target": 32000,
       "measures": [
@@ -1760,6 +1910,40 @@
               }
             }
           }
+        },
+        {
+          "code": "K1",
+          "name": "월 결산 소요일",
+          "unit": "일",
+          "direction": "-",
+          "target": 2,
+          "weight": 1,
+          "measures": [
+            {
+              "at": "2026-07-05",
+              "value": 5
+            },
+            {
+              "at": "2026-08-05",
+              "value": 3
+            },
+            {
+              "at": "2026-09-04",
+              "value": 2.1
+            }
+          ],
+          "i18n": {
+            "en": {
+              "name": "Days to monthly close",
+              "_src": {
+                "name": "월 결산 소요일",
+                "source": "ERP 결산 마감 로그"
+              },
+              "source": "ERP closing ledger log"
+            }
+          },
+          "source": "ERP 결산 마감 로그",
+          "group": "재무 운영"
         }
       ],
       "code": "KPI-RECUR",
@@ -2011,6 +2195,40 @@
               }
             }
           }
+        },
+        {
+          "code": "K2",
+          "name": "분기 수주 예측 오차",
+          "unit": "%",
+          "direction": "-",
+          "target": 10,
+          "weight": 2,
+          "measures": [
+            {
+              "at": "2026-07-31",
+              "value": 18
+            },
+            {
+              "at": "2026-08-31",
+              "value": 12
+            },
+            {
+              "at": "2026-09-10",
+              "value": 10.4
+            }
+          ],
+          "i18n": {
+            "en": {
+              "name": "Quarterly order forecast error",
+              "_src": {
+                "name": "분기 수주 예측 오차",
+                "source": "CRM 수주 파이프라인"
+              },
+              "source": "CRM order pipeline"
+            }
+          },
+          "source": "CRM 수주 파이프라인",
+          "group": "수요 예측"
         }
       ],
       "code": "KPI-WS",
@@ -2191,6 +2409,38 @@
               }
             }
           }
+        },
+        {
+          "code": "K3",
+          "name": "리드 스코어링 적용률",
+          "unit": "%",
+          "direction": "+",
+          "target": 100,
+          "weight": 1,
+          "measures": [
+            {
+              "at": "2026-07-31",
+              "value": 45
+            },
+            {
+              "at": "2026-08-31",
+              "value": 62
+            },
+            {
+              "at": "2026-09-10",
+              "value": 78
+            }
+          ],
+          "i18n": {
+            "en": {
+              "name": "Lead scoring adoption rate",
+              "_src": {
+                "name": "리드 스코어링 적용률"
+              }
+            }
+          },
+          "source": "",
+          "group": "영업 전환"
         }
       ],
       "code": "KPI-SHARE",
@@ -2620,6 +2870,143 @@
               }
             }
           }
+        },
+        {
+          "code": "K6",
+          "name": "AS 접수 자동 분류 정확도",
+          "unit": "%",
+          "direction": "+",
+          "target": 90,
+          "weight": 2,
+          "measures": [
+            {
+              "at": "2026-07-31",
+              "value": 82
+            },
+            {
+              "at": "2026-08-31",
+              "value": 86
+            },
+            {
+              "at": "2026-09-10",
+              "value": 88.5
+            }
+          ],
+          "i18n": {
+            "en": {
+              "name": "AS intake auto-classification accuracy",
+              "_src": {
+                "name": "AS 접수 자동 분류 정확도",
+                "source": "VOC 분류 모델 평가 파이프라인"
+              },
+              "source": "VOC classification model evaluation pipeline"
+            }
+          },
+          "source": "VOC 분류 모델 평가 파이프라인",
+          "group": "서비스"
+        },
+        {
+          "code": "K7",
+          "name": "VOC 리포트 주간 자동 발행률",
+          "unit": "%",
+          "direction": "+",
+          "target": 100,
+          "weight": 1,
+          "measures": [
+            {
+              "at": "2026-08-31",
+              "value": 50
+            },
+            {
+              "at": "2026-09-10",
+              "value": 75
+            }
+          ],
+          "i18n": {
+            "en": {
+              "name": "Weekly VOC report automation rate",
+              "_src": {
+                "name": "VOC 리포트 주간 자동 발행률"
+              }
+            }
+          },
+          "source": "",
+          "group": "서비스"
+        },
+        {
+          "source": "",
+          "subs": [],
+          "code": "KPI-CSIS-1",
+          "group": "서비스",
+          "name": "FRFT 일발 수리율",
+          "unit": "%",
+          "direction": "+",
+          "target": 90,
+          "weight": 2,
+          "measures": [],
+          "i18n": {
+            "en": {
+              "name": "Fix Right First Time (FRFT) rate",
+              "_src": {
+                "name": "FRFT 일발 수리율"
+              }
+            }
+          }
+        },
+        {
+          "source": "",
+          "subs": [],
+          "code": "KPI-CSIS-2",
+          "group": "서비스",
+          "name": "서비스 리텐션율 (보증기간 내 재방문)",
+          "unit": "%",
+          "direction": "+",
+          "target": 55,
+          "weight": 1,
+          "measures": [],
+          "i18n": {
+            "en": {
+              "name": "Service retention rate (in-warranty return)",
+              "_src": {
+                "name": "서비스 리텐션율 (보증기간 내 재방문)"
+              }
+            }
+          }
+        },
+        {
+          "source": "리콜 관리 시스템 (오픈 리콜 대상 DB)",
+          "subs": [],
+          "code": "KPI-CSIS-3",
+          "group": "품질",
+          "name": "오픈 리콜 완료율",
+          "unit": "%",
+          "direction": "+",
+          "target": 75,
+          "weight": 1,
+          "measures": [
+            {
+              "at": "2026-07-31",
+              "value": 58
+            },
+            {
+              "at": "2026-08-31",
+              "value": 61
+            },
+            {
+              "at": "2026-09-10",
+              "value": 63
+            }
+          ],
+          "i18n": {
+            "en": {
+              "name": "Open recall completion rate",
+              "_src": {
+                "name": "오픈 리콜 완료율",
+                "source": "리콜 관리 시스템 (오픈 리콜 대상 DB)"
+              },
+              "source": "Recall management system (open-recall database)"
+            }
+          }
         }
       ],
       "code": "KPI-CSIS",
@@ -2696,6 +3083,57 @@
               "_src": {
                 "name": "딜러 구매 경험"
               }
+            }
+          }
+        },
+        {
+          "source": "",
+          "subs": [],
+          "code": "KPI-CSIP-1",
+          "group": "",
+          "name": "인터넷 리드 응답 시간",
+          "unit": "분",
+          "direction": "-",
+          "target": 15,
+          "weight": 2,
+          "measures": [],
+          "i18n": {
+            "en": {
+              "name": "Internet lead response time",
+              "_src": {
+                "name": "인터넷 리드 응답 시간"
+              }
+            }
+          }
+        },
+        {
+          "source": "CRM 시승 스케줄러",
+          "subs": [],
+          "code": "KPI-CSIP-2",
+          "group": "",
+          "name": "시승 전환율",
+          "unit": "%",
+          "direction": "+",
+          "target": 35,
+          "weight": 1,
+          "measures": [
+            {
+              "at": "2026-08-31",
+              "value": 24
+            },
+            {
+              "at": "2026-09-10",
+              "value": 26
+            }
+          ],
+          "i18n": {
+            "en": {
+              "name": "Test-drive conversion rate",
+              "_src": {
+                "name": "시승 전환율",
+                "source": "CRM 시승 스케줄러"
+              },
+              "source": "CRM test-drive scheduler"
             }
           }
         }
@@ -2837,6 +3275,53 @@
               }
             }
           }
+        },
+        {
+          "code": "K4",
+          "name": "캠페인 ROI 측정 커버리지",
+          "unit": "%",
+          "direction": "+",
+          "target": 100,
+          "weight": 1,
+          "measures": [
+            {
+              "at": "2026-08-31",
+              "value": 30
+            },
+            {
+              "at": "2026-09-10",
+              "value": 55
+            }
+          ],
+          "i18n": {
+            "en": {
+              "name": "Campaign ROI measurement coverage",
+              "_src": {
+                "name": "캠페인 ROI 측정 커버리지"
+              }
+            }
+          },
+          "source": "",
+          "group": "마케팅 효율"
+        },
+        {
+          "code": "K5",
+          "name": "세그먼트 기반 캠페인 비중",
+          "unit": "%",
+          "direction": "+",
+          "target": 50,
+          "weight": 1,
+          "measures": [],
+          "i18n": {
+            "en": {
+              "name": "Share of segment-based campaigns",
+              "_src": {
+                "name": "세그먼트 기반 캠페인 비중"
+              }
+            }
+          },
+          "source": "",
+          "group": "마케팅 효율"
         }
       ],
       "code": "KPI-BRAND",
