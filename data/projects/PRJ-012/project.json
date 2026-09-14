@@ -1,0 +1,22 @@
+{
+  "id": 12,
+  "name": "마케팅 고객 세그먼테이션",
+  "dept": "Marketing",
+  "ms": "M2",
+  "owner": "한지민",
+  "prio": "P2",
+  "status": "보류",
+  "start": "2026-06-15",
+  "end": "",
+  "i18n": {
+    "en": {
+      "name": "Marketing customer segmentation",
+      "_src": {
+        "name": "마케팅 고객 세그먼테이션"
+      }
+    }
+  },
+  "kpi": "K5",
+  "kpiRole": "개선",
+  "impacts": []
+}

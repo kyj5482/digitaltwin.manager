@@ -1,0 +1,47 @@
+{
+  "name": "Finance",
+  "status": "shaping",
+  "owner": "박민수",
+  "goal": "결산·재무 리포트의 수작업 제거와 이상 징후 조기 탐지. KPI는 결산 자동화 결과를 보고 4분기 확정.",
+  "kpi": "월 결산 소요일 5일 → 2일 (안)",
+  "ms": [
+    {
+      "code": "M1",
+      "name": "월 결산 자동화 파이프라인",
+      "due": "2026-Q3",
+      "i18n": {
+        "en": {
+          "name": "Monthly closing automation pipeline",
+          "_src": {
+            "name": "월 결산 자동화 파이프라인"
+          }
+        }
+      }
+    },
+    {
+      "code": "M2",
+      "name": "이상 거래 탐지 PoC",
+      "due": "2026-Q4",
+      "i18n": {
+        "en": {
+          "name": "Anomalous transaction detection PoC",
+          "_src": {
+            "name": "이상 거래 탐지 PoC"
+          }
+        }
+      }
+    }
+  ],
+  "history": [],
+  "i18n": {
+    "en": {
+      "goal": "Eliminate manual work in closing and financial reporting, and detect anomalies early. KPI to be fixed in Q4 based on closing-automation results.",
+      "_src": {
+        "goal": "결산·재무 리포트의 수작업 제거와 이상 징후 조기 탐지. KPI는 결산 자동화 결과를 보고 4분기 확정.",
+        "kpi": "월 결산 소요일 5일 → 2일 (안)"
+      },
+      "kpi": "Monthly closing time 5 days → 2 days (proposed)"
+    }
+  },
+  "order": 1
+}

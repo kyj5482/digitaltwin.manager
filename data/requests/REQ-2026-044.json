@@ -1,0 +1,21 @@
+{
+  "id": "REQ-2026-044",
+  "title": "[샘플] 배차 최적화 문의",
+  "channel": "회의",
+  "requester": "재무팀 이몽룡",
+  "dept": "Sales",
+  "status": "전환",
+  "note": "",
+  "createdAt": "2026-08-24",
+  "link": "DT-115",
+  "i18n": {
+    "en": {
+      "title": "[Sample] Dispatch optimization inquiry",
+      "_src": {
+        "title": "[샘플] 배차 최적화 문의",
+        "requester": "재무팀 이몽룡"
+      },
+      "requester": "Mongryong Lee, Finance"
+    }
+  }
+}

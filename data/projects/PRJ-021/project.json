@@ -1,0 +1,22 @@
+{
+  "id": 21,
+  "name": "[샘플] 콜센터 상담 유형 분류",
+  "dept": "Service",
+  "ms": "M3",
+  "owner": "최현우",
+  "prio": "P1",
+  "status": "계획",
+  "start": "",
+  "end": "",
+  "i18n": {
+    "en": {
+      "name": "[Sample] Call center inquiry type classification",
+      "_src": {
+        "name": "[샘플] 콜센터 상담 유형 분류"
+      }
+    }
+  },
+  "kpi": "ND-VOC",
+  "kpiRole": "연동",
+  "impacts": []
+}

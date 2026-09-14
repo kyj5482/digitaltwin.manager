@@ -1,0 +1,20 @@
+{
+  "id": "DT-111",
+  "projectId": 9,
+  "sprintNo": 17,
+  "title": "캠페인 비용 데이터 연동 (GA4+광고)",
+  "owner": "이서연",
+  "stage": 1,
+  "due": "2026-08-25",
+  "done": false,
+  "carry": 0,
+  "stageAt": "2026-08-16",
+  "i18n": {
+    "en": {
+      "title": "Campaign cost data integration (GA4 + ads)",
+      "_src": {
+        "title": "캠페인 비용 데이터 연동 (GA4+광고)"
+      }
+    }
+  }
+}

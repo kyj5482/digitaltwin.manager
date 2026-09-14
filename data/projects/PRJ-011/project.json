@@ -1,0 +1,22 @@
+{
+  "id": 11,
+  "name": "수주 파이프라인 예측 모델",
+  "dept": "Sales",
+  "ms": "M2",
+  "owner": "김유진",
+  "prio": "P0",
+  "status": "진행중",
+  "start": "2026-06-01",
+  "end": "2026-09-30",
+  "i18n": {
+    "en": {
+      "name": "Order pipeline forecasting model",
+      "_src": {
+        "name": "수주 파이프라인 예측 모델"
+      }
+    }
+  },
+  "kpi": "K2",
+  "kpiRole": "개선",
+  "impacts": []
+}

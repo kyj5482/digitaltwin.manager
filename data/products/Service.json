@@ -1,0 +1,61 @@
+{
+  "name": "Service",
+  "status": "fixed",
+  "owner": "최현우",
+  "goal": "VOC를 실시간으로 읽는 서비스 조직: AS 접수 자동 분류 정확도 90%, VOC 리포트 주간 자동 발행.",
+  "kpi": "AS 자동 분류 정확도 90% · VOC 리포트 주간 발행",
+  "ms": [
+    {
+      "code": "M1",
+      "name": "VOC 분류 자동화 배포",
+      "due": "2026-Q3",
+      "i18n": {
+        "en": {
+          "name": "VOC classification automation rollout",
+          "_src": {
+            "name": "VOC 분류 자동화 배포"
+          }
+        }
+      }
+    },
+    {
+      "code": "M2",
+      "name": "주간 VOC 리포트 자동화",
+      "due": "2026-Q4",
+      "i18n": {
+        "en": {
+          "name": "Weekly VOC report automation",
+          "_src": {
+            "name": "주간 VOC 리포트 자동화"
+          }
+        }
+      }
+    },
+    {
+      "code": "M3",
+      "name": "[샘플] 콜센터 상담 유형 분류",
+      "due": "2026-Q4",
+      "hold": true,
+      "i18n": {
+        "en": {
+          "name": "[Sample] Call center inquiry type classification",
+          "_src": {
+            "name": "[샘플] 콜센터 상담 유형 분류"
+          }
+        }
+      }
+    }
+  ],
+  "history": [],
+  "i18n": {
+    "en": {
+      "goal": "A service organization that reads VOC in real time: 90% accuracy in automatic AS ticket classification, weekly automated VOC reports.",
+      "_src": {
+        "goal": "VOC를 실시간으로 읽는 서비스 조직: AS 접수 자동 분류 정확도 90%, VOC 리포트 주간 자동 발행.",
+        "kpi": "AS 자동 분류 정확도 90% · VOC 리포트 주간 발행"
+      },
+      "kpi": "AS auto-classification accuracy 90% · weekly VOC report"
+    }
+  },
+  "order": 4
+}

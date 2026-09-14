@@ -1,0 +1,23 @@
+{
+  "id": "REQ-2026-041",
+  "title": "신제품 수요 예측 문의",
+  "channel": "이메일",
+  "requester": "기획팀 홍길동",
+  "dept": "Product Planning",
+  "status": "접수",
+  "note": "내년 상반기 라인업 수요 규모 추정 요청",
+  "createdAt": "2026-08-20",
+  "link": null,
+  "i18n": {
+    "en": {
+      "title": "New product demand forecast inquiry",
+      "_src": {
+        "title": "신제품 수요 예측 문의",
+        "note": "내년 상반기 라인업 수요 규모 추정 요청",
+        "requester": "기획팀 홍길동"
+      },
+      "note": "Request to estimate demand for next year's H1 lineup",
+      "requester": "Gildong Hong, Product Planning"
+    }
+  }
+}

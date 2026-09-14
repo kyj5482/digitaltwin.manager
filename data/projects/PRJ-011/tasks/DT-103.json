@@ -1,0 +1,22 @@
+{
+  "id": "DT-103",
+  "projectId": 11,
+  "sprintNo": 17,
+  "title": "수주 예측 피처 마트 구축 + 베이스라인",
+  "owner": "김유진",
+  "stage": 3,
+  "due": "2026-08-22",
+  "done": false,
+  "carry": 1,
+  "stageAt": "2026-08-25",
+  "logs": [],
+  "files": [],
+  "i18n": {
+    "en": {
+      "title": "Order forecast feature mart + baseline",
+      "_src": {
+        "title": "수주 예측 피처 마트 구축 + 베이스라인"
+      }
+    }
+  }
+}

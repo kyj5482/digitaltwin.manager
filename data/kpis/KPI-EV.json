@@ -1,0 +1,101 @@
+{
+  "target": 6000,
+  "measures": [
+    {
+      "at": "2026-07-31",
+      "value": 4800
+    },
+    {
+      "at": "2026-08-31",
+      "value": 5300
+    },
+    {
+      "at": "2026-09-10",
+      "value": 5600
+    }
+  ],
+  "subs": [
+    {
+      "target": null,
+      "measures": [],
+      "subs": [],
+      "code": "ND-AUR",
+      "group": "",
+      "name": "Aurora EV 소매",
+      "unit": "대",
+      "direction": "+",
+      "weight": 1,
+      "source": "트윈 실측 바인딩 'm_AUR' — digitaltwin.retail.vehicle",
+      "i18n": {
+        "en": {
+          "name": "Aurora EV retail",
+          "_src": {
+            "name": "Aurora EV 소매",
+            "source": "트윈 실측 바인딩 'm_AUR' — digitaltwin.retail.vehicle"
+          },
+          "source": "Twin data binding 'm_AUR' — digitaltwin.retail.vehicle"
+        }
+      }
+    },
+    {
+      "target": null,
+      "measures": [],
+      "subs": [],
+      "code": "ND-LUM",
+      "group": "",
+      "name": "Lumen EV 소매",
+      "unit": "대",
+      "direction": "+",
+      "weight": 1,
+      "source": "트윈 실측 바인딩 'm_LUM' — digitaltwin.retail.vehicle",
+      "i18n": {
+        "en": {
+          "name": "Lumen EV retail",
+          "_src": {
+            "name": "Lumen EV 소매",
+            "source": "트윈 실측 바인딩 'm_LUM' — digitaltwin.retail.vehicle"
+          },
+          "source": "Twin data binding 'm_LUM' — digitaltwin.retail.vehicle"
+        }
+      }
+    },
+    {
+      "target": null,
+      "measures": [],
+      "subs": [],
+      "code": "ND-CHG",
+      "group": "",
+      "name": "충전 인프라 파트너십",
+      "unit": "건",
+      "direction": "+",
+      "weight": 1,
+      "source": "",
+      "i18n": {
+        "en": {
+          "name": "Charging infrastructure partnerships",
+          "_src": {
+            "name": "충전 인프라 파트너십"
+          }
+        }
+      }
+    }
+  ],
+  "code": "KPI-EV",
+  "area": "사업",
+  "name": "친환경 소매판매량 (소매)",
+  "unit": "대",
+  "direction": "+",
+  "weight": 5,
+  "source": "트윈 실측 바인딩 'ev' — digitaltwin.retail.vehicle",
+  "i18n": {
+    "en": {
+      "name": "EV retail sales",
+      "_src": {
+        "name": "친환경 소매판매량 (소매)",
+        "source": "트윈 실측 바인딩 'ev' — digitaltwin.retail.vehicle"
+      },
+      "source": "Twin data binding 'ev' — digitaltwin.retail.vehicle"
+    }
+  },
+  "order": 7
+}

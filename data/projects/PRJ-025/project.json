@@ -1,0 +1,36 @@
+{
+  "id": 25,
+  "name": "커넥티드카 OTA 품질 개선 확대",
+  "dept": "Service",
+  "ms": "M1",
+  "kpi": "K8-2",
+  "kpiRole": "개선",
+  "owner": "최현우",
+  "prio": "P1",
+  "status": "진행중",
+  "start": "2026-08-24",
+  "end": "2026-12-18",
+  "impacts": [
+    {
+      "kpi": "KPI-RECUR",
+      "effect": "-",
+      "note": "OTA 횟수 증가 → 모바일 네트워크 비용 증가",
+      "i18n": {
+        "en": {
+          "note": "More OTA updates → higher mobile network cost",
+          "_src": {
+            "note": "OTA 횟수 증가 → 모바일 네트워크 비용 증가"
+          }
+        }
+      }
+    }
+  ],
+  "i18n": {
+    "en": {
+      "name": "Connected-car OTA quality improvement expansion",
+      "_src": {
+        "name": "커넥티드카 OTA 품질 개선 확대"
+      }
+    }
+  }
+}

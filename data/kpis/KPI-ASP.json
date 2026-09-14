@@ -1,0 +1,114 @@
+{
+  "target": 32000,
+  "measures": [
+    {
+      "at": "2026-07-31",
+      "value": 30800
+    },
+    {
+      "at": "2026-08-31",
+      "value": 31200
+    },
+    {
+      "at": "2026-09-10",
+      "value": 31450
+    }
+  ],
+  "subs": [
+    {
+      "target": null,
+      "measures": [],
+      "subs": [],
+      "code": "ND-ASP-MIX",
+      "group": "",
+      "name": "트림 믹스 프리미엄",
+      "unit": "$",
+      "direction": "+",
+      "weight": 1,
+      "source": "트윈 실측 바인딩 'mixprem' — digitaltwin.retail.vehicle",
+      "i18n": {
+        "en": {
+          "name": "Trim mix premium",
+          "_src": {
+            "name": "트림 믹스 프리미엄",
+            "source": "트윈 실측 바인딩 'mixprem' — digitaltwin.retail.vehicle"
+          },
+          "source": "Twin data binding 'mixprem' — digitaltwin.retail.vehicle"
+        }
+      }
+    },
+    {
+      "target": 1800,
+      "measures": [
+        {
+          "at": "2026-07-31",
+          "value": 2050
+        },
+        {
+          "at": "2026-08-31",
+          "value": 1980
+        },
+        {
+          "at": "2026-09-10",
+          "value": 1920
+        }
+      ],
+      "subs": [],
+      "code": "ND-ASP-INC",
+      "group": "",
+      "name": "대당 인센티브",
+      "unit": "$",
+      "direction": "-",
+      "weight": 1,
+      "source": "트윈 실측 바인딩 'incunit' — digitaltwin.retail.vehicle",
+      "i18n": {
+        "en": {
+          "name": "Incentive per unit",
+          "_src": {
+            "name": "대당 인센티브",
+            "source": "트윈 실측 바인딩 'incunit' — digitaltwin.retail.vehicle"
+          },
+          "source": "Twin data binding 'incunit' — digitaltwin.retail.vehicle"
+        }
+      }
+    },
+    {
+      "target": null,
+      "measures": [],
+      "subs": [],
+      "code": "ND-ASP-FX",
+      "group": "",
+      "name": "환율 영향",
+      "unit": "$",
+      "direction": "~",
+      "weight": 1,
+      "source": "",
+      "i18n": {
+        "en": {
+          "name": "FX impact",
+          "_src": {
+            "name": "환율 영향"
+          }
+        }
+      }
+    }
+  ],
+  "code": "KPI-ASP",
+  "area": "재무",
+  "name": "ASP (인센티브 차감 후)",
+  "unit": "$",
+  "direction": "+",
+  "weight": 5,
+  "source": "트윈 실측 바인딩 'asp' — digitaltwin.retail.vehicle",
+  "i18n": {
+    "en": {
+      "name": "ASP (net of incentives)",
+      "_src": {
+        "name": "ASP (인센티브 차감 후)",
+        "source": "트윈 실측 바인딩 'asp' — digitaltwin.retail.vehicle"
+      },
+      "source": "Twin data binding 'asp' — digitaltwin.retail.vehicle"
+    }
+  },
+  "order": 0
+}

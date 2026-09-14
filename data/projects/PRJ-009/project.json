@@ -1,0 +1,22 @@
+{
+  "id": 9,
+  "name": "캠페인 ROI 대시보드",
+  "dept": "Marketing",
+  "ms": "M1",
+  "owner": "이서연",
+  "prio": "P1",
+  "status": "진행중",
+  "start": "2026-05-18",
+  "end": "2026-10-16",
+  "i18n": {
+    "en": {
+      "name": "Campaign ROI dashboard",
+      "_src": {
+        "name": "캠페인 ROI 대시보드"
+      }
+    }
+  },
+  "kpi": "K4",
+  "kpiRole": "개선",
+  "impacts": []
+}

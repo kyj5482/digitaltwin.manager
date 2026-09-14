@@ -1,0 +1,49 @@
+{
+  "id": 26,
+  "name": "고객케어 서비스 캠페인",
+  "dept": "Marketing",
+  "ms": "M1",
+  "kpi": "K8-5",
+  "kpiRole": "개선",
+  "owner": "이서연",
+  "prio": "P1",
+  "status": "계획",
+  "start": "2026-10-05",
+  "end": "2026-12-04",
+  "impacts": [
+    {
+      "kpi": "K8-3",
+      "effect": "-",
+      "note": "캠페인 입고 물량이 일반 수리 예약 슬롯 점유",
+      "i18n": {
+        "en": {
+          "note": "Campaign inflow occupies regular repair booking slots",
+          "_src": {
+            "note": "캠페인 입고 물량이 일반 수리 예약 슬롯 점유"
+          }
+        }
+      }
+    },
+    {
+      "kpi": "KPI-RECUR",
+      "effect": "-",
+      "note": "캠페인 비용과 무상 점검으로 이익 감소",
+      "i18n": {
+        "en": {
+          "note": "Campaign cost and free inspections reduce profit",
+          "_src": {
+            "note": "캠페인 비용과 무상 점검으로 이익 감소"
+          }
+        }
+      }
+    }
+  ],
+  "i18n": {
+    "en": {
+      "name": "Customer-care service campaign",
+      "_src": {
+        "name": "고객케어 서비스 캠페인"
+      }
+    }
+  }
+}

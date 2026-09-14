@@ -1,0 +1,36 @@
+{
+  "id": 34,
+  "name": "인센티브 지출 최적화 (모델·지역 탄력성 분석)",
+  "dept": "Finance",
+  "ms": "M1",
+  "kpi": "ND-ASP-INC",
+  "kpiRole": "개선",
+  "owner": "박민수",
+  "prio": "P1",
+  "status": "계획",
+  "start": "2026-10-12",
+  "end": "2027-01-15",
+  "impacts": [
+    {
+      "kpi": "KPI-SHARE",
+      "effect": "-",
+      "note": "인센티브 축소 시 단기 판매·점유율 하락 위험",
+      "i18n": {
+        "en": {
+          "note": "Cutting incentives risks short-term sales and share decline",
+          "_src": {
+            "note": "인센티브 축소 시 단기 판매·점유율 하락 위험"
+          }
+        }
+      }
+    }
+  ],
+  "i18n": {
+    "en": {
+      "name": "Incentive spend optimization (model/region elasticity)",
+      "_src": {
+        "name": "인센티브 지출 최적화 (모델·지역 탄력성 분석)"
+      }
+    }
+  }
+}

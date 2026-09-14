@@ -1,0 +1,126 @@
+{
+  "target": 75,
+  "measures": [
+    {
+      "at": "2026-07-31",
+      "value": 71
+    },
+    {
+      "at": "2026-08-31",
+      "value": 72.5
+    },
+    {
+      "at": "2026-09-10",
+      "value": 73.4
+    }
+  ],
+  "subs": [
+    {
+      "target": null,
+      "measures": [],
+      "subs": [],
+      "code": "ND-ADST",
+      "group": "",
+      "name": "광고 인지 잔존 (adstock)",
+      "unit": "점",
+      "direction": "+",
+      "weight": 1,
+      "source": "트윈 실측 바인딩 'adstock' — digitaltwin.retail.vehicle",
+      "i18n": {
+        "en": {
+          "name": "Ad awareness (adstock)",
+          "_src": {
+            "name": "광고 인지 잔존 (adstock)",
+            "source": "트윈 실측 바인딩 'adstock' — digitaltwin.retail.vehicle"
+          },
+          "source": "Twin data binding 'adstock' — digitaltwin.retail.vehicle"
+        }
+      }
+    },
+    {
+      "target": null,
+      "measures": [],
+      "subs": [],
+      "code": "ND-SOC",
+      "group": "",
+      "name": "소셜 감성 지수",
+      "unit": "점",
+      "direction": "+",
+      "weight": 1,
+      "source": "",
+      "i18n": {
+        "en": {
+          "name": "Social sentiment index",
+          "_src": {
+            "name": "소셜 감성 지수"
+          }
+        }
+      }
+    },
+    {
+      "code": "K4",
+      "name": "캠페인 ROI 측정 커버리지",
+      "unit": "%",
+      "direction": "+",
+      "target": 100,
+      "weight": 1,
+      "measures": [
+        {
+          "at": "2026-08-31",
+          "value": 30
+        },
+        {
+          "at": "2026-09-10",
+          "value": 55
+        }
+      ],
+      "i18n": {
+        "en": {
+          "name": "Campaign ROI measurement coverage",
+          "_src": {
+            "name": "캠페인 ROI 측정 커버리지"
+          }
+        }
+      },
+      "source": "",
+      "group": "마케팅 효율"
+    },
+    {
+      "code": "K5",
+      "name": "세그먼트 기반 캠페인 비중",
+      "unit": "%",
+      "direction": "+",
+      "target": 50,
+      "weight": 1,
+      "measures": [],
+      "i18n": {
+        "en": {
+          "name": "Share of segment-based campaigns",
+          "_src": {
+            "name": "세그먼트 기반 캠페인 비중"
+          }
+        }
+      },
+      "source": "",
+      "group": "마케팅 효율"
+    }
+  ],
+  "code": "KPI-BRAND",
+  "area": "지속경영",
+  "name": "브랜드트래커",
+  "unit": "점",
+  "direction": "+",
+  "weight": 5,
+  "source": "트윈 실측 바인딩 'brand' — digitaltwin.retail.vehicle",
+  "i18n": {
+    "en": {
+      "name": "Brand tracker",
+      "_src": {
+        "name": "브랜드트래커",
+        "source": "트윈 실측 바인딩 'brand' — digitaltwin.retail.vehicle"
+      },
+      "source": "Twin data binding 'brand' — digitaltwin.retail.vehicle"
+    }
+  },
+  "order": 13
+}

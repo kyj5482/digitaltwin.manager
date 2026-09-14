@@ -1,0 +1,22 @@
+{
+  "id": 24,
+  "name": "정비 예약 시스템 데이터 연동",
+  "dept": "Service",
+  "ms": "M1",
+  "kpi": "K8-3",
+  "kpiRole": "연동",
+  "owner": "최현우",
+  "prio": "P1",
+  "status": "진행중",
+  "start": "2026-09-01",
+  "end": "2026-11-27",
+  "i18n": {
+    "en": {
+      "name": "Service booking system data integration",
+      "_src": {
+        "name": "정비 예약 시스템 데이터 연동"
+      }
+    }
+  },
+  "impacts": []
+}

@@ -1,0 +1,130 @@
+{
+  "target": 90,
+  "measures": [
+    {
+      "at": "2026-07-31",
+      "value": 88.1
+    },
+    {
+      "at": "2026-08-31",
+      "value": 88.6
+    },
+    {
+      "at": "2026-09-10",
+      "value": 89
+    }
+  ],
+  "subs": [
+    {
+      "target": null,
+      "measures": [],
+      "subs": [],
+      "code": "ND-DLV",
+      "group": "",
+      "name": "인도 리드타임 지수",
+      "unit": "점",
+      "direction": "+",
+      "weight": 1,
+      "source": "트윈 실측 바인딩 'csidlv' — digitaltwin.retail.vehicle",
+      "i18n": {
+        "en": {
+          "name": "Delivery lead-time index",
+          "_src": {
+            "name": "인도 리드타임 지수",
+            "source": "트윈 실측 바인딩 'csidlv' — digitaltwin.retail.vehicle"
+          },
+          "source": "Twin data binding 'csidlv' — digitaltwin.retail.vehicle"
+        }
+      }
+    },
+    {
+      "target": null,
+      "measures": [],
+      "subs": [],
+      "code": "ND-DEXP",
+      "group": "",
+      "name": "딜러 구매 경험",
+      "unit": "점",
+      "direction": "+",
+      "weight": 1,
+      "source": "",
+      "i18n": {
+        "en": {
+          "name": "Dealer purchase experience",
+          "_src": {
+            "name": "딜러 구매 경험"
+          }
+        }
+      }
+    },
+    {
+      "source": "",
+      "subs": [],
+      "code": "KPI-CSIP-1",
+      "group": "",
+      "name": "인터넷 리드 응답 시간",
+      "unit": "분",
+      "direction": "-",
+      "target": 15,
+      "weight": 2,
+      "measures": [],
+      "i18n": {
+        "en": {
+          "name": "Internet lead response time",
+          "_src": {
+            "name": "인터넷 리드 응답 시간"
+          }
+        }
+      }
+    },
+    {
+      "source": "CRM 시승 스케줄러",
+      "subs": [],
+      "code": "KPI-CSIP-2",
+      "group": "",
+      "name": "시승 전환율",
+      "unit": "%",
+      "direction": "+",
+      "target": 35,
+      "weight": 1,
+      "measures": [
+        {
+          "at": "2026-08-31",
+          "value": 24
+        },
+        {
+          "at": "2026-09-10",
+          "value": 26
+        }
+      ],
+      "i18n": {
+        "en": {
+          "name": "Test-drive conversion rate",
+          "_src": {
+            "name": "시승 전환율",
+            "source": "CRM 시승 스케줄러"
+          },
+          "source": "CRM test-drive scheduler"
+        }
+      }
+    }
+  ],
+  "code": "KPI-CSIP",
+  "area": "지속경영",
+  "name": "고객만족도 (판매)",
+  "unit": "점",
+  "direction": "+",
+  "weight": 3.5,
+  "source": "트윈 실측 바인딩 'csidlv' — digitaltwin.retail.vehicle",
+  "i18n": {
+    "en": {
+      "name": "Customer satisfaction (sales)",
+      "_src": {
+        "name": "고객만족도 (판매)",
+        "source": "트윈 실측 바인딩 'csidlv' — digitaltwin.retail.vehicle"
+      },
+      "source": "Twin data binding 'csidlv' — digitaltwin.retail.vehicle"
+    }
+  },
+  "order": 11
+}

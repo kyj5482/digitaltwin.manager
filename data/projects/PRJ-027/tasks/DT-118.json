@@ -1,0 +1,24 @@
+{
+  "id": "DT-118",
+  "projectId": 27,
+  "sprintNo": 1,
+  "title": "RO 일배치 적재 파이프라인 구축",
+  "owner": "최현우",
+  "stage": 4,
+  "due": "2026-09-25",
+  "done": false,
+  "carry": 0,
+  "deliverable": "일배치 적재 파이프라인 (FRFT·리텐션 산출)",
+  "stageAt": "2026-09-08",
+  "logs": [],
+  "i18n": {
+    "en": {
+      "title": "Daily RO ingestion pipeline",
+      "_src": {
+        "title": "RO 일배치 적재 파이프라인 구축",
+        "deliverable": "일배치 적재 파이프라인 (FRFT·리텐션 산출)"
+      },
+      "deliverable": "Daily ingestion pipeline (feeds FRFT & retention)"
+    }
+  }
+}

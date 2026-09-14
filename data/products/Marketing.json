@@ -1,0 +1,64 @@
+{
+  "name": "Marketing",
+  "status": "shaping",
+  "owner": "이서연",
+  "goal": "[샘플] 마케팅 Goal 수정본",
+  "kpi": "캠페인 ROI 측정 커버리지 100% (안)",
+  "ms": [
+    {
+      "code": "M1",
+      "name": "캠페인 ROI 대시보드",
+      "due": "2026-Q3",
+      "i18n": {
+        "en": {
+          "name": "Campaign ROI dashboard",
+          "_src": {
+            "name": "캠페인 ROI 대시보드"
+          }
+        }
+      }
+    },
+    {
+      "code": "M2",
+      "name": "고객 세그먼테이션",
+      "due": "2026-Q4",
+      "hold": true,
+      "i18n": {
+        "en": {
+          "name": "Customer segmentation",
+          "_src": {
+            "name": "고객 세그먼테이션"
+          }
+        }
+      }
+    }
+  ],
+  "history": [
+    {
+      "at": "2026-08-24T23:44:18.512Z",
+      "why": "전수 점검 샘플 입력",
+      "before": "캠페인 집행을 ROI 데이터로 의사결정: 전 캠페인 ROI 측정 체계 구축, 세그먼트 기반 타게팅 전환.",
+      "i18n": {
+        "en": {
+          "why": "Sample entry for full review",
+          "_src": {
+            "why": "전수 점검 샘플 입력",
+            "before": "캠페인 집행을 ROI 데이터로 의사결정: 전 캠페인 ROI 측정 체계 구축, 세그먼트 기반 타게팅 전환."
+          },
+          "before": "Decide campaign spend with ROI data: build ROI measurement for all campaigns, switch to segment-based targeting."
+        }
+      }
+    }
+  ],
+  "i18n": {
+    "en": {
+      "goal": "[Sample] Revised marketing Goal",
+      "_src": {
+        "goal": "[샘플] 마케팅 Goal 수정본",
+        "kpi": "캠페인 ROI 측정 커버리지 100% (안)"
+      },
+      "kpi": "Campaign ROI measurement coverage 100% (proposed)"
+    }
+  },
+  "order": 2
+}

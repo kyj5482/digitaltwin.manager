@@ -1,0 +1,60 @@
+{
+  "name": "Sales",
+  "status": "fixed",
+  "owner": "김유진",
+  "goal": "감(感)이 아닌 데이터로 수주를 예측한다: 분기 수주 예측 오차 ±10% 이내, 리드 스코어링 전 영업조직 적용.",
+  "kpi": "분기 수주 예측 오차 ±10% · 리드 스코어링 적용률 100%",
+  "ms": [
+    {
+      "code": "M1",
+      "name": "리드 스코어링 v1 적용",
+      "due": "2026-Q2",
+      "i18n": {
+        "en": {
+          "name": "Lead scoring v1 rollout",
+          "_src": {
+            "name": "리드 스코어링 v1 적용"
+          }
+        }
+      }
+    },
+    {
+      "code": "M2",
+      "name": "수주 파이프라인 예측 모델",
+      "due": "2026-Q3",
+      "i18n": {
+        "en": {
+          "name": "Order pipeline forecasting model",
+          "_src": {
+            "name": "수주 파이프라인 예측 모델"
+          }
+        }
+      }
+    },
+    {
+      "code": "M3",
+      "name": "예측 기반 목표 수립 프로세스",
+      "due": "2026-Q4",
+      "i18n": {
+        "en": {
+          "name": "Forecast-based target-setting process",
+          "_src": {
+            "name": "예측 기반 목표 수립 프로세스"
+          }
+        }
+      }
+    }
+  ],
+  "history": [],
+  "i18n": {
+    "en": {
+      "goal": "Predict orders with data, not gut feeling: quarterly order forecast error within ±10%, lead scoring adopted across the entire sales organization.",
+      "_src": {
+        "goal": "감(感)이 아닌 데이터로 수주를 예측한다: 분기 수주 예측 오차 ±10% 이내, 리드 스코어링 전 영업조직 적용.",
+        "kpi": "분기 수주 예측 오차 ±10% · 리드 스코어링 적용률 100%"
+      },
+      "kpi": "Quarterly order forecast error ±10% · lead scoring adoption 100%"
+    }
+  },
+  "order": 0
+}

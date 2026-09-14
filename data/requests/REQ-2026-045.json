@@ -1,0 +1,23 @@
+{
+  "id": "REQ-2026-045",
+  "title": "[샘플] 단순 데이터 추출",
+  "channel": "전화",
+  "requester": "재무팀 이몽룡",
+  "dept": "Sales",
+  "status": "리턴",
+  "note": "기존 대시보드로 회신",
+  "createdAt": "2026-08-24",
+  "link": null,
+  "i18n": {
+    "en": {
+      "title": "[Sample] Simple data extraction",
+      "_src": {
+        "title": "[샘플] 단순 데이터 추출",
+        "note": "기존 대시보드로 회신",
+        "requester": "재무팀 이몽룡"
+      },
+      "note": "Replied with the existing dashboard",
+      "requester": "Mongryong Lee, Finance"
+    }
+  }
+}

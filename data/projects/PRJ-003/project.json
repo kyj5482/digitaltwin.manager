@@ -1,0 +1,22 @@
+{
+  "id": 3,
+  "name": "영업 리드 스코어링",
+  "dept": "Sales",
+  "ms": "M1",
+  "owner": "김유진",
+  "prio": "P2",
+  "status": "완료",
+  "start": "2026-01-12",
+  "end": "2026-05-29",
+  "i18n": {
+    "en": {
+      "name": "Sales lead scoring",
+      "_src": {
+        "name": "영업 리드 스코어링"
+      }
+    }
+  },
+  "kpi": "K3",
+  "kpiRole": "개선",
+  "impacts": []
+}

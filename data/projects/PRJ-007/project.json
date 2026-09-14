@@ -1,0 +1,22 @@
+{
+  "id": 7,
+  "name": "AS 접수 VOC 분류 자동화",
+  "dept": "Service",
+  "ms": "M1",
+  "owner": "최현우",
+  "prio": "P0",
+  "status": "진행중",
+  "start": "2026-04-14",
+  "end": "2026-09-12",
+  "i18n": {
+    "en": {
+      "name": "AS ticket VOC classification automation",
+      "_src": {
+        "name": "AS 접수 VOC 분류 자동화"
+      }
+    }
+  },
+  "kpi": "K6",
+  "kpiRole": "개선",
+  "impacts": []
+}

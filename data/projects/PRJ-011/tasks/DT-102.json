@@ -1,0 +1,20 @@
+{
+  "id": "DT-102",
+  "projectId": 11,
+  "sprintNo": 16,
+  "title": "수주 이력 정합성 검증",
+  "owner": "김유진",
+  "stage": 5,
+  "due": "2026-08-14",
+  "done": true,
+  "carry": 0,
+  "stageAt": "2026-08-22",
+  "i18n": {
+    "en": {
+      "title": "Order history consistency validation",
+      "_src": {
+        "title": "수주 이력 정합성 검증"
+      }
+    }
+  }
+}

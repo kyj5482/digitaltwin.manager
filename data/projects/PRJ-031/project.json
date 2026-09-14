@@ -1,0 +1,22 @@
+{
+  "id": 31,
+  "name": "인터넷 리드 15분 응답 체계 (CRM 라우팅·딜러 SLA)",
+  "dept": "Sales",
+  "ms": "M1",
+  "kpi": "KPI-CSIP-1",
+  "kpiRole": "개선",
+  "owner": "김유진",
+  "prio": "P1",
+  "status": "계획",
+  "start": "2026-10-05",
+  "end": "2027-01-29",
+  "impacts": [],
+  "i18n": {
+    "en": {
+      "name": "15-minute internet lead response (CRM routing & dealer SLA)",
+      "_src": {
+        "name": "인터넷 리드 15분 응답 체계 (CRM 라우팅·딜러 SLA)"
+      }
+    }
+  }
+}

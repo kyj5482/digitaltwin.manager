@@ -1,0 +1,21 @@
+{
+  "id": "REQ-2026-043",
+  "title": "[샘플] 환리스크 분석 요청",
+  "channel": "이메일",
+  "requester": "재무팀 이몽룡",
+  "dept": "Sales",
+  "status": "전환",
+  "note": "",
+  "createdAt": "2026-08-24",
+  "link": "PRJ-022",
+  "i18n": {
+    "en": {
+      "title": "[Sample] FX risk analysis request",
+      "_src": {
+        "title": "[샘플] 환리스크 분석 요청",
+        "requester": "재무팀 이몽룡"
+      },
+      "requester": "Mongryong Lee, Finance"
+    }
+  }
+}

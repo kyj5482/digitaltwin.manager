@@ -1,0 +1,23 @@
+{
+  "id": "REQ-2026-042",
+  "title": "지난달 캠페인 채널별 성과 데이터 요청",
+  "channel": "회의",
+  "requester": "마케팅팀 김철수",
+  "dept": "Marketing",
+  "status": "리턴",
+  "note": "기존 대시보드 링크로 즉시 회신",
+  "createdAt": "2026-08-21",
+  "link": null,
+  "i18n": {
+    "en": {
+      "title": "Request for last month's campaign performance by channel",
+      "_src": {
+        "title": "지난달 캠페인 채널별 성과 데이터 요청",
+        "note": "기존 대시보드 링크로 즉시 회신",
+        "requester": "마케팅팀 김철수"
+      },
+      "note": "Replied immediately with a link to the existing dashboard",
+      "requester": "Cheolsu Kim, Marketing"
+    }
+  }
+}

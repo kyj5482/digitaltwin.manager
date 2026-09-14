@@ -1,0 +1,22 @@
+{
+  "id": 22,
+  "name": "[샘플] 환리스크 분석 요청",
+  "dept": "Finance",
+  "ms": "M1",
+  "owner": "박민수",
+  "prio": "P1",
+  "status": "계획",
+  "start": "",
+  "end": "",
+  "i18n": {
+    "en": {
+      "name": "[Sample] FX risk analysis request",
+      "_src": {
+        "name": "[샘플] 환리스크 분석 요청"
+      }
+    }
+  },
+  "kpi": "ND-ASP-FX",
+  "kpiRole": "연동",
+  "impacts": []
+}

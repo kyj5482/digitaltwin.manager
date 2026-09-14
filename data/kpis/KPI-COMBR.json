@@ -1,0 +1,59 @@
+{
+  "target": 9,
+  "measures": [
+    {
+      "at": "2026-07-31",
+      "value": 8.2
+    },
+    {
+      "at": "2026-08-31",
+      "value": 8.6
+    },
+    {
+      "at": "2026-09-10",
+      "value": 8.5
+    }
+  ],
+  "subs": [
+    {
+      "target": null,
+      "measures": [],
+      "subs": [],
+      "code": "ND-REV",
+      "group": "",
+      "name": "도매 매출",
+      "unit": "$",
+      "direction": "+",
+      "weight": 1,
+      "source": "트윈 실측 바인딩 'rev' — digitaltwin.retail.vehicle",
+      "i18n": {
+        "en": {
+          "name": "Wholesale revenue",
+          "_src": {
+            "name": "도매 매출",
+            "source": "트윈 실측 바인딩 'rev' — digitaltwin.retail.vehicle"
+          },
+          "source": "Twin data binding 'rev' — digitaltwin.retail.vehicle"
+        }
+      }
+    }
+  ],
+  "code": "KPI-COMBR",
+  "area": "재무",
+  "name": "합산손익률",
+  "unit": "%",
+  "direction": "+",
+  "weight": 15,
+  "source": "트윈 실측 바인딩 'combr' — digitaltwin.retail.vehicle",
+  "i18n": {
+    "en": {
+      "name": "Combined P&L margin",
+      "_src": {
+        "name": "합산손익률",
+        "source": "트윈 실측 바인딩 'combr' — digitaltwin.retail.vehicle"
+      },
+      "source": "Twin data binding 'combr' — digitaltwin.retail.vehicle"
+    }
+  },
+  "order": 3
+}

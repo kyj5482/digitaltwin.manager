@@ -1,0 +1,20 @@
+{
+  "id": "DT-109",
+  "projectId": 14,
+  "sprintNo": 17,
+  "title": "결산 데이터 정합성 검증 (ERP-DW 대사)",
+  "owner": "박민수",
+  "stage": 1,
+  "due": "2026-08-21",
+  "done": false,
+  "carry": 1,
+  "stageAt": "2026-08-14",
+  "i18n": {
+    "en": {
+      "title": "Closing data consistency validation (ERP–DW reconciliation)",
+      "_src": {
+        "title": "결산 데이터 정합성 검증 (ERP-DW 대사)"
+      }
+    }
+  }
+}

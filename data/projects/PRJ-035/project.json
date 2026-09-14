@@ -1,0 +1,22 @@
+{
+  "id": 35,
+  "name": "딜러 재고 리밸런싱 (재고 일수 DS 최적화)",
+  "dept": "Sales",
+  "ms": "M1",
+  "kpi": "ND-DS",
+  "kpiRole": "개선",
+  "owner": "김유진",
+  "prio": "P1",
+  "status": "계획",
+  "start": "2026-11-02",
+  "end": "2027-02-12",
+  "impacts": [],
+  "i18n": {
+    "en": {
+      "name": "Dealer inventory rebalancing (days-of-supply optimization)",
+      "_src": {
+        "name": "딜러 재고 리밸런싱 (재고 일수 DS 최적화)"
+      }
+    }
+  }
+}

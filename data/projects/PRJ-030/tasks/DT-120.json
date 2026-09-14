@@ -1,0 +1,24 @@
+{
+  "id": "DT-120",
+  "projectId": 30,
+  "sprintNo": 1,
+  "title": "1차 아웃리치 발송(SMS·우편) 및 응답 추적",
+  "owner": "최현우",
+  "stage": 5,
+  "due": "2026-09-25",
+  "done": false,
+  "carry": 0,
+  "deliverable": "발송 결과·입고 전환 리포트",
+  "stageAt": "2026-09-08",
+  "logs": [],
+  "i18n": {
+    "en": {
+      "title": "First outreach wave (SMS/mail) with response tracking",
+      "_src": {
+        "title": "1차 아웃리치 발송(SMS·우편) 및 응답 추적",
+        "deliverable": "발송 결과·입고 전환 리포트"
+      },
+      "deliverable": "Send results & service-visit conversion report"
+    }
+  }
+}

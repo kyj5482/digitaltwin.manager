@@ -1,0 +1,22 @@
+{
+  "id": "DT-101",
+  "projectId": 11,
+  "sprintNo": 16,
+  "title": "CRM 원천 데이터 적재 배치",
+  "owner": "김유진",
+  "stage": 5,
+  "due": "2026-08-12",
+  "done": true,
+  "carry": 0,
+  "stageAt": "2026-08-21",
+  "logs": [],
+  "deliverable": "",
+  "i18n": {
+    "en": {
+      "title": "CRM source data ingestion batch",
+      "_src": {
+        "title": "CRM 원천 데이터 적재 배치"
+      }
+    }
+  }
+}

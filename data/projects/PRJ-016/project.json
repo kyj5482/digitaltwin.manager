@@ -1,0 +1,22 @@
+{
+  "id": 16,
+  "name": "신제품 수요 예측",
+  "dept": "Product Planning",
+  "ms": "M1",
+  "owner": "정다현",
+  "prio": "P2",
+  "status": "계획",
+  "start": "2026-09-01",
+  "end": "2026-12-18",
+  "i18n": {
+    "en": {
+      "name": "New product demand forecasting",
+      "_src": {
+        "name": "신제품 수요 예측"
+      }
+    }
+  },
+  "kpi": "ND-ORD",
+  "kpiRole": "개선",
+  "impacts": []
+}

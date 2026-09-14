@@ -1,0 +1,111 @@
+{
+  "target": 9,
+  "measures": [
+    {
+      "at": "2026-07-31",
+      "value": 8.4
+    },
+    {
+      "at": "2026-08-31",
+      "value": 8.6
+    },
+    {
+      "at": "2026-09-10",
+      "value": 8.7
+    }
+  ],
+  "subs": [
+    {
+      "target": null,
+      "measures": [],
+      "subs": [],
+      "code": "ND-IND",
+      "group": "",
+      "name": "산업 수요 (SAAR)",
+      "unit": "대",
+      "direction": "~",
+      "weight": 1,
+      "source": "트윈 실측 바인딩 'industry' — digitaltwin.retail.vehicle",
+      "i18n": {
+        "en": {
+          "name": "Industry demand (SAAR)",
+          "_src": {
+            "name": "산업 수요 (SAAR)",
+            "source": "트윈 실측 바인딩 'industry' — digitaltwin.retail.vehicle"
+          },
+          "source": "Twin data binding 'industry' — digitaltwin.retail.vehicle"
+        }
+      }
+    },
+    {
+      "target": null,
+      "measures": [],
+      "subs": [],
+      "code": "ND-COMP",
+      "group": "",
+      "name": "경쟁사 런칭 모니터링",
+      "unit": "건",
+      "direction": "~",
+      "weight": 1,
+      "source": "",
+      "i18n": {
+        "en": {
+          "name": "Competitor launch monitoring",
+          "_src": {
+            "name": "경쟁사 런칭 모니터링"
+          }
+        }
+      }
+    },
+    {
+      "code": "K3",
+      "name": "리드 스코어링 적용률",
+      "unit": "%",
+      "direction": "+",
+      "target": 100,
+      "weight": 1,
+      "measures": [
+        {
+          "at": "2026-07-31",
+          "value": 45
+        },
+        {
+          "at": "2026-08-31",
+          "value": 62
+        },
+        {
+          "at": "2026-09-10",
+          "value": 78
+        }
+      ],
+      "i18n": {
+        "en": {
+          "name": "Lead scoring adoption rate",
+          "_src": {
+            "name": "리드 스코어링 적용률"
+          }
+        }
+      },
+      "source": "",
+      "group": "영업 전환"
+    }
+  ],
+  "code": "KPI-SHARE",
+  "area": "사업",
+  "name": "시장점유율",
+  "unit": "%",
+  "direction": "+",
+  "weight": 10,
+  "source": "트윈 실측 바인딩 'share' — digitaltwin.retail.vehicle",
+  "i18n": {
+    "en": {
+      "name": "Market share",
+      "_src": {
+        "name": "시장점유율",
+        "source": "트윈 실측 바인딩 'share' — digitaltwin.retail.vehicle"
+      },
+      "source": "Twin data binding 'share' — digitaltwin.retail.vehicle"
+    }
+  },
+  "order": 6
+}

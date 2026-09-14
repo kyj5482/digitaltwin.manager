@@ -1,0 +1,385 @@
+{
+  "target": 90,
+  "measures": [
+    {
+      "at": "2026-07-31",
+      "value": 86.5
+    },
+    {
+      "at": "2026-08-31",
+      "value": 87.2
+    },
+    {
+      "at": "2026-09-10",
+      "value": 87.8
+    }
+  ],
+  "subs": [
+    {
+      "target": 0.5,
+      "measures": [
+        {
+          "at": "2026-07-31",
+          "value": 0.8
+        },
+        {
+          "at": "2026-08-31",
+          "value": 0.6
+        },
+        {
+          "at": "2026-09-10",
+          "value": 0.55
+        }
+      ],
+      "subs": [],
+      "code": "ND-VOC",
+      "group": "",
+      "name": "VoC·클레임 발생률",
+      "unit": "/1k",
+      "direction": "-",
+      "weight": 1,
+      "source": "트윈 실측 바인딩 'voc' — digitaltwin.retail.vehicle",
+      "i18n": {
+        "en": {
+          "name": "VoC/claim rate",
+          "_src": {
+            "name": "VoC·클레임 발생률",
+            "source": "트윈 실측 바인딩 'voc' — digitaltwin.retail.vehicle"
+          },
+          "source": "Twin data binding 'voc' — digitaltwin.retail.vehicle"
+        }
+      }
+    },
+    {
+      "target": null,
+      "measures": [],
+      "subs": [],
+      "code": "ND-CAMP",
+      "group": "",
+      "name": "품질 캠페인 커버리지",
+      "unit": "%",
+      "direction": "+",
+      "weight": 1,
+      "source": "트윈 실측 바인딩 'camp' — digitaltwin.retail.vehicle",
+      "i18n": {
+        "en": {
+          "name": "Quality campaign coverage",
+          "_src": {
+            "name": "품질 캠페인 커버리지",
+            "source": "트윈 실측 바인딩 'camp' — digitaltwin.retail.vehicle"
+          },
+          "source": "Twin data binding 'camp' — digitaltwin.retail.vehicle"
+        }
+      }
+    },
+    {
+      "source": "텔레매틱스 배터리 이벤트 로그",
+      "subs": [],
+      "code": "K8-1",
+      "group": "품질",
+      "name": "12V 배터리 방전 건수",
+      "unit": "건/천대",
+      "direction": "-",
+      "target": 3,
+      "weight": 2,
+      "measures": [
+        {
+          "at": "2026-07-31",
+          "value": 5.2
+        },
+        {
+          "at": "2026-08-31",
+          "value": 4.6
+        },
+        {
+          "at": "2026-09-10",
+          "value": 4.1
+        }
+      ],
+      "i18n": {
+        "en": {
+          "name": "12V battery discharge cases",
+          "_src": {
+            "name": "12V 배터리 방전 건수",
+            "source": "텔레매틱스 배터리 이벤트 로그"
+          },
+          "source": "Telematics battery event log"
+        }
+      }
+    },
+    {
+      "source": "차량 진단 DTC 수집 시스템",
+      "subs": [],
+      "code": "K8-2",
+      "group": "품질",
+      "name": "DTC (MIL ON) 발생률",
+      "unit": "%",
+      "direction": "-",
+      "target": 1.5,
+      "weight": 2,
+      "measures": [
+        {
+          "at": "2026-07-31",
+          "value": 2.4
+        },
+        {
+          "at": "2026-08-31",
+          "value": 2.1
+        },
+        {
+          "at": "2026-09-10",
+          "value": 1.9
+        }
+      ],
+      "i18n": {
+        "en": {
+          "name": "DTC (MIL ON) incidence rate",
+          "_src": {
+            "name": "DTC (MIL ON) 발생률",
+            "source": "차량 진단 DTC 수집 시스템"
+          },
+          "source": "Vehicle diagnostics DTC collection system"
+        }
+      }
+    },
+    {
+      "source": "",
+      "subs": [],
+      "code": "K8-3",
+      "group": "서비스",
+      "name": "정비 즉시 예약 가능률",
+      "unit": "%",
+      "direction": "+",
+      "target": 90,
+      "weight": 1,
+      "measures": [],
+      "i18n": {
+        "en": {
+          "name": "Immediate service booking availability",
+          "_src": {
+            "name": "정비 즉시 예약 가능률"
+          }
+        }
+      }
+    },
+    {
+      "source": "정비 시스템 작업 오더",
+      "subs": [],
+      "code": "K8-4",
+      "group": "서비스",
+      "name": "평균 수리 소요시간",
+      "unit": "시간",
+      "direction": "-",
+      "target": 4,
+      "weight": 1,
+      "measures": [
+        {
+          "at": "2026-08-31",
+          "value": 6.5
+        },
+        {
+          "at": "2026-09-10",
+          "value": 5.8
+        }
+      ],
+      "i18n": {
+        "en": {
+          "name": "Average repair turnaround time",
+          "_src": {
+            "name": "평균 수리 소요시간",
+            "source": "정비 시스템 작업 오더"
+          },
+          "source": "Service shop work orders"
+        }
+      }
+    },
+    {
+      "source": "",
+      "subs": [],
+      "code": "K8-5",
+      "group": "고객케어",
+      "name": "서비스 앱 고객 평점",
+      "unit": "점",
+      "direction": "+",
+      "target": 4.5,
+      "weight": 1,
+      "measures": [
+        {
+          "at": "2026-07-31",
+          "value": 4.1
+        },
+        {
+          "at": "2026-08-31",
+          "value": 4.2
+        },
+        {
+          "at": "2026-09-10",
+          "value": 4.25
+        }
+      ],
+      "i18n": {
+        "en": {
+          "name": "Service app customer rating",
+          "_src": {
+            "name": "서비스 앱 고객 평점"
+          }
+        }
+      }
+    },
+    {
+      "code": "K6",
+      "name": "AS 접수 자동 분류 정확도",
+      "unit": "%",
+      "direction": "+",
+      "target": 90,
+      "weight": 2,
+      "measures": [
+        {
+          "at": "2026-07-31",
+          "value": 82
+        },
+        {
+          "at": "2026-08-31",
+          "value": 86
+        },
+        {
+          "at": "2026-09-10",
+          "value": 88.5
+        }
+      ],
+      "i18n": {
+        "en": {
+          "name": "AS intake auto-classification accuracy",
+          "_src": {
+            "name": "AS 접수 자동 분류 정확도",
+            "source": "VOC 분류 모델 평가 파이프라인"
+          },
+          "source": "VOC classification model evaluation pipeline"
+        }
+      },
+      "source": "VOC 분류 모델 평가 파이프라인",
+      "group": "서비스"
+    },
+    {
+      "code": "K7",
+      "name": "VOC 리포트 주간 자동 발행률",
+      "unit": "%",
+      "direction": "+",
+      "target": 100,
+      "weight": 1,
+      "measures": [
+        {
+          "at": "2026-08-31",
+          "value": 50
+        },
+        {
+          "at": "2026-09-10",
+          "value": 75
+        }
+      ],
+      "i18n": {
+        "en": {
+          "name": "Weekly VOC report automation rate",
+          "_src": {
+            "name": "VOC 리포트 주간 자동 발행률"
+          }
+        }
+      },
+      "source": "",
+      "group": "서비스"
+    },
+    {
+      "source": "",
+      "subs": [],
+      "code": "KPI-CSIS-1",
+      "group": "서비스",
+      "name": "FRFT 일발 수리율",
+      "unit": "%",
+      "direction": "+",
+      "target": 90,
+      "weight": 2,
+      "measures": [],
+      "i18n": {
+        "en": {
+          "name": "Fix Right First Time (FRFT) rate",
+          "_src": {
+            "name": "FRFT 일발 수리율"
+          }
+        }
+      }
+    },
+    {
+      "source": "",
+      "subs": [],
+      "code": "KPI-CSIS-2",
+      "group": "서비스",
+      "name": "서비스 리텐션율 (보증기간 내 재방문)",
+      "unit": "%",
+      "direction": "+",
+      "target": 55,
+      "weight": 1,
+      "measures": [],
+      "i18n": {
+        "en": {
+          "name": "Service retention rate (in-warranty return)",
+          "_src": {
+            "name": "서비스 리텐션율 (보증기간 내 재방문)"
+          }
+        }
+      }
+    },
+    {
+      "source": "리콜 관리 시스템 (오픈 리콜 대상 DB)",
+      "subs": [],
+      "code": "KPI-CSIS-3",
+      "group": "품질",
+      "name": "오픈 리콜 완료율",
+      "unit": "%",
+      "direction": "+",
+      "target": 75,
+      "weight": 1,
+      "measures": [
+        {
+          "at": "2026-07-31",
+          "value": 58
+        },
+        {
+          "at": "2026-08-31",
+          "value": 61
+        },
+        {
+          "at": "2026-09-10",
+          "value": 63
+        }
+      ],
+      "i18n": {
+        "en": {
+          "name": "Open recall completion rate",
+          "_src": {
+            "name": "오픈 리콜 완료율",
+            "source": "리콜 관리 시스템 (오픈 리콜 대상 DB)"
+          },
+          "source": "Recall management system (open-recall database)"
+        }
+      }
+    }
+  ],
+  "code": "KPI-CSIS",
+  "area": "지속경영",
+  "name": "고객만족도 (서비스)",
+  "unit": "점",
+  "direction": "+",
+  "weight": 3.5,
+  "source": "트윈 실측 바인딩 'csisvc' — digitaltwin.retail.vehicle",
+  "i18n": {
+    "en": {
+      "name": "Customer satisfaction (service)",
+      "_src": {
+        "name": "고객만족도 (서비스)",
+        "source": "트윈 실측 바인딩 'csisvc' — digitaltwin.retail.vehicle"
+      },
+      "source": "Twin data binding 'csisvc' — digitaltwin.retail.vehicle"
+    }
+  },
+  "order": 10
+}

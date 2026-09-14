@@ -1,0 +1,42 @@
+{
+  "target": null,
+  "measures": [],
+  "subs": [
+    {
+      "target": null,
+      "measures": [],
+      "subs": [],
+      "code": "ND-GREEN-AD",
+      "group": "",
+      "name": "광고 환경 표기 심의",
+      "unit": "건",
+      "direction": "-",
+      "weight": 1,
+      "source": "",
+      "i18n": {
+        "en": {
+          "name": "Green ad claim review",
+          "_src": {
+            "name": "광고 환경 표기 심의"
+          }
+        }
+      }
+    }
+  ],
+  "code": "KPI-GREEN",
+  "area": "지속경영",
+  "name": "그린워싱",
+  "unit": "건",
+  "direction": "-",
+  "weight": 5,
+  "source": "",
+  "i18n": {
+    "en": {
+      "name": "Greenwashing",
+      "_src": {
+        "name": "그린워싱"
+      }
+    }
+  },
+  "order": 8
+}

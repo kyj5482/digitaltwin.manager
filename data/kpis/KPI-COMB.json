@@ -1,0 +1,81 @@
+{
+  "target": 128,
+  "measures": [
+    {
+      "at": "2026-07-31",
+      "value": 118
+    },
+    {
+      "at": "2026-08-31",
+      "value": 122
+    },
+    {
+      "at": "2026-09-10",
+      "value": 121
+    }
+  ],
+  "subs": [
+    {
+      "target": null,
+      "measures": [],
+      "subs": [],
+      "code": "ND-OP",
+      "group": "",
+      "name": "영업이익 (판매법인)",
+      "unit": "$",
+      "direction": "+",
+      "weight": 1,
+      "source": "트윈 실측 바인딩 'op' — digitaltwin.retail.vehicle",
+      "i18n": {
+        "en": {
+          "name": "Operating profit (sales company)",
+          "_src": {
+            "name": "영업이익 (판매법인)",
+            "source": "트윈 실측 바인딩 'op' — digitaltwin.retail.vehicle"
+          },
+          "source": "Twin data binding 'op' — digitaltwin.retail.vehicle"
+        }
+      }
+    },
+    {
+      "target": null,
+      "measures": [],
+      "subs": [],
+      "code": "ND-CAPTIVE",
+      "group": "",
+      "name": "금융법인 손익 (캡티브)",
+      "unit": "$",
+      "direction": "+",
+      "weight": 1,
+      "source": "트윈 실측 바인딩 'captive' — digitaltwin.retail.vehicle",
+      "i18n": {
+        "en": {
+          "name": "Captive finance P&L",
+          "_src": {
+            "name": "금융법인 손익 (캡티브)",
+            "source": "트윈 실측 바인딩 'captive' — digitaltwin.retail.vehicle"
+          },
+          "source": "Twin data binding 'captive' — digitaltwin.retail.vehicle"
+        }
+      }
+    }
+  ],
+  "code": "KPI-COMB",
+  "area": "재무",
+  "name": "합산손익",
+  "unit": "M$",
+  "direction": "+",
+  "weight": 12,
+  "source": "트윈 실측 바인딩 'comb' — digitaltwin.retail.vehicle",
+  "i18n": {
+    "en": {
+      "name": "Combined P&L",
+      "_src": {
+        "name": "합산손익",
+        "source": "트윈 실측 바인딩 'comb' — digitaltwin.retail.vehicle"
+      },
+      "source": "Twin data binding 'comb' — digitaltwin.retail.vehicle"
+    }
+  },
+  "order": 2
+}

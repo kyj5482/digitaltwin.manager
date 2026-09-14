@@ -1,0 +1,20 @@
+{
+  "id": "DT-106",
+  "projectId": 7,
+  "sprintNo": 17,
+  "title": "VOC 분류 모델 재학습 파이프라인 (주 1회)",
+  "owner": "최현우",
+  "stage": 4,
+  "due": "2026-08-25",
+  "done": false,
+  "carry": 0,
+  "stageAt": "2026-08-11",
+  "i18n": {
+    "en": {
+      "title": "VOC classification model retraining pipeline (weekly)",
+      "_src": {
+        "title": "VOC 분류 모델 재학습 파이프라인 (주 1회)"
+      }
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "id": 30,
+  "name": "미조치 리콜 아웃리치 캠페인 (오픈 리콜 완료율 제고)",
+  "dept": "Service",
+  "ms": "M1",
+  "kpi": "KPI-CSIS-3",
+  "kpiRole": "개선",
+  "owner": "최현우",
+  "prio": "P1",
+  "status": "진행중",
+  "start": "2026-08-31",
+  "end": "2026-12-18",
+  "impacts": [
+    {
+      "kpi": "K8-3",
+      "effect": "-",
+      "note": "리콜 입고 물량이 일반 정비 예약 슬롯 점유",
+      "i18n": {
+        "en": {
+          "note": "Recall inflow occupies regular service booking slots",
+          "_src": {
+            "note": "리콜 입고 물량이 일반 정비 예약 슬롯 점유"
+          }
+        }
+      }
+    }
+  ],
+  "i18n": {
+    "en": {
+      "name": "Open-recall outreach campaign",
+      "_src": {
+        "name": "미조치 리콜 아웃리치 캠페인 (오픈 리콜 완료율 제고)"
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "id": "DT-104",
+  "projectId": 11,
+  "sprintNo": 17,
+  "title": "분기 수주액 모델 하이퍼파라미터 튜닝",
+  "owner": "김유진",
+  "stage": 3,
+  "due": "2026-08-28",
+  "done": false,
+  "carry": 0,
+  "stageAt": "2026-08-24",
+  "i18n": {
+    "en": {
+      "title": "Quarterly order value model hyperparameter tuning",
+      "_src": {
+        "title": "분기 수주액 모델 하이퍼파라미터 튜닝"
+      }
+    }
+  }
+}

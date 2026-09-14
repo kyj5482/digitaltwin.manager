@@ -1,0 +1,22 @@
+{
+  "id": 14,
+  "name": "월 결산 자동화 및 이상 탐지",
+  "dept": "Finance",
+  "ms": "M1",
+  "owner": "박민수",
+  "prio": "P1",
+  "status": "진행중",
+  "start": "2026-07-06",
+  "end": "2026-11-27",
+  "i18n": {
+    "en": {
+      "name": "Monthly closing automation and anomaly detection",
+      "_src": {
+        "name": "월 결산 자동화 및 이상 탐지"
+      }
+    }
+  },
+  "kpi": "K1",
+  "kpiRole": "개선",
+  "impacts": []
+}

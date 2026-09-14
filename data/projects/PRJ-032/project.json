@@ -1,0 +1,22 @@
+{
+  "id": 32,
+  "name": "CRM 리드 퍼널 데이터 연동",
+  "dept": "Sales",
+  "ms": "M1",
+  "kpi": "KPI-CSIP-1",
+  "kpiRole": "연동",
+  "owner": "김유진",
+  "prio": "P1",
+  "status": "진행중",
+  "start": "2026-09-14",
+  "end": "2026-11-20",
+  "impacts": [],
+  "i18n": {
+    "en": {
+      "name": "CRM lead-funnel data integration",
+      "_src": {
+        "name": "CRM 리드 퍼널 데이터 연동"
+      }
+    }
+  }
+}

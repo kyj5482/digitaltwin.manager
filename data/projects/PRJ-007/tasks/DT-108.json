@@ -1,0 +1,20 @@
+{
+  "id": "DT-108",
+  "projectId": 7,
+  "sprintNo": 16,
+  "title": "분류 라벨 체계 정리",
+  "owner": "최현우",
+  "stage": 5,
+  "due": "2026-08-13",
+  "done": true,
+  "carry": 0,
+  "stageAt": "2026-08-13",
+  "i18n": {
+    "en": {
+      "title": "Classification label taxonomy cleanup",
+      "_src": {
+        "title": "분류 라벨 체계 정리"
+      }
+    }
+  }
+}

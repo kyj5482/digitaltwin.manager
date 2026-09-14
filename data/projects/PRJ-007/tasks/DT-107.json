@@ -1,0 +1,20 @@
+{
+  "id": "DT-107",
+  "projectId": 7,
+  "sprintNo": 17,
+  "title": "AS 접수 화면에 분류 결과 노출 API",
+  "owner": "최현우",
+  "stage": 5,
+  "due": "2026-08-26",
+  "done": false,
+  "carry": 0,
+  "stageAt": "2026-08-12",
+  "i18n": {
+    "en": {
+      "title": "API exposing classification results on the AS intake screen",
+      "_src": {
+        "title": "AS 접수 화면에 분류 결과 노출 API"
+      }
+    }
+  }
+}

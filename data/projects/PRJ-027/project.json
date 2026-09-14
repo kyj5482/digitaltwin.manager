@@ -1,0 +1,22 @@
+{
+  "id": 27,
+  "name": "딜러 DMS 정비 오더(RO) 데이터 연동",
+  "dept": "Service",
+  "ms": "M1",
+  "kpi": "KPI-CSIS-1",
+  "kpiRole": "연동",
+  "owner": "최현우",
+  "prio": "P1",
+  "status": "진행중",
+  "start": "2026-09-07",
+  "end": "2026-12-11",
+  "impacts": [],
+  "i18n": {
+    "en": {
+      "name": "Dealer DMS repair-order (RO) data integration",
+      "_src": {
+        "name": "딜러 DMS 정비 오더(RO) 데이터 연동"
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "id": "DT-110",
+  "projectId": 14,
+  "sprintNo": 17,
+  "title": "이상 탐지 대상 계정과목 범위 협의",
+  "owner": "박민수",
+  "stage": 0,
+  "due": "2026-08-26",
+  "done": false,
+  "carry": 0,
+  "stageAt": "2026-08-15",
+  "i18n": {
+    "en": {
+      "title": "Scope alignment on accounts for anomaly detection",
+      "_src": {
+        "title": "이상 탐지 대상 계정과목 범위 협의"
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "id": 28,
+  "name": "FRFT 일발 수리 개선 (부품 사전 준비·기술 핫라인)",
+  "dept": "Service",
+  "ms": "M1",
+  "kpi": "KPI-CSIS-1",
+  "kpiRole": "개선",
+  "owner": "최현우",
+  "prio": "P1",
+  "status": "계획",
+  "start": "2026-10-12",
+  "end": "2027-02-26",
+  "impacts": [],
+  "i18n": {
+    "en": {
+      "name": "FRFT improvement (parts pre-pull & tech hotline)",
+      "_src": {
+        "name": "FRFT 일발 수리 개선 (부품 사전 준비·기술 핫라인)"
+      }
+    }
+  }
+}

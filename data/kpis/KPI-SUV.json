@@ -1,0 +1,103 @@
+{
+  "target": 18000,
+  "measures": [
+    {
+      "at": "2026-07-31",
+      "value": 15200
+    },
+    {
+      "at": "2026-08-31",
+      "value": 16900
+    },
+    {
+      "at": "2026-09-10",
+      "value": 17400
+    }
+  ],
+  "subs": [
+    {
+      "target": null,
+      "measures": [],
+      "subs": [],
+      "code": "ND-TRN",
+      "group": "",
+      "name": "Terron 소매 (대형 SUV)",
+      "unit": "대",
+      "direction": "+",
+      "weight": 1,
+      "source": "트윈 실측 바인딩 'm_TRN' — digitaltwin.retail.vehicle",
+      "i18n": {
+        "en": {
+          "name": "Terron retail (full-size SUV)",
+          "_src": {
+            "name": "Terron 소매 (대형 SUV)",
+            "source": "트윈 실측 바인딩 'm_TRN' — digitaltwin.retail.vehicle"
+          },
+          "source": "Twin data binding 'm_TRN' — digitaltwin.retail.vehicle"
+        }
+      }
+    },
+    {
+      "target": null,
+      "measures": [],
+      "subs": [],
+      "code": "ND-VST",
+      "group": "",
+      "name": "Vista 소매 (중형 SUV)",
+      "unit": "대",
+      "direction": "+",
+      "weight": 1,
+      "source": "트윈 실측 바인딩 'm_VST' — digitaltwin.retail.vehicle",
+      "i18n": {
+        "en": {
+          "name": "Vista retail (mid-size SUV)",
+          "_src": {
+            "name": "Vista 소매 (중형 SUV)",
+            "source": "트윈 실측 바인딩 'm_VST' — digitaltwin.retail.vehicle"
+          },
+          "source": "Twin data binding 'm_VST' — digitaltwin.retail.vehicle"
+        }
+      }
+    },
+    {
+      "target": null,
+      "measures": [],
+      "subs": [],
+      "code": "ND-SUVINC",
+      "group": "",
+      "name": "SUV 인센티브 효율",
+      "unit": "$",
+      "direction": "-",
+      "weight": 1,
+      "source": "트윈 실측 바인딩 'suvinc' — digitaltwin.retail.vehicle",
+      "i18n": {
+        "en": {
+          "name": "SUV incentive efficiency",
+          "_src": {
+            "name": "SUV 인센티브 효율",
+            "source": "트윈 실측 바인딩 'suvinc' — digitaltwin.retail.vehicle"
+          },
+          "source": "Twin data binding 'suvinc' — digitaltwin.retail.vehicle"
+        }
+      }
+    }
+  ],
+  "code": "KPI-SUV",
+  "area": "사업",
+  "name": "볼륨 SUV 육성 (소매)",
+  "unit": "대",
+  "direction": "+",
+  "weight": 10,
+  "source": "트윈 실측 바인딩 'suv' — digitaltwin.retail.vehicle",
+  "i18n": {
+    "en": {
+      "name": "Volume SUV growth (retail)",
+      "_src": {
+        "name": "볼륨 SUV 육성 (소매)",
+        "source": "트윈 실측 바인딩 'suv' — digitaltwin.retail.vehicle"
+      },
+      "source": "Twin data binding 'suv' — digitaltwin.retail.vehicle"
+    }
+  },
+  "order": 5
+}

@@ -1,0 +1,20 @@
+{
+  "id": "DT-115",
+  "projectId": 7,
+  "sprintNo": null,
+  "title": "[샘플] 배차 최적화 문의",
+  "owner": "최현우",
+  "stage": 0,
+  "due": "",
+  "done": false,
+  "carry": 0,
+  "stageAt": "2026-08-24",
+  "i18n": {
+    "en": {
+      "title": "[Sample] Dispatch optimization inquiry",
+      "_src": {
+        "title": "[샘플] 배차 최적화 문의"
+      }
+    }
+  }
+}

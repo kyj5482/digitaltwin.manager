@@ -1,0 +1,62 @@
+{
+  "target": null,
+  "measures": [],
+  "subs": [
+    {
+      "target": null,
+      "measures": [],
+      "subs": [],
+      "code": "ND-SECP",
+      "group": "",
+      "name": "차량 SW 보안 패치",
+      "unit": "%",
+      "direction": "+",
+      "weight": 1,
+      "source": "",
+      "i18n": {
+        "en": {
+          "name": "Vehicle SW security patching",
+          "_src": {
+            "name": "차량 SW 보안 패치"
+          }
+        }
+      }
+    },
+    {
+      "target": null,
+      "measures": [],
+      "subs": [],
+      "code": "ND-SECIT",
+      "group": "",
+      "name": "IT 침해 시도 대응",
+      "unit": "건",
+      "direction": "-",
+      "weight": 1,
+      "source": "",
+      "i18n": {
+        "en": {
+          "name": "IT intrusion response",
+          "_src": {
+            "name": "IT 침해 시도 대응"
+          }
+        }
+      }
+    }
+  ],
+  "code": "KPI-SEC",
+  "area": "지속경영",
+  "name": "보안",
+  "unit": "건",
+  "direction": "-",
+  "weight": 3,
+  "source": "",
+  "i18n": {
+    "en": {
+      "name": "Security",
+      "_src": {
+        "name": "보안"
+      }
+    }
+  },
+  "order": 12
+}

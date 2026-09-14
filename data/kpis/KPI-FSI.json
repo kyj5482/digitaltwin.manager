@@ -1,0 +1,42 @@
+{
+  "target": 100,
+  "measures": [],
+  "subs": [
+    {
+      "target": null,
+      "measures": [],
+      "subs": [],
+      "code": "ND-FSI-DLR",
+      "group": "",
+      "name": "딜러 SI 2.0 적용률",
+      "unit": "%",
+      "direction": "+",
+      "weight": 1,
+      "source": "",
+      "i18n": {
+        "en": {
+          "name": "Dealer SI 2.0 adoption",
+          "_src": {
+            "name": "딜러 SI 2.0 적용률"
+          }
+        }
+      }
+    }
+  ],
+  "code": "KPI-FSI",
+  "area": "지속경영",
+  "name": "Full SI 2.0",
+  "unit": "%",
+  "direction": "+",
+  "weight": 5,
+  "source": "",
+  "i18n": {
+    "en": {
+      "name": "Full SI 2.0",
+      "_src": {
+        "name": "Full SI 2.0"
+      }
+    }
+  },
+  "order": 9
+}

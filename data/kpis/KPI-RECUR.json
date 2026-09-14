@@ -1,0 +1,213 @@
+{
+  "target": 8,
+  "measures": [
+    {
+      "at": "2026-07-31",
+      "value": 7.1
+    },
+    {
+      "at": "2026-08-31",
+      "value": 7.4
+    },
+    {
+      "at": "2026-09-10",
+      "value": 7.2
+    }
+  ],
+  "subs": [
+    {
+      "target": 42000,
+      "measures": [
+        {
+          "at": "2026-07-31",
+          "value": 46000
+        },
+        {
+          "at": "2026-08-31",
+          "value": 44800
+        },
+        {
+          "at": "2026-09-10",
+          "value": 44100
+        }
+      ],
+      "subs": [],
+      "code": "ND-ENERGY",
+      "group": "오피스 관리비",
+      "name": "전력사용량",
+      "unit": "$",
+      "direction": "-",
+      "weight": 1,
+      "lever": "hvac",
+      "source": "트윈 실측 바인딩 'energy' — digitaltwin.retail.vehicle",
+      "i18n": {
+        "en": {
+          "name": "Energy usage",
+          "_src": {
+            "name": "전력사용량",
+            "source": "트윈 실측 바인딩 'energy' — digitaltwin.retail.vehicle"
+          },
+          "source": "Twin data binding 'energy' — digitaltwin.retail.vehicle"
+        }
+      }
+    },
+    {
+      "target": null,
+      "measures": [],
+      "subs": [],
+      "code": "ND-LEASE",
+      "group": "오피스 관리비",
+      "name": "임차·시설",
+      "unit": "$",
+      "direction": "-",
+      "weight": 1,
+      "source": "트윈 실측 바인딩 'lease' — digitaltwin.retail.vehicle",
+      "i18n": {
+        "en": {
+          "name": "Lease & facilities",
+          "_src": {
+            "name": "임차·시설",
+            "source": "트윈 실측 바인딩 'lease' — digitaltwin.retail.vehicle"
+          },
+          "source": "Twin data binding 'lease' — digitaltwin.retail.vehicle"
+        }
+      }
+    },
+    {
+      "target": null,
+      "measures": [],
+      "subs": [],
+      "code": "ND-SUPPLY",
+      "group": "오피스 관리비",
+      "name": "소모품·기타",
+      "unit": "$",
+      "direction": "-",
+      "weight": 1,
+      "source": "",
+      "i18n": {
+        "en": {
+          "name": "Supplies & misc",
+          "_src": {
+            "name": "소모품·기타"
+          }
+        }
+      }
+    },
+    {
+      "target": null,
+      "measures": [],
+      "subs": [],
+      "code": "ND-PARTS",
+      "group": "",
+      "name": "Parts 손익",
+      "unit": "k$",
+      "direction": "+",
+      "weight": 1,
+      "source": "트윈 실측 바인딩 'parts' — digitaltwin.retail.vehicle",
+      "i18n": {
+        "en": {
+          "name": "Parts P&L",
+          "_src": {
+            "name": "Parts 손익",
+            "source": "트윈 실측 바인딩 'parts' — digitaltwin.retail.vehicle"
+          },
+          "source": "Twin data binding 'parts' — digitaltwin.retail.vehicle"
+        }
+      }
+    },
+    {
+      "target": null,
+      "measures": [],
+      "subs": [],
+      "code": "ND-LOGI",
+      "group": "",
+      "name": "물류·운송비",
+      "unit": "$",
+      "direction": "-",
+      "weight": 1,
+      "source": "트윈 실측 바인딩 'freight' — digitaltwin.retail.vehicle",
+      "i18n": {
+        "en": {
+          "name": "Logistics & freight",
+          "_src": {
+            "name": "물류·운송비",
+            "source": "트윈 실측 바인딩 'freight' — digitaltwin.retail.vehicle"
+          },
+          "source": "Twin data binding 'freight' — digitaltwin.retail.vehicle"
+        }
+      }
+    },
+    {
+      "target": null,
+      "measures": [],
+      "subs": [],
+      "code": "ND-FINCOST",
+      "group": "",
+      "name": "금융 비용",
+      "unit": "$",
+      "direction": "-",
+      "weight": 1,
+      "source": "",
+      "i18n": {
+        "en": {
+          "name": "Financing cost",
+          "_src": {
+            "name": "금융 비용"
+          }
+        }
+      }
+    },
+    {
+      "code": "K1",
+      "name": "월 결산 소요일",
+      "unit": "일",
+      "direction": "-",
+      "target": 2,
+      "weight": 1,
+      "measures": [
+        {
+          "at": "2026-07-05",
+          "value": 5
+        },
+        {
+          "at": "2026-08-05",
+          "value": 3
+        },
+        {
+          "at": "2026-09-04",
+          "value": 2.1
+        }
+      ],
+      "i18n": {
+        "en": {
+          "name": "Days to monthly close",
+          "_src": {
+            "name": "월 결산 소요일",
+            "source": "ERP 결산 마감 로그"
+          },
+          "source": "ERP closing ledger log"
+        }
+      },
+      "source": "ERP 결산 마감 로그",
+      "group": "재무 운영"
+    }
+  ],
+  "code": "KPI-RECUR",
+  "area": "재무",
+  "name": "경상이익률",
+  "unit": "%",
+  "direction": "+",
+  "weight": 5,
+  "source": "트윈 실측 바인딩 'recur' — digitaltwin.retail.vehicle",
+  "i18n": {
+    "en": {
+      "name": "Recurring profit margin",
+      "_src": {
+        "name": "경상이익률",
+        "source": "트윈 실측 바인딩 'recur' — digitaltwin.retail.vehicle"
+      },
+      "source": "Twin data binding 'recur' — digitaltwin.retail.vehicle"
+    }
+  },
+  "order": 1
+}

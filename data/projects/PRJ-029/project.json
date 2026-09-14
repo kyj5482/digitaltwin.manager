@@ -1,0 +1,36 @@
+{
+  "id": 29,
+  "name": "서비스 리텐션 케어 프로그램 (정비 리마인더·선불 정비 패키지)",
+  "dept": "Marketing",
+  "ms": "M1",
+  "kpi": "KPI-CSIS-2",
+  "kpiRole": "개선",
+  "owner": "이서연",
+  "prio": "P1",
+  "status": "계획",
+  "start": "2026-10-19",
+  "end": "2027-03-26",
+  "impacts": [
+    {
+      "kpi": "KPI-RECUR",
+      "effect": "-",
+      "note": "무상 점검·쿠폰 프로모션 비용으로 단기 이익 감소",
+      "i18n": {
+        "en": {
+          "note": "Free inspections and coupon promotions reduce short-term profit",
+          "_src": {
+            "note": "무상 점검·쿠폰 프로모션 비용으로 단기 이익 감소"
+          }
+        }
+      }
+    }
+  ],
+  "i18n": {
+    "en": {
+      "name": "Service retention care program (maintenance reminders & prepaid packages)",
+      "_src": {
+        "name": "서비스 리텐션 케어 프로그램 (정비 리마인더·선불 정비 패키지)"
+      }
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "id": "DT-117",
+  "projectId": 27,
+  "sprintNo": 1,
+  "title": "딜러 DMS RO 스키마 분석·필드 매핑",
+  "owner": "최현우",
+  "stage": 1,
+  "due": "2026-09-18",
+  "done": false,
+  "carry": 0,
+  "deliverable": "RO 필드 매핑 정의서",
+  "stageAt": "2026-09-08",
+  "logs": [],
+  "i18n": {
+    "en": {
+      "title": "Dealer DMS RO schema analysis & field mapping",
+      "_src": {
+        "title": "딜러 DMS RO 스키마 분석·필드 매핑",
+        "deliverable": "RO 필드 매핑 정의서"
+      },
+      "deliverable": "RO field-mapping spec"
+    }
+  }
+}

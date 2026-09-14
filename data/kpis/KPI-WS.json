@@ -1,0 +1,148 @@
+{
+  "target": 52000,
+  "measures": [
+    {
+      "at": "2026-07-31",
+      "value": 47000
+    },
+    {
+      "at": "2026-08-31",
+      "value": 50100
+    },
+    {
+      "at": "2026-09-10",
+      "value": 49800
+    }
+  ],
+  "subs": [
+    {
+      "target": null,
+      "measures": [],
+      "subs": [],
+      "code": "ND-ORD",
+      "group": "",
+      "name": "월 생산 주문",
+      "unit": "대",
+      "direction": "+",
+      "weight": 1,
+      "source": "트윈 실측 바인딩 'ord' — digitaltwin.retail.vehicle",
+      "i18n": {
+        "en": {
+          "name": "Monthly production orders",
+          "_src": {
+            "name": "월 생산 주문",
+            "source": "트윈 실측 바인딩 'ord' — digitaltwin.retail.vehicle"
+          },
+          "source": "Twin data binding 'ord' — digitaltwin.retail.vehicle"
+        }
+      }
+    },
+    {
+      "target": 60,
+      "measures": [
+        {
+          "at": "2026-07-31",
+          "value": 75
+        },
+        {
+          "at": "2026-08-31",
+          "value": 68
+        },
+        {
+          "at": "2026-09-10",
+          "value": 64
+        }
+      ],
+      "subs": [],
+      "code": "ND-DS",
+      "group": "",
+      "name": "재고 일수 (DS)",
+      "unit": "일",
+      "direction": "~",
+      "weight": 1,
+      "source": "트윈 실측 바인딩 'ds' — digitaltwin.retail.vehicle",
+      "i18n": {
+        "en": {
+          "name": "Days of supply (DS)",
+          "_src": {
+            "name": "재고 일수 (DS)",
+            "source": "트윈 실측 바인딩 'ds' — digitaltwin.retail.vehicle"
+          },
+          "source": "Twin data binding 'ds' — digitaltwin.retail.vehicle"
+        }
+      }
+    },
+    {
+      "target": null,
+      "measures": [],
+      "subs": [],
+      "code": "ND-PIPE",
+      "group": "",
+      "name": "해상 파이프라인",
+      "unit": "대",
+      "direction": "~",
+      "weight": 1,
+      "source": "",
+      "i18n": {
+        "en": {
+          "name": "Ocean pipeline",
+          "_src": {
+            "name": "해상 파이프라인"
+          }
+        }
+      }
+    },
+    {
+      "code": "K2",
+      "name": "분기 수주 예측 오차",
+      "unit": "%",
+      "direction": "-",
+      "target": 10,
+      "weight": 2,
+      "measures": [
+        {
+          "at": "2026-07-31",
+          "value": 18
+        },
+        {
+          "at": "2026-08-31",
+          "value": 12
+        },
+        {
+          "at": "2026-09-10",
+          "value": 10.4
+        }
+      ],
+      "i18n": {
+        "en": {
+          "name": "Quarterly order forecast error",
+          "_src": {
+            "name": "분기 수주 예측 오차",
+            "source": "CRM 수주 파이프라인"
+          },
+          "source": "CRM order pipeline"
+        }
+      },
+      "source": "CRM 수주 파이프라인",
+      "group": "수요 예측"
+    }
+  ],
+  "code": "KPI-WS",
+  "area": "사업",
+  "name": "도매판매량",
+  "unit": "대",
+  "direction": "+",
+  "weight": 10,
+  "source": "트윈 실측 바인딩 'ws' — digitaltwin.retail.vehicle",
+  "i18n": {
+    "en": {
+      "name": "Wholesale volume",
+      "_src": {
+        "name": "도매판매량",
+        "source": "트윈 실측 바인딩 'ws' — digitaltwin.retail.vehicle"
+      },
+      "source": "Twin data binding 'ws' — digitaltwin.retail.vehicle"
+    }
+  },
+  "order": 4
+}

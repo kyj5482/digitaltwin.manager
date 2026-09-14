@@ -1,0 +1,20 @@
+{
+  "id": "DT-114",
+  "projectId": 21,
+  "sprintNo": 2,
+  "title": "[샘플] 상담 로그 적재 배치",
+  "owner": "최현우",
+  "stage": 1,
+  "due": "",
+  "done": false,
+  "carry": 1,
+  "stageAt": "2026-08-24",
+  "i18n": {
+    "en": {
+      "title": "[Sample] Consultation log ingestion batch",
+      "_src": {
+        "title": "[샘플] 상담 로그 적재 배치"
+      }
+    }
+  }
+}

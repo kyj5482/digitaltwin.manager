@@ -1,0 +1,22 @@
+{
+  "id": 33,
+  "name": "온라인 시승 예약 퍼널 최적화",
+  "dept": "Sales",
+  "ms": "M1",
+  "kpi": "KPI-CSIP-2",
+  "kpiRole": "개선",
+  "owner": "김유진",
+  "prio": "P1",
+  "status": "계획",
+  "start": "2026-10-26",
+  "end": "2027-02-19",
+  "impacts": [],
+  "i18n": {
+    "en": {
+      "name": "Online test-drive booking funnel optimization",
+      "_src": {
+        "name": "온라인 시승 예약 퍼널 최적화"
+      }
+    }
+  }
+}

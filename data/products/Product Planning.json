@@ -1,0 +1,32 @@
+{
+  "name": "Product Planning",
+  "status": "draft",
+  "owner": "정다현",
+  "goal": "신제품 기획에 수요 예측 데이터를 반영한다. KPI·범위는 첫 프로젝트 Intake 협의로 구체화.",
+  "kpi": "",
+  "ms": [
+    {
+      "code": "M1",
+      "name": "신제품 수요 예측 PoC",
+      "due": "2026-Q4",
+      "i18n": {
+        "en": {
+          "name": "New product demand forecasting PoC",
+          "_src": {
+            "name": "신제품 수요 예측 PoC"
+          }
+        }
+      }
+    }
+  ],
+  "history": [],
+  "i18n": {
+    "en": {
+      "goal": "Feed demand-forecast data into new product planning. KPI and scope to be refined through the first project's intake alignment.",
+      "_src": {
+        "goal": "신제품 기획에 수요 예측 데이터를 반영한다. KPI·범위는 첫 프로젝트 Intake 협의로 구체화."
+      }
+    }
+  },
+  "order": 3
+}

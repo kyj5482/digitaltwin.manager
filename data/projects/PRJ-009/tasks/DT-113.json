@@ -1,0 +1,20 @@
+{
+  "id": "DT-113",
+  "projectId": 9,
+  "sprintNo": 17,
+  "title": "ROI 대시보드 화면 개발 (1차)",
+  "owner": "이서연",
+  "stage": 5,
+  "due": "2026-08-28",
+  "done": false,
+  "carry": 0,
+  "stageAt": "2026-08-18",
+  "i18n": {
+    "en": {
+      "title": "ROI dashboard UI development (phase 1)",
+      "_src": {
+        "title": "ROI 대시보드 화면 개발 (1차)"
+      }
+    }
+  }
+}
