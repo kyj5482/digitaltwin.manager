@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>스프린트 보드 — AI/Data North Pole 프로토타입</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="crumbs" id="sp-crumbs">Digital Twin Manager / <b>AI/Data North Pole</b> / 스프린트 보드</div>
+      <div class="spacer"></div>
+      <button class="theme-toggle" onclick="toggleTheme()">☀ / ☾ 테마</button>
+      <span class="avatar" title="김용진">YK</span>
+    </div>
+
+    <div class="page-head">
+      <div>
+        <h1 id="sp-title">스프린트 보드</h1>
+        <div class="sub" id="sp-sub"></div>
+      </div>
+      <div class="actions">
+        <select class="input" id="sel-project" style="width:auto" onchange="goProject()"></select>
+        <button class="btn" onclick="openModal('sprint-modal')">⚙ 스프린트 관리</button>
+        <button class="btn primary" onclick="openModal('task-modal')">+ 새 태스크</button>
+      </div>
+    </div>
+
+    <!-- 프로젝트 스코프에서만 표시: 하위 스프린트 전체 / 선택 보기 -->
+    <div class="sprint-chips" id="sp-chips"></div>
+
+    <div class="filter-row">
+      <select class="input" id="f-owner" onchange="render()"><option>담당자: 전체</option><option>김유진</option><option>박민수</option><option>이서연</option><option>정다현</option><option>최현우</option><option>한지민</option><option>오세훈</option><option>윤아름</option></select>
+      <div class="meter" style="margin-left:auto;min-width:240px">
+        <span class="small muted" id="sp-meter-lbl">완료율</span>
+        <div class="track"><div class="fill" id="sp-meter-fill" style="width:0%"></div></div><span class="pct" id="sp-meter-pct">0%</span>
+      </div>
+    </div>
+
+    <div class="kanban" id="board"></div>
+
+    <details class="done-strip" id="done-strip">
+      <summary id="done-sum">완료 · 이월 처리 태스크 0건 보기</summary>
+      <div class="done-list" id="done-list"></div>
+    </details>
+
+    <p class="muted small" style="margin-top:10px">
+      ⚠ 표시는 해당 단계 평균 소요일의 1.5배를 초과해 체류 중인 태스크입니다. 단계 이동 시각은 StageLog에 자동 기록되어
+      <a href="index.html">대시보드의 단계별 소요시간 분석</a>에 반영됩니다.
+      ↻ 이월 배지는 이전 스프린트에서 완료되지 못하고 넘어온 태스크로, 이월 횟수가 누적 표시됩니다.
+    </p>
+
+    <!-- 스프린트 관리 모달: 생성 / 편집 / 종료 -->
+    <div class="modal-scrim" id="sprint-modal">
+      <div class="modal">
+        <h2 id="sp-mgmt-title">스프린트 관리</h2>
+        <p class="m-sub">스프린트는 프로젝트에 속하며 2주 주기가 기본입니다. 이름은 ISO 주차 기준으로 자동 채번되고, 기간과 상태는 편집할 수 있습니다.</p>
+
+        <table class="tbl" style="margin-bottom:18px">
+          <thead><tr><th>스프린트</th><th>기간</th><th>상태</th><th>태스크</th><th></th></tr></thead>
+          <tbody id="sp-mgmt-body"></tbody>
+        </table>
+
+        <hr class="divider">
+        <h2 style="font-size:14px;margin:0 0 10px">새 스프린트 생성</h2>
+        <div class="form-2col">
+          <div class="field">
+            <label>이름 (자동 채번)</label>
+            <input class="input" id="sp-new-name" value="Sprint 2026-19" readonly>
+          </div>
+          <div class="field">
+            <label>상태</label>
+            <select class="input" id="sp-new-status"><option selected>예정</option><option>진행중</option></select>
+          </div>
+          <div class="field">
+            <label>시작일 <span class="req">*</span></label>
+            <input class="input" type="date" id="sp-new-start" value="2026-09-14">
+          </div>
+          <div class="field">
+            <label>종료일 <span class="req">*</span></label>
+            <input class="input" type="date" id="sp-new-end" value="2026-09-25">
+            <span class="hint">시작일 기준 2주(10영업일)가 자동 제안됩니다. 잘못 생성한 스프린트는 목록의 [✕ 삭제]로 지울 수 있습니다.</span>
+          </div>
+        </div>
+        <div class="m-foot">
+          <button class="btn" onclick="closeModal('sprint-modal')">닫기</button>
+          <button class="btn primary" onclick="createSprint()">스프린트 생성</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 스프린트 편집 모달 -->
+    <div class="modal-scrim" id="sprint-edit-modal">
+      <div class="modal" style="width:480px">
+        <h2 id="sp-edit-title">스프린트 편집</h2>
+        <p class="m-sub">기간 변경은 배정된 태스크의 목표일에 영향을 주지 않으며, 변경 이력이 기록됩니다.</p>
+        <div class="form-2col">
+          <div class="field">
+            <label>시작일 <span class="req">*</span></label>
+            <input class="input" type="date" value="2026-08-17">
+          </div>
+          <div class="field">
+            <label>종료일 <span class="req">*</span></label>
+            <input class="input" type="date" value="2026-08-28">
+          </div>
+        </div>
+        <div class="field">
+          <label>상태</label>
+          <select class="input"><option>예정</option><option selected>진행중</option></select>
+          <span class="hint">완료 처리는 [종료] 버튼으로만 가능합니다 (미완료 태스크 이월 확인 필요).</span>
+        </div>
+        <div class="field">
+          <label>변경 사유</label>
+          <input class="input" placeholder="예: 추석 연휴로 종료일 3일 연장">
+        </div>
+        <div class="m-foot">
+          <button class="btn" onclick="closeModal('sprint-edit-modal')">취소</button>
+          <button class="btn primary" onclick="closeModal('sprint-edit-modal')">저장</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 스프린트 종료 모달 -->
+    <div class="modal-scrim" id="sprint-close-modal">
+      <div class="modal" style="width:520px">
+        <h2 id="sp-close-title">스프린트 종료</h2>
+        <p class="m-sub" id="sp-close-sub">미완료 태스크의 처리 방법을 정해야 종료할 수 있습니다.</p>
+        <div class="field">
+          <label>미완료 태스크 처리 <span class="req">*</span></label>
+          <select class="input" id="sp-close-sel">
+            <option selected>다음 스프린트로 이월</option>
+            <option>백로그로 이동</option>
+            <option>태스크별로 개별 선택…</option>
+          </select>
+          <span class="hint">이월된 태스크에는 이월 횟수가 표시되어 반복 이월을 추적합니다.</span>
+        </div>
+        <div class="field">
+          <label>회고 메모 (선택)</label>
+          <textarea class="input" rows="3" placeholder="이번 스프린트에서 오래 걸린 단계, 배운 점 등 — 스프린트 리포트에 포함됩니다."></textarea>
+        </div>
+        <div class="m-foot">
+          <button class="btn" onclick="closeModal('sprint-close-modal')">취소</button>
+          <button class="btn primary" onclick="closeModal('sprint-close-modal')">스프린트 종료</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 새 태스크 모달 -->
+    <div class="modal-scrim" id="task-modal">
+      <div class="modal">
+        <h2>새 태스크</h2>
+        <p class="m-sub">태스크는 프로젝트에 속하며 그 프로젝트의 스프린트에 배정됩니다. 시작 단계는 항상 Intake 협의입니다.</p>
+        <div class="field">
+          <label>태스크명 <span class="req">*</span></label>
+          <input class="input" placeholder="예: 수주 예측 피처 마트 구축">
+        </div>
+        <div class="form-2col">
+          <div class="field">
+            <label>프로젝트 <span class="req">*</span></label>
+            <select class="input" id="task-project"></select>
+          </div>
+          <div class="field">
+            <label>스프린트 <span class="hint" style="display:inline">(프로젝트의 스프린트만 선택 가능)</span></label>
+            <select class="input" id="task-sprint"></select>
+          </div>
+          <div class="field">
+            <label>담당자 <span class="req">*</span></label>
+            <select class="input"><option>김유진</option><option>박민수</option><option>이서연</option><option>정다현</option><option>최현우</option></select>
+          </div>
+          <div class="field">
+            <label>Git 브랜치 (자동 제안)</label>
+            <input class="input" value="feature/DT-164-feature-mart" readonly>
+          </div>
+          <div class="field">
+            <label>시작일 <span class="req">*</span></label>
+            <input class="input" type="date" value="2026-08-24">
+          </div>
+          <div class="field">
+            <label>목표 종료일 <span class="req">*</span></label>
+            <input class="input" type="date" value="2026-08-28">
+          </div>
+        </div>
+        <div class="field">
+          <label>Deliverable 정의 <span class="req">*</span></label>
+          <textarea class="input" rows="2" placeholder="예: 학습용 피처 마트 테이블(feature_mart.orders_v1) + 데이터 명세서 1부"></textarea>
+          <span class="hint">완료 판단 기준이 되는 산출물을 반드시 명시합니다. 비워 둘 수 없습니다.</span>
+        </div>
+        <div class="m-foot">
+          <button class="btn" onclick="closeModal('task-modal')">취소</button>
+          <button class="btn primary" onclick="closeModal('task-modal')">태스크 생성</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="assets/app.js"></script>
+<script>
+/* ═══ 검토용 목데이터 — 실제 구현 시
+   GET /api/northpole/projects/:id/sprints, GET /api/northpole/projects/:id/tasks?sprints=… 로 대체 ═══ */
+const Q = new URLSearchParams(location.search);
+const prjId = Q.get("project") ? parseInt(Q.get("project"), 10) : null;
+
+const KNOWN = [
+  { id: 11, name: "수주 파이프라인 예측 모델", short: "수주 예측" },
+  { id: 7,  name: "AS 접수 VOC 분류 자동화", short: "VOC 분류" },
+  { id: 14, name: "월 결산 자동화 및 이상 탐지", short: "월 결산" },
+  { id: 9,  name: "캠페인 ROI 대시보드", short: "캠페인 ROI" },
+  { id: 16, name: "신제품 수요 예측", short: "수요 예측" },
+  { id: 12, name: "마케팅 고객 세그먼테이션", short: "세그먼테이션" },
+  { id: 3,  name: "영업 리드 스코어링", short: "리드 스코어링" },
+];
+const prjName = Q.get("pname") ||
+  (KNOWN.find(p => p.id === prjId) || {}).name ||
+  (prjId != null ? `프로젝트 PRJ-${String(prjId).padStart(3, "0")}` : null);
+
+/* 2주 스프린트 캘린더 (ISO 주차 기반 자동 채번 가정) — 현재 진행중 = 2026-17 */
+const CAL = { 13:["06-22","07-03"], 14:["07-06","07-17"], 15:["07-20","07-31"],
+              16:["08-03","08-14"], 17:["08-17","08-28"], 18:["08-31","09-11"], 19:["09-14","09-25"] };
+const CUR = 17;
+const STAGES = ["Intake 협의", "데이터 준비", "EDA", "모델링", "파이프라인", "서비스 개발"];
+const TITLES = [
+  ["요구사항 정의 협의", "지표 정의 합의 (현업)", "대상 범위·우선순위 협의"],
+  ["원천 데이터 적재 배치 작성", "데이터 정합성 검증 (원천 대사)", "외부 데이터 연동"],
+  ["탐색 분석 리포트 작성", "세그먼트 분포·이상치 점검", "변수 상관·드리프트 분석"],
+  ["베이스라인 모델 학습", "하이퍼파라미터 튜닝", "모델 평가 리포트"],
+  ["재학습 파이프라인 구축", "배치 스케줄링·모니터링 설정", "피처 스토어 등록"],
+  ["서빙 API 개발", "대시보드 화면 개발", "현업 화면 연동·배포"],
+];
+const OWNERS = ["김유진", "박민수", "이서연", "정다현", "최현우", "한지민", "오세훈", "윤아름"];
+
+/* 결정적 의사난수 — 같은 프로젝트는 항상 같은 목데이터 */
+function rnd() {
+  let s = 7;
+  for (const k of arguments) s = (s * 31 + k * 7919 + 1) % 233280;
+  return ((s * 9301 + 49297) % 233280) / 233280;
+}
+
+/* 프로젝트의 스프린트 목록: 완료 2~4개 + 진행중 1 + 예정 1~2개 */
+function sprintsOf(pid) {
+  const nClosed = 2 + Math.floor(rnd(pid, 1) * 3);
+  const nPlanned = 1 + (rnd(pid, 2) > 0.55 ? 1 : 0);
+  const list = [];
+  for (let no = CUR - nClosed; no <= CUR + nPlanned; no++) {
+    if (!CAL[no]) continue;
+    list.push({ no, name: `Sprint 2026-${no}`, s: CAL[no][0], e: CAL[no][1],
+                status: no < CUR ? "closed" : no === CUR ? "active" : "planned" });
+  }
+  return list;
+}
+
+/* 스프린트별 태스크 + 이월 체인: 완료 스프린트의 미완료분은 다음 스프린트로 넘어가며 이월 횟수 누적 */
+function tasksOf(pid) {
+  const sps = sprintsOf(pid);
+  const all = [];
+  let seq = 100 + (pid * 13) % 40;
+  let carryIn = [];                       // 직전 스프린트에서 이월된 태스크
+  sps.forEach((sp, si) => {
+    const mine = [];
+    for (const c of carryIn)              // 이월 태스크: 같은 코드·제목, 이월 횟수 +1
+      mine.push({ ...c, spNo: sp.no, carry: c.carry + 1, carriedOut: false,
+                  done: sp.status === "closed" ? rnd(pid, sp.no, c.code.length) > 0.2 : false });
+    const n = (sp.status === "planned" ? 1 : 4) + Math.floor(rnd(pid, sp.no, 3) * (sp.status === "planned" ? 3 : 5));
+    for (let k = 0; k < n; k++) {
+      const r = i => rnd(pid, sp.no, k * 10 + i);
+      const stage = sp.status === "planned" ? 0 : Math.floor(r(1) * 6);
+      const done = sp.status === "closed" ? r(2) > 0.22 : sp.status === "active" ? r(2) > 0.75 : false;
+      const [em, ed] = sp.e.split("-").map(Number);
+      const due = `${String(em).padStart(2, "0")}-${String(Math.max(1, ed - Math.floor(r(3) * 9))).padStart(2, "0")}`;
+      const stay = 1 + Math.floor(r(4) * 12);
+      mine.push({ code: `DT-${++seq}`, pid, spNo: sp.no,
+        title: TITLES[stage][Math.floor(r(5) * 3)],
+        stage, owner: OWNERS[Math.floor(r(6) * 8)], due,
+        delay: !done && sp.status === "active" && r(7) > 0.75,
+        stay, slow: stay >= 7, att: r(8) > 0.6 ? 1 + Math.floor(r(9) * 3) : 0,
+        done, carry: 0, carriedOut: false });
+    }
+    // 완료된 스프린트의 미완료분 → 이월 처리 표기 + 다음 스프린트로 전달
+    carryIn = [];
+    if (sp.status === "closed")
+      for (const t of mine) if (!t.done) { t.carriedOut = true; carryIn.push(t); }
+    all.push(...mine);
+  });
+  return all;
+}
+
+/* ═══ 상태 ═══ */
+const SPRINTS = prjId != null ? sprintsOf(prjId) : [];
+const TASKS = prjId != null
+  ? tasksOf(prjId)
+  : KNOWN.flatMap(p => tasksOf(p.id).filter(t => t.spNo === CUR));   // 전체 모드: 각 프로젝트의 진행중 스프린트
+let selSp = new Set();                    // 선택된 스프린트 no 집합 (프로젝트 모드)
+if (prjId != null) {
+  const fromUrl = (Q.get("sprints") || "").split(",").map(Number).filter(n => SPRINTS.some(s => s.no === n));
+  if (fromUrl.length) fromUrl.forEach(n => selSp.add(n));
+  else selSp.add(SPRINTS.some(s => s.status === "active") ? CUR : SPRINTS[SPRINTS.length - 1].no);
+}
+const ST_KO = { planned: "예정", active: "진행중", closed: "완료" };
+const ST_BG = { planned: "plan", active: "doing", closed: "done" };
+
+/* ═══ 렌더 ═══ */
+function goProject() {
+  const v = document.getElementById("sel-project").value;
+  location.href = v === "all" ? "sprint.html"
+    : `sprint.html?project=${v}&pname=${encodeURIComponent(KNOWN.find(p => p.id == v).name)}`;
+}
+function toggleSp(no) {
+  if (no === "all") { selSp = new Set(SPRINTS.map(s => s.no)); }
+  else {
+    selSp.has(no) ? selSp.delete(no) : selSp.add(no);
+    if (!selSp.size) selSp.add(no);       // 최소 1개 유지
+  }
+  try {   // 딥링크용 URL 반영 — file:// 등 제한 환경에서는 조용히 생략
+    history.replaceState(null, "", `sprint.html?project=${prjId}&pname=${encodeURIComponent(prjName)}&sprints=${[...selSp].join(",")}`);
+  } catch (_) {}
+  render();
+}
+function visibleTasks() {
+  const ow = document.getElementById("f-owner").value;
+  return TASKS.filter(t =>
+    (prjId == null || selSp.has(t.spNo)) &&
+    (ow.includes("전체") || t.owner === ow));
+}
+function render() {
+  // 헤더·크럼
+  document.getElementById("sp-title").textContent = prjId != null ? prjName : "스프린트 보드 — 전체 프로젝트";
+  document.getElementById("sp-crumbs").innerHTML = prjId != null
+    ? `Digital Twin Manager / <b>AI/Data North Pole</b> / <a href="projects.html">프로젝트</a> / ${prjName}`
+    : `Digital Twin Manager / <b>AI/Data North Pole</b> / 스프린트 보드`;
+  // 프로젝트 셀렉터
+  document.getElementById("sel-project").innerHTML =
+    `<option value="all">프로젝트: 전체 (진행중 스프린트만)</option>` +
+    KNOWN.map(p => `<option value="${p.id}" ${p.id === prjId ? "selected" : ""}>PRJ-${String(p.id).padStart(3, "0")} ${p.name}</option>`).join("");
+  // 스프린트 칩 (프로젝트 모드)
+  const chips = document.getElementById("sp-chips");
+  if (prjId != null) {
+    const allOn = selSp.size === SPRINTS.length;
+    chips.innerHTML = `<span class="lbl">스프린트 (다중 선택):</span>
+      <button class="schip ${allOn ? "on" : ""}" onclick="toggleSp('all')">전체 ${SPRINTS.length}개</button>` +
+      SPRINTS.map(s => `<button class="schip ${selSp.has(s.no) ? "on" : ""}" onclick="toggleSp(${s.no})">
+        ${s.name}<span class="st">${ST_KO[s.status]} · ${s.s}~${s.e}</span></button>`).join("");
+  } else chips.innerHTML = "";
+  // 서브 타이틀
+  const sel = prjId != null ? SPRINTS.filter(s => selSp.has(s.no)) : [];
+  document.getElementById("sp-sub").textContent = prjId != null
+    ? (sel.length === 1
+        ? `${sel[0].name} · ${sel[0].s} ~ ${sel[0].e} (${ST_KO[sel[0].status]}) · 컬럼은 6단계 파이프라인, 카드는 오른쪽으로만 이동합니다.`
+        : `${sel.length}개 스프린트 표시 (${sel[0].s} ~ ${sel[sel.length - 1].e}) · 카드의 S 태그가 소속 스프린트입니다.`)
+    : "전체 프로젝트의 진행중 스프린트(Sprint 2026-17)를 통합 표시합니다. 프로젝트를 선택하면 해당 프로젝트의 전체 스프린트 이력을 볼 수 있습니다.";
+  // 보드
+  const vis = visibleTasks();
+  const open = vis.filter(t => !t.done && !t.carriedOut);
+  const closed = vis.filter(t => t.done || t.carriedOut);
+  const multi = prjId != null && selSp.size > 1;
+  const card = t => {
+    const prj = KNOWN.find(p => p.id === t.pid);
+    return `<a class="kcard ${t.done || t.carriedOut ? "done" : ""}" href="task-detail.html">
+      <div class="kid">${t.code}${prjId == null && prj ? ` · ${prj.short}` : ""}
+        ${multi ? `<span class="sptag">S26-${t.spNo}</span>` : ""}
+        ${t.carry ? `<span class="carry">↻ 이월 ${t.carry}회</span>` : ""}
+        ${t.carriedOut ? `<span class="carry">↻ 다음 스프린트로 이월됨</span>` : ""}</div>
+      <div class="kt">${t.title}</div>
+      <div class="kmeta"><span class="avatar" title="${t.owner}">${t.owner.slice(1)}</span>
+        <span>~${t.due}${t.delay ? " 지연" : ""}</span>${t.att ? `<span>📎 ${t.att}</span>` : ""}
+        ${!t.done && !t.carriedOut ? `<span class="stay ${t.slow ? "slow" : ""}">${t.stay}일째${t.slow ? " ⚠" : ""}</span>` : ""}</div>
+    </a>`;
+  };
+  document.getElementById("board").innerHTML = STAGES.map((st, si) => {
+    const cards = open.filter(t => t.stage === si);
+    return `<div class="kcol">
+      <div class="kcol-head"><span class="stage-dot"></span><h3>${st}</h3><span class="cnt">${cards.length}</span></div>
+      ${cards.map(card).join("")}</div>`;
+  }).join("");
+  // 완료·이월 접힘
+  document.getElementById("done-sum").textContent =
+    `완료 ${closed.filter(t => t.done).length}건 · 이월 처리 ${closed.filter(t => t.carriedOut).length}건 보기`;
+  document.getElementById("done-list").innerHTML = closed.map(card).join("") ||
+    `<span class="muted small">완료·이월 처리된 태스크가 없습니다.</span>`;
+  // 완료율
+  const pct = vis.length ? Math.round(closed.filter(t => t.done).length / vis.length * 100) : 0;
+  document.getElementById("sp-meter-lbl").textContent = prjId != null && sel.length === 1 ? "스프린트 완료율" : "선택 범위 완료율";
+  document.getElementById("sp-meter-fill").style.width = pct + "%";
+  document.getElementById("sp-meter-pct").textContent = pct + "%";
+  // 스프린트 관리 모달
+  renderMgmt();
+  // 새 태스크 모달 셀렉터
+  document.getElementById("task-project").innerHTML =
+    KNOWN.map(p => `<option value="${p.id}" ${p.id === prjId ? "selected" : ""}>PRJ-${String(p.id).padStart(3, "0")} ${p.name}</option>`).join("");
+  const spOpts = (prjId != null ? SPRINTS : sprintsOf(KNOWN[0].id)).filter(s => s.status !== "closed");
+  document.getElementById("task-sprint").innerHTML =
+    spOpts.map(s => `<option ${s.status === "active" ? "selected" : ""}>${s.name} (${ST_KO[s.status]})</option>`).join("") +
+    `<option>백로그 (미배정)</option>`;
+}
+function renderMgmt() {
+  const body = document.getElementById("sp-mgmt-body");
+  document.getElementById("sp-mgmt-title").textContent =
+    prjId != null ? `스프린트 관리 — ${prjName}` : "스프린트 관리";
+  if (prjId == null) {
+    body.innerHTML = `<tr><td colspan="5" class="muted small" style="padding:16px;text-align:center">
+      프로젝트를 선택하면 해당 프로젝트의 스프린트를 관리할 수 있습니다.</td></tr>`;
+    return;
+  }
+  const cnt = no => TASKS.filter(t => t.spNo === no).length;
+  const carried = no => TASKS.filter(t => t.spNo === no && t.carriedOut).length;
+  body.innerHTML = [...SPRINTS].reverse().map(s => `
+    <tr>
+      <td><b>${s.name}</b>${s.status === "active" ? ' <span class="muted small">(현재)</span>' : ""}</td>
+      <td class="id">${s.s} ~ ${s.e}</td>
+      <td><span class="badge ${ST_BG[s.status]}">${s.status === "planned" ? "○" : s.status === "active" ? "●" : "✓"} ${ST_KO[s.status]}</span></td>
+      <td class="num">${cnt(s.no)}${carried(s.no) ? ` <span class="muted small">(이월 ${carried(s.no)})</span>` : ""}</td>
+      <td style="text-align:right">${
+        s.status === "closed"
+          ? `<button class="btn sm" disabled title="완료된 스프린트는 편집 불가">잠김</button>`
+          : `<button class="btn sm" onclick="openSpEdit('${s.name}')">✎ 편집</button>` +
+            (s.status === "active"
+              ? ` <button class="btn sm" onclick="openSpClose('${s.name}', ${s.no})">⏹ 종료</button>`
+              : ` <button class="btn sm danger" onclick="deleteSprint(${s.no})" title="잘못 생성한 스프린트 삭제">✕ 삭제</button>`)
+      }</td>
+    </tr>`).join("");
+  // 새 스프린트 자동 채번 = 마지막 번호 + 1
+  document.getElementById("sp-new-name").value = `Sprint 2026-${SPRINTS[SPRINTS.length - 1].no + 1}`;
+}
+function openSpEdit(name) {
+  document.getElementById("sp-edit-title").textContent = `스프린트 편집 — ${name}`;
+  openModal("sprint-edit-modal");
+}
+function openSpClose(name, no) {
+  const t = TASKS.filter(x => x.spNo === no);
+  const doneN = t.filter(x => x.done).length;
+  document.getElementById("sp-close-title").textContent = `스프린트 종료 — ${name}`;
+  document.getElementById("sp-close-sub").textContent =
+    `완료 ${doneN} / 전체 ${t.length}. 미완료 태스크 ${t.length - doneN}건의 처리 방법을 정해야 종료할 수 있습니다.`;
+  const next = SPRINTS.find(s => s.no === no + 1);
+  document.getElementById("sp-close-sel").options[0].textContent =
+    next ? `다음 스프린트(${next.name})로 이월` : "새 스프린트 생성 후 이월";
+  openModal("sprint-close-modal");
+}
+/* 새 스프린트 생성 — 실제 구현 시 POST /api/northpole/projects/:id/sprints */
+function createSprint() {
+  if (prjId == null) { alert("프로젝트를 선택한 뒤 스프린트를 생성할 수 있습니다."); return; }
+  const s = document.getElementById("sp-new-start").value;
+  const e = document.getElementById("sp-new-end").value;
+  if (!s || !e || e < s) { alert("시작일·종료일을 확인해 주세요."); return; }
+  SPRINTS.push({ no: SPRINTS[SPRINTS.length - 1].no + 1,
+    name: document.getElementById("sp-new-name").value,
+    s: s.slice(5), e: e.slice(5),
+    status: document.getElementById("sp-new-status").value === "진행중" ? "active" : "planned" });
+  render();   // 모달을 닫지 않고 목록에 새 행을 보여줌 — 잘못 눌렀다면 바로 [✕ 삭제] 가능
+}
+/* 예정 스프린트 삭제 — 실제 구현 시 DELETE /api/northpole/sprints/:id (planned만 허용) */
+function deleteSprint(no) {
+  const sp = SPRINTS.find(x => x.no === no);
+  if (!sp || sp.status !== "planned") return;
+  const n = TASKS.filter(t => t.spNo === no).length;
+  if (!confirm(`${sp.name}을(를) 삭제할까요?${n ? `\n배정된 태스크 ${n}건은 백로그(미배정)로 이동합니다.` : ""}`)) return;
+  for (let i = TASKS.length - 1; i >= 0; i--) if (TASKS[i].spNo === no) TASKS.splice(i, 1);
+  SPRINTS.splice(SPRINTS.indexOf(sp), 1);
+  selSp.delete(no);
+  if (!selSp.size) selSp.add(SPRINTS.some(x => x.status === "active") ? CUR : SPRINTS[SPRINTS.length - 1].no);
+  render();
+}
+render();
+</script>
+</body>
+</html>

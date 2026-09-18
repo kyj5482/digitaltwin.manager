@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>스프린트 보드 — AI/Data North Pole</title>
+<link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <div class="topbar">
+      <div class="crumbs" id="sp-crumbs">AI/Data North Pole / <b>스프린트 보드</b></div>
+      <div class="spacer"></div>
+      <button class="theme-toggle" onclick="toggleTheme()">☀ / ☾ 테마</button>
+    </div>
+
+    <div class="page-head">
+      <div>
+        <h1 id="sp-title">스프린트 보드</h1>
+        <div class="sub" id="sp-sub"></div>
+      </div>
+      <div class="actions">
+        <select class="input" id="sel-project" style="width:auto" onchange="goProject()"></select>
+        <button class="btn" id="btn-new-sp" onclick="createSprint()">+ 스프린트 생성</button>
+        <button class="btn primary" onclick="openTask()">+ 새 태스크</button>
+      </div>
+    </div>
+
+    <div class="sprint-chips" id="sp-chips"></div>
+
+    <div class="filter-row">
+      <select class="input" id="f-owner" onchange="render()"><option value="">담당자: 전체</option></select>
+      <div class="meter" style="margin-left:auto;min-width:240px">
+        <span class="small muted">선택 범위 완료율</span>
+        <div class="track"><div class="fill" id="mt-fill" style="width:0%"></div></div><span class="pct" id="mt-pct">0%</span>
+      </div>
+    </div>
+
+    <div class="kanban" id="board"></div>
+
+    <details class="done-strip">
+      <summary id="done-sum">완료 태스크 보기</summary>
+      <div class="done-list" id="done-list"></div>
+    </details>
+
+    <p class="muted small" style="margin-top:10px">
+      카드의 <b>▶</b> 버튼으로 다음 단계로 이동합니다 (마지막 단계에서 ▶ = 완료 처리).
+      ↻ 배지는 이전 스프린트에서 이월된 태스크이며 횟수가 누적됩니다.
+    </p>
+
+    <!-- 스프린트 종료 모달 -->
+    <div class="modal-scrim" id="close-modal">
+      <div class="modal" style="width:520px">
+        <h2 id="cl-title">스프린트 종료</h2>
+        <p class="m-sub" id="cl-sub"></p>
+        <div class="field"><label>미완료 태스크 처리 <span class="req">*</span></label>
+          <select class="input" id="cl-carry"><option value="next" selected>다음 스프린트로 이월</option><option value="backlog">백로그로 이동</option></select></div>
+        <div class="field"><label>회고 메모 (선택)</label><textarea class="input" rows="3" id="cl-retro"></textarea></div>
+        <div class="m-foot">
+          <button class="btn" onclick="closeModal('close-modal')">취소</button>
+          <button class="btn primary" onclick="doClose()">스프린트 종료</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 새 태스크 모달 -->
+    <div class="modal-scrim" id="task-modal">
+      <div class="modal">
+        <h2>새 태스크</h2>
+        <p class="m-sub">태스크는 프로젝트에 속하며 그 프로젝트의 스프린트에 배정됩니다. 시작 단계는 Intake 협의입니다.</p>
+        <div class="field"><label>태스크명 <span class="req">*</span></label><input class="input" id="t-title"></div>
+        <div class="form-2col">
+          <div class="field"><label>프로젝트 <span class="req">*</span></label>
+            <select class="input" id="t-project" onchange="fillSprints()"></select></div>
+          <div class="field"><label>스프린트</label><select class="input" id="t-sprint"></select></div>
+          <div class="field"><label>담당자 <span class="req">*</span></label><input class="input" id="t-owner"></div>
+          <div class="field"><label>목표 종료일</label><input class="input" type="date" id="t-due"></div>
+        </div>
+        <div class="field"><label>Deliverable <span class="req">*</span> <span class="hint">(줄 단위 체크리스트 — 완료 판단 기준)</span></label>
+          <textarea class="input" rows="3" id="t-deliverable" placeholder="예: 학습용 피처 마트 v1 + 명세서"></textarea></div>
+        <div class="m-foot">
+          <button class="btn" onclick="closeModal('task-modal')">취소</button>
+          <button class="btn primary" onclick="createTask()">태스크 생성</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 태스크 상세 모달 -->
+    <div class="modal-scrim" id="detail-modal">
+      <div class="modal" style="width:760px;max-width:94vw">
+        <h2><span class="muted" id="d-id" style="font-weight:500"></span> <span id="d-title-view"></span></h2>
+        <p class="m-sub chip-row" id="d-badges" style="margin-top:6px"></p>
+        <div class="stepper" id="d-stepper"></div>
+        <hr class="divider">
+        <div class="form-2col">
+          <div class="field"><label>태스크명 <span class="req">*</span></label><input class="input" id="d-title"></div>
+          <div class="field"><label>담당자 <span class="req">*</span></label><input class="input" id="d-owner"></div>
+          <div class="field"><label>목표 종료일</label><input class="input" type="date" id="d-due"></div>
+          <div class="field"><label>스프린트</label><select class="input" id="d-sprint"></select></div>
+        </div>
+        <div class="field"><label>Deliverable <span class="hint">(줄 단위 체크리스트)</span></label>
+          <textarea class="input" rows="2" id="d-deliverable"></textarea></div>
+        <div class="field"><label>변경 사유 <span class="hint">(수정 저장 시 활동 로그에 기록)</span></label>
+          <input class="input" id="d-reason" placeholder="예: 데이터 결측 이슈로 목표일 3일 연장"></div>
+        <div class="field"><label>첨부</label>
+          <div id="d-files"></div>
+          <input type="file" id="d-file" hidden onchange="uploadTaskFile(this.files[0])">
+          <div class="dropzone" style="padding:10px;cursor:pointer"
+            onclick="document.getElementById('d-file').click()"
+            ondragover="event.preventDefault()"
+            ondrop="event.preventDefault();uploadTaskFile(event.dataTransfer.files[0])">
+            클릭 또는 파일을 끌어다 놓아 첨부 (10MB 이하)</div>
+        </div>
+        <hr class="divider">
+        <h2 style="font-size:14px;margin:0 0 10px">활동 로그</h2>
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <input class="input" id="d-log" style="flex:1" placeholder="작업 로그 남기기… (Enter로 추가)"
+            onkeydown="if(event.key==='Enter')addTaskLog()">
+          <button class="btn sm" style="flex:0 0 auto" onclick="addTaskLog()">로그 추가</button>
+        </div>
+        <ul class="timeline" id="d-timeline" style="max-height:220px;overflow-y:auto"></ul>
+        <div class="m-foot">
+          <button class="btn" style="margin-right:auto;color:var(--st-critical)" onclick="deleteTask()">✕ 태스크 삭제</button>
+          <button class="btn" onclick="closeModal('detail-modal')">닫기</button>
+          <button class="btn primary" onclick="saveTask()">저장</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="assets/i18n-dict.js"></script>
+<script src="assets/i18n.js"></script>
+<script src="assets/app.js"></script>
+<script>
+let S = null;
+const Q = new URLSearchParams(location.search);
+const prjId = Q.get("project") ? parseInt(Q.get("project"), 10) : null;
+let selSp = new Set();
+const ST_KO = { planned: "예정", active: "진행중", closed: "완료" };
+
+async function load() {
+  S = await api("state");
+  const mySprints = S.sprints.filter(s => s.projectId === prjId).sort((a, b) => a.no - b.no);
+  if (prjId != null && !selSp.size && mySprints.length) {
+    const act = mySprints.find(s => s.status === "active");
+    selSp.add(act ? act.no : mySprints[mySprints.length - 1].no);
+  }
+  const owners = [...new Set(S.tasks.map(t => t.owner))];
+  document.getElementById("f-owner").innerHTML =
+    '<option value="">담당자: 전체</option>' + owners.map(o => `<option>${o}</option>`).join("");
+  render();
+}
+const prj = () => S.projects.find(p => p.id === prjId);
+const mySprints = () => S.sprints.filter(s => s.projectId === prjId).sort((a, b) => a.no - b.no);
+
+function goProject() {
+  const v = document.getElementById("sel-project").value;
+  location.href = v === "all" ? "sprint.html" : "sprint.html?project=" + v;
+}
+function toggleSp(no) {
+  if (no === "all") selSp = new Set(mySprints().map(s => s.no));
+  else { selSp.has(no) ? selSp.delete(no) : selSp.add(no); if (!selSp.size) selSp.add(no); }
+  render();
+}
+function visible() {
+  const ow = document.getElementById("f-owner").value;
+  return S.tasks.filter(t =>
+    (prjId != null ? (t.projectId === prjId && (t.sprintNo == null ? false : selSp.has(t.sprintNo)))
+                   : S.sprints.some(s => s.projectId === t.projectId && s.status === "active" && s.no === t.sprintNo)) &&
+    (!ow || t.owner === ow));
+}
+function stay(t) { return Math.max(1, Math.round((Date.now() - new Date(t.stageAt + "T00:00:00")) / 864e5)); }
+
+function render() {
+  const p = prj();
+  document.getElementById("sp-title").textContent = p ? p.name : "스프린트 보드 — 전체 프로젝트";
+  document.getElementById("sp-crumbs").innerHTML = p
+    ? `AI/Data North Pole / <a href="projects.html">프로젝트</a> / <b>${p.name}</b>`
+    : `AI/Data North Pole / <b>스프린트 보드</b>`;
+  document.getElementById("sel-project").innerHTML =
+    `<option value="all">프로젝트: 전체 (진행중 스프린트)</option>` +
+    S.projects.map(x => `<option value="${x.id}" ${x.id === prjId ? "selected" : ""}>PRJ-${String(x.id).padStart(3, "0")} ${x.name}</option>`).join("");
+  document.getElementById("btn-new-sp").style.display = p ? "" : "none";
+  // 스프린트 칩
+  const chips = document.getElementById("sp-chips");
+  if (p) {
+    const sps = mySprints();
+    const allOn = selSp.size === sps.length && sps.length > 0;
+    chips.innerHTML = `<span class="lbl">스프린트 (다중 선택):</span>
+      <button class="schip ${allOn ? "on" : ""}" onclick="toggleSp('all')">전체 ${sps.length}개</button>` +
+      sps.map(s => `<button class="schip ${selSp.has(s.no) ? "on" : ""}" onclick="toggleSp(${s.no})">
+          ${s.name}<span class="st">${ST_KO[s.status]} · ${s.start.slice(5)}~${s.end.slice(5)}</span></button>`).join("") +
+      sps.filter(s => s.status === "planned").slice(0, 1).map(s =>
+        `<button class="schip" onclick="startSprint('${s.id}')" title="예정 스프린트를 진행중으로 전환">▶ ${s.name} 시작</button>`).join("") +
+      sps.filter(s => s.status === "active").map(s =>
+        `<button class="schip" onclick="openClose('${s.id}')" title="미완료 태스크 이월 후 종료">⏹ ${s.name} 종료</button>`).join("");
+    const sel = sps.filter(s => selSp.has(s.no));
+    document.getElementById("sp-sub").textContent = sel.length === 1
+      ? `${sel[0].name} · ${sel[0].start} ~ ${sel[0].end} (${ST_KO[sel[0].status]})`
+      : `${sel.length}개 스프린트 표시 — 카드의 S 태그가 소속 스프린트입니다.`;
+  } else {
+    chips.innerHTML = "";
+    document.getElementById("sp-sub").textContent = "전체 프로젝트의 진행중 스프린트를 통합 표시합니다. 프로젝트를 선택하면 스프린트 이력·관리가 가능합니다.";
+  }
+  // 보드
+  const vis = visible();
+  const open = vis.filter(t => !t.done);
+  const multi = p && selSp.size > 1;
+  const card = t => {
+    const pj = S.projects.find(x => x.id === t.projectId);
+    return `<div class="kcard ${t.done ? "done" : ""}" title="클릭=상세 · 드래그=단계 이동" onclick="openDetail('${t.id}')"
+      draggable="${!t.done}" ondragstart="dragTask(event,'${t.id}')" ondragend="this.classList.remove('dragging')">
+      <div class="kid">${t.id}${!p && pj ? ` · ${pj.name.slice(0, 10)}` : ""}
+        ${multi ? `<span class="sptag">S-${t.sprintNo}</span>` : ""}
+        ${t.carry ? `<span class="carry">↻ 이월 ${t.carry}회</span>` : ""}</div>
+      <div class="kt">${t.title}</div>
+      <div class="kmeta"><span class="avatar" title="${t.owner}">${t.owner.slice(1)}</span>
+        <span>~${(t.due || "").slice(5) || "미정"}</span>
+        ${(t.files || []).length ? `<span title="첨부 ${t.files.length}건">📎${t.files.length}</span>` : ""}
+        ${!t.done ? `<span class="stay ${stay(t) >= 7 ? "slow" : ""}">${stay(t)}일째${stay(t) >= 7 ? " ⚠" : ""}</span>
+        <button class="btn sm" title="다음 단계로 이동" onclick="event.stopPropagation();advance('${t.id}')">▶</button>` : ""}</div>
+    </div>`;
+  };
+  document.getElementById("board").innerHTML = S.stages.map((st, si) => {
+    const cards = open.filter(t => t.stage === si);
+    return `<div class="kcol" ondragover="event.preventDefault();this.classList.add('dragover')"
+      ondragleave="this.classList.remove('dragover')"
+      ondrop="this.classList.remove('dragover');dropTask(event, ${si})">
+      <div class="kcol-head"><span class="stage-dot"></span><h3>${st}</h3><span class="cnt">${cards.length}</span></div>${cards.map(card).join("")}</div>`;
+  }).join("");
+  const done = vis.filter(t => t.done);
+  document.getElementById("done-sum").textContent = `완료 태스크 ${done.length}건 보기`;
+  document.getElementById("done-list").innerHTML = done.map(card).join("") || '<span class="muted small">완료된 태스크가 없습니다.</span>';
+  const pct = vis.length ? Math.round(done.length / vis.length * 100) : 0;
+  document.getElementById("mt-fill").style.width = pct + "%";
+  document.getElementById("mt-pct").textContent = pct + "%";
+}
+
+async function advance(id) {
+  const t = S.tasks.find(x => x.id === id);
+  const last = t && t.stage === S.stages.length - 1;
+  const note = prompt(last ? "마지막 단계입니다. 최종 산출물 요약을 입력하세요 (완료 처리됩니다):"
+                           : `'${S.stages[t.stage]}' 단계 산출물 요약을 입력하세요 (StageLog에 기록):`, "");
+  if (note === null) return;                     // 취소 시 이동하지 않음
+  await api("task/advance", { id, note: note.trim() });
+  await load(); refreshGitChip();
+  if (dId === id && document.getElementById("detail-modal").classList.contains("open")) openDetail(id);
+}
+
+/* ═══ 태스크 상세 팝업 ═══ */
+let dId = null;
+function fmtAt(at) { return (at || "").slice(5, 16).replace("T", " "); }
+function openDetail(id) {
+  const t = S.tasks.find(x => x.id === id);
+  if (!t) return;
+  dId = id;
+  const pj = S.projects.find(x => x.id === t.projectId);
+  const sp = S.sprints.find(s => s.projectId === t.projectId && s.no === t.sprintNo);
+  document.getElementById("d-id").textContent = t.id;
+  document.getElementById("d-title-view").textContent = t.title;
+  document.getElementById("d-badges").innerHTML =
+    (t.done ? '<span class="badge done">✓ 완료</span>'
+            : `<span class="badge doing">● 진행중 · ${S.stages[t.stage]} 단계</span>`) +
+    (pj ? ` <span class="badge">${pj.dept} · PRJ-${String(pj.id).padStart(3, "0")}</span>` : "") +
+    ` <span class="badge">${sp ? sp.name : "백로그 (미배정)"}</span>` +
+    (t.carry ? ` <span class="badge hold">↻ 이월 ${t.carry}회</span>` : "") +
+    (!t.done && t.due && t.due < new Date().toISOString().slice(0, 10)
+      ? ` <span class="badge overdue">⏰ 목표일 ${t.due.slice(5)} 초과</span>` : "");
+  document.getElementById("d-stepper").innerHTML = S.stages.map((st, si) => {
+    const cls = t.done || si < t.stage ? "done" : si === t.stage ? "current" : "pending";
+    return `<div class="step ${cls}">
+      <div class="s-name">${cls === "done" ? "✓ " : cls === "current" ? "● " : ""}${st}</div>
+      <div class="s-days">${cls === "current" ? `<b>${stay(t)}일째</b> (${t.stageAt} 시작)` : cls === "done" ? "완료" : "예정"}</div>
+    </div>`;
+  }).join("");
+  document.getElementById("d-title").value = t.title;
+  document.getElementById("d-owner").value = t.owner;
+  document.getElementById("d-due").value = t.due || "";
+  document.getElementById("d-deliverable").value = t.deliverable || "";
+  document.getElementById("d-reason").value = "";
+  const sps = S.sprints.filter(s => s.projectId === t.projectId).sort((a, b) => a.no - b.no);
+  document.getElementById("d-sprint").innerHTML =
+    sps.map(s => `<option value="${s.no}" ${s.no === t.sprintNo ? "selected" : ""}>${s.name} (${ST_KO[s.status]})</option>`).join("") +
+    `<option value="" ${t.sprintNo == null ? "selected" : ""}>백로그 (미배정)</option>`;
+  document.getElementById("d-files").innerHTML = fileRows(t.files);
+  renderTimeline(t, dCommits[id] || []);
+  openModal("detail-modal");
+  // [DT-xxx] 규약 git 커밋을 타임라인에 병합 (FR-510) — 응답 오면 갱신
+  api("task/commits?id=" + id).then(c => {
+    dCommits[id] = c.commits || [];
+    if (dId === id) renderTimeline(t, dCommits[id]);
+  }).catch(() => {});
+}
+const dCommits = {};
+function renderTimeline(t, commits) {
+  const entries = (t.logs || []).map(l => ({
+    at: l.at, cls: l.type === "stage" ? "stage" : l.type === "return" ? "return" : "",
+    head: `<b>${l.by || "시스템"}</b> ${l.type === "stage" ? "단계 전환" : l.type === "edit" ? "정보 수정" : "수동 로그"}`,
+    body: l.text,
+  })).concat(commits.map(c => ({
+    at: c.at, cls: "git", head: `<b>${c.by}</b> 커밋 푸시`, body: `<code>${c.hash}</code> ${c.msg}`,
+  })));
+  entries.sort((a, b) => (b.at || "").localeCompare(a.at || ""));
+  document.getElementById("d-timeline").innerHTML = entries.map(e => `
+    <li class="${e.cls}">
+      <span class="dot"></span>
+      <div class="t-head">${e.head} <span class="t-time">· ${fmtAt(e.at)}</span></div>
+      <div class="t-body">${e.body}</div>
+    </li>`).join("") ||
+    '<li><span class="dot"></span><div class="t-body muted small">기록된 로그가 없습니다. 커밋 메시지에 [' + t.id + '] 를 넣으면 여기 표시됩니다.</div></li>';
+}
+async function uploadTaskFile(file) {
+  if (!file) return;
+  if (file.size > 10 * 1024 * 1024) return alert("10MB 이하 파일만 업로드할 수 있습니다.");
+  await api("task/file", { id: dId, name: file.name, data: await readFileB64(file) });
+  document.getElementById("d-file").value = "";
+  S = await api("state");
+  openDetail(dId); refreshGitChip();
+}
+
+/* ═══ 드래그&드롭 단계 이동 (FR-410) ═══ */
+function dragTask(e, id) {
+  e.dataTransfer.setData("text/plain", id);
+  e.currentTarget.classList.add("dragging");
+}
+async function dropTask(e, si) {
+  e.preventDefault();
+  const id = e.dataTransfer.getData("text/plain");
+  const t = S.tasks.find(x => x.id === id);
+  if (!t || t.done || si === t.stage) return;
+  if (si > t.stage + 1) return alert("오른쪽 한 칸(다음 단계)으로만 이동할 수 있습니다.");
+  let note = "", reason = "";
+  if (si === t.stage + 1) {                      // 전진: 산출물 요약 (FR-411)
+    note = prompt(`'${S.stages[t.stage]}' 단계 산출물 요약을 입력하세요 (StageLog에 기록):`, "");
+    if (note === null) return;
+  } else {                                       // 되돌림: 사유 필수
+    reason = prompt(`'${S.stages[t.stage]}' → '${S.stages[si]}' 되돌림 사유를 입력하세요 (필수):`, "");
+    if (reason === null) return;
+    if (!reason.trim()) return alert("이전 단계로 되돌리려면 사유가 필요합니다.");
+  }
+  await api("task/move", { id, stage: si, note: note.trim(), reason: reason.trim() });
+  await load(); refreshGitChip();
+}
+async function saveTask() {
+  const title = document.getElementById("d-title").value.trim();
+  const owner = document.getElementById("d-owner").value.trim();
+  if (!title || !owner) return alert("태스크명과 담당자는 필수입니다.");
+  const spv = document.getElementById("d-sprint").value;
+  await api("task/update", { id: dId, title, owner,
+    due: document.getElementById("d-due").value,
+    deliverable: document.getElementById("d-deliverable").value.trim(),
+    sprintNo: spv === "" ? null : +spv,
+    reason: document.getElementById("d-reason").value.trim() });
+  closeModal("detail-modal"); await load(); refreshGitChip();
+}
+async function addTaskLog() {
+  const el = document.getElementById("d-log");
+  const text = el.value.trim();
+  if (!text) return el.focus();
+  await api("task/log", { id: dId, text });
+  el.value = "";
+  S = await api("state");
+  openDetail(dId);                               // 타임라인 즉시 갱신 (모달 유지)
+}
+async function deleteTask() {
+  const t = S.tasks.find(x => x.id === dId);
+  if (!confirm(`'${t ? t.title : dId}' 태스크를 삭제할까요? 되돌릴 수 없습니다.`)) return;
+  await api("task/delete", { id: dId });
+  closeModal("detail-modal"); await load(); refreshGitChip();
+}
+async function createSprint() {
+  const r = await api("sprint/create", { projectId: prjId });
+  selSp.add(r.sprint.no); await load(); refreshGitChip();
+}
+async function startSprint(sprintId) { await api("sprint/start", { sprintId }); await load(); refreshGitChip(); }
+let closeCtx = null;
+function openClose(sprintId) {
+  closeCtx = sprintId;
+  const sp = S.sprints.find(s => s.id === sprintId);
+  const t = S.tasks.filter(x => x.projectId === sp.projectId && x.sprintNo === sp.no);
+  const doneN = t.filter(x => x.done).length;
+  document.getElementById("cl-title").textContent = `스프린트 종료 — ${sp.name}`;
+  document.getElementById("cl-sub").textContent =
+    `완료 ${doneN} / 전체 ${t.length}. 미완료 ${t.length - doneN}건의 처리 방법을 정해야 종료할 수 있습니다.`;
+  openModal("close-modal");
+}
+async function doClose() {
+  const r = await api("sprint/close", { sprintId: closeCtx,
+    carry: document.getElementById("cl-carry").value,
+    retro: document.getElementById("cl-retro").value });
+  closeModal("close-modal");
+  alert(`종료 완료 — 미완료 ${r.carried}건 → ${r.to || "이월 없음"}`);
+  selSp = new Set(); await load(); refreshGitChip();
+}
+function openTask() {
+  document.getElementById("t-project").innerHTML =
+    S.projects.map(x => `<option value="${x.id}" ${x.id === prjId ? "selected" : ""}>PRJ-${String(x.id).padStart(3, "0")} ${x.name}</option>`).join("");
+  fillSprints();
+  openModal("task-modal");
+}
+function fillSprints() {
+  const pid = parseInt(document.getElementById("t-project").value, 10);
+  const sps = S.sprints.filter(s => s.projectId === pid && s.status !== "closed");
+  document.getElementById("t-sprint").innerHTML =
+    sps.map(s => `<option value="${s.no}" ${s.status === "active" ? "selected" : ""}>${s.name} (${ST_KO[s.status]})</option>`).join("") +
+    '<option value="">백로그 (미배정)</option>';
+}
+async function createTask() {
+  const title = document.getElementById("t-title").value.trim();
+  const owner = document.getElementById("t-owner").value.trim();
+  const deliverable = document.getElementById("t-deliverable").value.trim();
+  if (!title || !owner) return alert("태스크명과 담당자는 필수입니다.");
+  if (!deliverable) { alert("Deliverable(완료 판단 기준)은 필수입니다."); document.getElementById("t-deliverable").focus(); return; }
+  const spv = document.getElementById("t-sprint").value;
+  await api("task/create", { projectId: document.getElementById("t-project").value,
+    sprintNo: spv === "" ? null : +spv, title, owner, deliverable,
+    due: document.getElementById("t-due").value });
+  closeModal("task-modal"); await load(); refreshGitChip();
+}
+load();
+</script>
+</body>
+</html>

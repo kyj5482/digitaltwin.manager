@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KPI 모니터링 — AI/Data North Pole</title>
+<link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <div class="topbar">
+      <div class="crumbs">AI/Data North Pole / <b>KPI 모니터링</b></div>
+      <div class="spacer"></div>
+      <button class="theme-toggle" onclick="toggleTheme()">☀ / ☾ 테마</button>
+    </div>
+
+    <div class="page-head">
+      <div>
+        <h1>KPI 모니터링</h1>
+        <div class="sub">전사 KPI(재무·사업·지속경영)를 정량 하위 지표로 분해해 관리합니다. 모든 지표는 시스템 수집 데이터와 연동하는 것이 원칙 — 미연동 지표는 데이터 연동 프로젝트가 필수로 이어지고, 액션 부서의 개선 프로젝트가 수치를 움직입니다.</div>
+      </div>
+      <div class="actions"><button class="btn primary" onclick="openKpi(null, null)">+ KPI 추가</button></div>
+    </div>
+
+    <div class="kpi-row" id="stats"></div>
+
+    <div class="callout" id="care-banner" style="display:none;margin-top:16px"></div>
+
+    <div id="kpi-grid" style="margin-top:16px;display:grid;gap:16px"></div>
+
+    <!-- KPI 정의 추가/편집 모달 -->
+    <div class="modal-scrim" id="kpi-modal">
+      <div class="modal" style="width:560px">
+        <h2 id="k-title">KPI 추가</h2>
+        <p class="m-sub">전사 측정 지표를 정의합니다. 세부 분해가 필요하면 저장 후 [＋ 하위]로 하위 지표를 추가하세요 — 달성률은 하위 지표의 가중 롤업이 됩니다.</p>
+        <div class="form-2col">
+          <div class="field"><label>영역 <span class="req">*</span></label>
+            <select class="input" id="k-area">
+              <option value="재무">재무</option>
+              <option value="사업">사업</option>
+              <option value="지속경영">지속경영</option>
+            </select></div>
+          <div class="field"><label>코드</label><input class="input" id="k-code" readonly></div>
+        </div>
+        <div class="field"><label>지표명 <span class="req">*</span></label><input class="input" id="k-name" placeholder="예: 고객만족"></div>
+        <div class="form-2col">
+          <div class="field"><label>단위</label><input class="input" id="k-unit" placeholder="% · 일 · 건 …"></div>
+          <div class="field"><label>방향</label>
+            <select class="input" id="k-dir">
+              <option value="+">+ 높을수록 좋음</option>
+              <option value="-">− 낮을수록 좋음</option>
+              <option value="~">~ 목표에 근접</option>
+            </select></div>
+          <div class="field"><label>목표값 (미정 허용)</label><input class="input" id="k-target" type="number" step="any"></div>
+          <div class="field"><label>가중치</label><input class="input" id="k-weight" type="number" step="any" min="0" value="1"></div>
+        </div>
+        <div class="field"><label>데이터 소스 (수집 시스템)</label><input class="input" id="k-source" placeholder="예: 텔레매틱스 배터리 이벤트 로그 — 비우면 미연동"></div>
+        <div class="m-foot">
+          <button class="btn" id="k-del" style="margin-right:auto;color:var(--st-critical)" onclick="delKpi()">✕ 삭제</button>
+          <button class="btn" onclick="closeModal('kpi-modal')">취소</button>
+          <button class="btn primary" onclick="saveKpi()">저장</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 하위 지표 추가/편집 모달 -->
+    <div class="modal-scrim" id="sub-modal">
+      <div class="modal" style="width:560px">
+        <h2 id="s-title">하위 지표</h2>
+        <p class="m-sub">KPI를 정량 지표로 분해합니다. 지표는 시스템 수집 데이터와 연동하는 것이 원칙 — 소스가 비어 있으면 데이터 연동 프로젝트가 필수로 이어져야 합니다.</p>
+        <div class="form-2col">
+          <div class="field"><label>상위 KPI</label><input class="input" id="s-parent" readonly></div>
+          <div class="field"><label>코드</label><input class="input" id="s-code" readonly></div>
+        </div>
+        <div class="form-2col">
+          <div class="field"><label>분류</label><input class="input" id="s-group" placeholder="예: 품질 / 서비스 / 고객케어"></div>
+          <div class="field"><label>지표명 <span class="req">*</span></label><input class="input" id="s-name" placeholder="예: 12V 배터리 방전 건수"></div>
+          <div class="field"><label>단위</label><input class="input" id="s-unit" placeholder="% · 건/천대 · 시간 …"></div>
+          <div class="field"><label>방향</label>
+            <select class="input" id="s-dir">
+              <option value="+">+ 높을수록 좋음</option>
+              <option value="-">− 낮을수록 좋음</option>
+              <option value="~">~ 목표에 근접</option>
+            </select></div>
+          <div class="field"><label>목표값 (미정 허용)</label><input class="input" id="s-target" type="number" step="any"></div>
+          <div class="field"><label>가중치</label><input class="input" id="s-weight" type="number" step="any" min="0" value="1"></div>
+        </div>
+        <div class="field"><label>데이터 소스 (수집 시스템)</label><input class="input" id="s-source" placeholder="예: 차량 진단 DTC 수집 시스템 — 비우면 미연동"></div>
+        <div class="m-foot">
+          <button class="btn" id="s-del" style="margin-right:auto;color:var(--st-critical)" onclick="delSub()">✕ 삭제</button>
+          <button class="btn" onclick="closeModal('sub-modal')">취소</button>
+          <button class="btn primary" onclick="saveSub()">저장</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 측정값 입력 모달 -->
+    <div class="modal-scrim" id="measure-modal">
+      <div class="modal" style="width:560px">
+        <h2 id="me-title">측정값 입력</h2>
+        <p class="m-sub" id="me-info"></p>
+        <div class="form-2col">
+          <div class="field"><label>측정일 <span class="req">*</span></label><input class="input" type="date" id="me-at"></div>
+          <div class="field"><label>측정값 <span class="req">*</span></label><input class="input" type="number" step="any" id="me-val"></div>
+        </div>
+        <div class="field"><label>메모</label><input class="input" id="me-note" placeholder="예: 8월 마감 기준"></div>
+        <div class="field"><label>측정 이력</label>
+          <ul class="timeline" id="me-hist" style="max-height:180px;overflow-y:auto"></ul></div>
+        <div class="m-foot">
+          <button class="btn" onclick="closeModal('measure-modal')">취소</button>
+          <button class="btn primary" onclick="saveMeasure()">기록</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="assets/i18n-dict.js"></script>
+<script src="assets/i18n.js"></script>
+<script src="assets/app.js"></script>
+<script>
+let S = null;
+// 신호등 — 상태 색은 항상 아이콘+텍스트 동반 (접근성 FR-006)
+const LAMP = {
+  good: '<span class="badge done">● 달성</span>',
+  warn: '<span class="badge p2">◐ 주의</span>',
+  crit: '<span class="badge p0">⚠ 위험</span>',
+  na:   '<span class="badge plan">○ 미측정</span>',
+};
+const LAMP_COLOR = { good: "var(--st-good)", warn: "var(--st-warning)",
+                     crit: "var(--st-critical)", na: "var(--series-neutral)" };
+// 데이터 연동 상태 — 소스 명시=연동 · 연동 프로젝트 진행중 · 미연동(연동 프로젝트 필요)
+const DATA_ST = {
+  linked:      s => `<span class="badge done" title="${s.source}">⚡ 연동</span>`,
+  in_progress: () => '<span class="badge doing">◌ 연동 진행중</span>',
+  unlinked:    () => '<span class="badge overdue">⛓ 미연동</span>',
+};
+const ROLE = { "연동": '<span class="badge doing">⚡ 연동</span>', "개선": '<span class="badge plan">▲ 개선</span>' };
+const DIR = { "+": "높을수록 좋음", "-": "낮을수록 좋음", "~": "목표에 근접" };
+const PRJ_ST = { "계획": '<span class="badge plan">○ 계획</span>', "진행중": '<span class="badge doing">● 진행중</span>',
+                 "보류": '<span class="badge hold">⏸ 보류</span>', "완료": '<span class="badge done">✓ 완료</span>' };
+const pct = a => a == null ? "—" : Math.round(a * 100) + "%";
+// 값 표기 — 통화($)는 단위를 앞에 ($31,450), 숫자는 천단위 콤마
+const fmtV = (v, u) => {
+  if (v == null) return "—";
+  const n = typeof v === "number" ? v.toLocaleString("en-US") : v;
+  if (u === "$") return "$" + n;
+  if (u === "k$" || u === "M$") return "$" + n + u[0];   // $1,200k · $128M
+  return n + (u || "");
+};
+const leafsOf = () => S.kpis.flatMap(k => k.subs.length ? k.subs : [k]);
+const allNodes = () => S.kpis.flatMap(k => [k, ...k.subs]);
+// 이름·사유는 현재 언어로 번역된 프로젝트 레코드에서 조회
+const prjName = id => { const p = S.projects.find(x => x.id === id); return p ? p.name : "PRJ-" + id; };
+const impactNote = (id, code) => {
+  const p = S.projects.find(x => x.id === id);
+  const i = p && (p.impacts || []).find(i => i.kpi === code);
+  return i ? (i.note || "") : "";
+};
+const nodeName = code => { const n = allNodes().find(x => x.code === code); return n ? n.name : code; };
+// 상충 감시(가드레일) 배지 — 다른 프로젝트가 이 지표에 부정 영향을 선언
+const conflictBadge = n => n.conflicts
+  ? `<span class="badge hold" title="${n.sideEffects.filter(e => e.effect === "-").map(e => `PRJ-${String(e.id).padStart(3, "0")} ${prjName(e.id)}`).join(" · ")}">⇄ 상충 ${n.conflicts}</span>`
+  : "";
+
+function attainCell(k) {
+  const w = k.attain == null ? 0 : Math.min(100, Math.round(k.attain * 100));
+  return `<div class="meter" title="달성률 ${pct(k.attain)} — 목표 ${fmtV(k.target, k.unit)} · 실적 ${k.actual ? fmtV(k.actual.value, k.unit) : "미측정"}">
+    <div class="track"><div class="fill" style="width:${w}%;background:${LAMP_COLOR[k.lamp]}"></div></div>
+    <span class="pct">${pct(k.attain)}</span></div>`;
+}
+// 측정 추이 스파크라인 — 단일 시리즈(액센트), 값은 실적 열이 직접 표기
+function spark(k) {
+  const ms = k.measures || [];
+  if (ms.length < 2) return '<span class="muted small">—</span>';
+  const vs = ms.map(m => m.value);
+  const min = Math.min(...vs), max = Math.max(...vs), span = max - min || 1;
+  const W = 96, H = 26, P = 4;
+  const x = i => P + i * (W - 2 * P) / (ms.length - 1);
+  const y = v => H - P - (v - min) * (H - 2 * P) / span;
+  return `<svg width="${W}" height="${H}" role="img">
+    <title>${ms.map(m => `${(m.at || "").slice(5)} ${fmtV(m.value, k.unit)}`).join(" · ")}</title>
+    <polyline points="${vs.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ")}"
+      fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="${x(vs.length - 1).toFixed(1)}" cy="${y(vs[vs.length - 1]).toFixed(1)}" r="3"
+      fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/></svg>`;
+}
+const prjCell = k => k.projects
+  ? `<a class="row-link" href="projects.html?kpi=${k.code}">프로젝트 ${k.projects}개</a><div class="muted">${k.depts.join(" · ")} — 태스크 ${k.tasksDone} / ${k.tasksTotal}</div>`
+  : `<a href="projects.html?kpi=${k.code}" title="프로젝트를 연결하세요">미연결 →</a>`;
+
+// 하위 지표 테이블 — 분류(품질/서비스/고객케어)별 그룹, 지표마다 데이터 연동 상태 표시
+function subTable(k) {
+  const groups = [...new Set(k.subs.map(s => s.group || ""))];
+  return `<table class="tbl">
+    <thead><tr><th>지표</th><th>데이터 연동</th><th class="num">목표</th><th class="num">실적</th><th>달성률</th><th>추이</th><th>프로젝트</th><th></th></tr></thead>
+    <tbody>${groups.map(g => `
+      ${g ? `<tr><td colspan="8" class="muted small" style="padding-top:10px"><b>${g}</b></td></tr>` : ""}
+      ${k.subs.filter(s => (s.group || "") === g).map(s => `
+      <tr>
+        <td><b>${s.code}.</b> ${s.name} ${conflictBadge(s)}<div class="small muted">${DIR[s.direction] || ""} · 가중치 ${s.weight || 1}</div></td>
+        <td>${DATA_ST[s.dataState](s)}</td>
+        <td class="num">${s.target != null ? fmtV(s.target, s.unit) : '<span class="muted">미정</span>'}</td>
+        <td class="num">${s.actual ? `<b>${fmtV(s.actual.value, s.unit)}</b><div class="small muted">${(s.actual.at || "").slice(5)}</div>` : '<span class="muted">—</span>'}</td>
+        <td>${attainCell(s)}${LAMP[s.lamp]}</td>
+        <td>${spark(s)}</td>
+        <td class="small">${prjCell(s)}</td>
+        <td style="text-align:right;white-space:nowrap">
+          <button class="btn sm" onclick="openMeasure('${s.code}')">＋ 측정</button>
+          <button class="btn sm" onclick="openSub('${k.code}','${s.code}')">✎</button></td>
+      </tr>`).join("")}`).join("")}
+    </tbody></table>`;
+}
+// KPI 기여 프로젝트 인라인 추적 테이블 (부서간 협업 — 유형: ⚡데이터 연동 / ▲지표 개선).
+// 사이드 이펙트 열: 이 프로젝트가 다른 지표에 선언한 영향 — 단순 숫자 올리기 방지 장치
+const impChips = p => (p.impacts || []).map(i =>
+  `<span class="badge ${i.effect === "-" ? "overdue" : "done"}" title="${(i.note || "")}">${i.effect === "-" ? "−" : "+"} ${i.kpi} ${nodeName(i.kpi)}</span>`).join(" ") ||
+  '<span class="muted small">—</span>';
+// 프로젝트 아래 진행중 스프린트·태스크 인라인 — KPI에서 스프린트 활동까지 한 화면에서 확인
+function sprintRow(p) {
+  const sp = S.sprints.find(s => s.projectId === p.id && s.status === "active");
+  const inSp = sp ? S.tasks.filter(t => t.projectId === p.id && t.sprintNo === sp.no) : [];
+  const backlog = S.tasks.filter(t => t.projectId === p.id && t.sprintNo == null && !t.done).length;
+  if (!sp && !backlog) return "";
+  const lines = inSp.map(t => `<div>${t.done ? "✓" : "○"} <span class="id">${t.id}</span>
+    <a class="row-link" href="sprint.html?project=${p.id}">${t.title}</a>
+    <span class="muted">— ${S.stages[t.stage]} · ${t.owner}${t.due ? " · ~" + t.due.slice(5) : ""}</span></div>`).join("");
+  return `<tr><td></td><td colspan="9" class="small" style="padding:2px 8px 10px">
+    ${sp ? `▤ <b>${sp.name}</b> <span class="muted">(${(sp.start || "").slice(5)} ~ ${(sp.end || "").slice(5)})</span>` : ""}
+    ${lines || (sp ? '<div class="muted">스프린트에 배정된 태스크 없음</div>' : "")}
+    ${backlog ? `<div class="muted">＋ 백로그 ${backlog}건</div>` : ""}</td></tr>`;
+}
+function trackTable(k) {
+  const codes = new Set([k.code, ...k.subs.map(s => s.code)]);
+  const rel = S.projects.filter(p => codes.has(p.kpi));
+  if (!rel.length) return "";
+  return `<p class="muted small" style="margin:12px 0 4px"><b>기여 프로젝트</b> — 유형: ⚡ 데이터 연동 · ▲ 지표 개선. 프로젝트 아래에 진행중 스프린트의 태스크가 표시됩니다.</p>
+  <table class="tbl">
+    <thead><tr><th>ID</th><th>프로젝트</th><th>지표</th><th>유형</th><th>사이드 이펙트</th><th>부문</th><th>담당</th><th>상태</th><th>진행률</th><th class="num">태스크</th></tr></thead>
+    <tbody>${rel.map(p => `<tr>
+      <td class="id">PRJ-${String(p.id).padStart(3, "0")}</td>
+      <td><a class="row-link" href="sprint.html?project=${p.id}">${p.name}</a></td>
+      <td class="id">${p.kpi}</td>
+      <td>${ROLE[p.kpiRole] || ""}</td>
+      <td class="small">${impChips(p)}</td>
+      <td>${p.dept}</td>
+      <td class="small">${p.owner}</td>
+      <td>${PRJ_ST[p.status] || p.status}</td>
+      <td><div class="meter"><div class="track"><div class="fill" style="width:${p.pct}%"></div></div><span class="pct">${p.pct}%</span></div></td>
+      <td class="num small">${p.tasksDone} / ${p.tasksTotal}</td></tr>${sprintRow(p)}`).join("")}
+    </tbody></table>`;
+}
+// 상충 관계 — 이 지표(트리)에 사이드 이펙트를 선언한 외부 프로젝트 (가드레일 뷰)
+function conflictTable(k) {
+  const rows = [k, ...k.subs].flatMap(n => n.sideEffects.map(e => ({ n, e })));
+  if (!rows.length) return "";
+  return `<p class="muted small" style="margin:12px 0 4px"><b>상충 관계 (사이드 이펙트)</b> — 이 지표에 영향을 선언한 프로젝트. 개선 액션의 대가를 함께 판단하세요.</p>
+  <table class="tbl">
+    <thead><tr><th>지표</th><th>영향</th><th>프로젝트</th><th>부문</th><th>상태</th><th>사유</th></tr></thead>
+    <tbody>${rows.map(({ n, e }) => `<tr>
+      <td class="small"><b>${n.code}.</b> ${n.name}</td>
+      <td>${e.effect === "-" ? '<span class="badge overdue">− 부정</span>' : '<span class="badge done">+ 긍정</span>'}</td>
+      <td><a class="row-link" href="sprint.html?project=${e.id}">${prjName(e.id)}</a></td>
+      <td class="small">${e.dept}</td>
+      <td>${PRJ_ST[e.status] || e.status}</td>
+      <td class="small">${impactNote(e.id, n.code)}</td></tr>`).join("")}
+    </tbody></table>`;
+}
+function toggleDetail(code) {
+  const tr = document.getElementById("det-" + code);
+  const btn = document.getElementById("det-btn-" + code);
+  const open = tr.style.display === "none";
+  tr.style.display = open ? "" : "none";
+  btn.textContent = open ? "▴ 접기" : "▾ 세부";
+}
+
+async function load() {
+  S = await api("state");
+  const leafs = leafsOf();
+  const measuredK = S.kpis.filter(k => k.attain != null);
+  const w = measuredK.reduce((s, k) => s + (k.weight || 1), 0);
+  const overall = w ? measuredK.reduce((s, k) => s + k.attain * (k.weight || 1), 0) / w : null;
+  const measured = leafs.filter(k => k.attain != null);
+  const linked = leafs.filter(k => k.dataState === "linked");
+  const inProg = leafs.filter(k => k.dataState === "in_progress");
+  const noData = leafs.filter(k => k.dataState === "unlinked");
+  const crit = leafs.filter(k => k.lamp === "crit").length;
+  const na = leafs.filter(k => k.lamp === "na");
+  const unlinked = leafs.filter(k => !k.projects);
+  document.getElementById("stats").innerHTML = [
+    ["종합 달성률", pct(overall), "측정 KPI 가중 평균"],
+    ["측정 커버리지", leafs.length ? Math.round(measured.length / leafs.length * 100) + "%" : "—", `측정 ${measured.length} / 전체 ${leafs.length}`],
+    ["데이터 연동률", leafs.length ? Math.round(linked.length / leafs.length * 100) + "%" : "—", `연동 ${linked.length} · 진행중 ${inProg.length} / 전체 ${leafs.length}`],
+    ["위험 지표", crit + "건", crit ? '<span class="delta down">달성률 92% 미만</span>' : "달성률 92% 미만"],
+    ["미연결 지표", unlinked.length + "건", "기여 프로젝트가 없는 지표"],
+  ].map(([l, v, d]) => `<div class="stat"><div class="label">${l}</div><div class="value">${v}</div><div class="delta">${d}</div></div>`).join("");
+
+  // 관리 필요 배너 — 미측정·프로젝트 미연결·데이터 미연동(연동 프로젝트 필수)·상충 감시·KPI 미연결 프로젝트
+  const conflicts = allNodes().reduce((s, n) => s + (n.conflicts || 0), 0);
+  const noKpiPrj = S.projects.filter(p => !p.kpi && p.status !== "완료").length;
+  const care = document.getElementById("care-banner");
+  if (na.length || unlinked.length || noData.length || conflicts || noKpiPrj) {
+    const chip = (k, cls) => `<span class="badge ${cls}">${k.code}. ${k.name}</span>`;
+    const cap = arr => arr.slice(0, 8).join(" ") +
+      (arr.length > 8 ? ` <span class="badge plan">외 ${arr.length - 8}건</span>` : "");
+    care.style.display = "";
+    care.innerHTML = `⚠ <b>관리 필요</b> — 미측정 ${na.length}건 · 프로젝트 미연결 ${unlinked.length}건 · 데이터 미연동 ${noData.length}건(연동 프로젝트 필수)${conflicts ? ` · 상충 감시 ${conflicts}건(⇄ 배지 참고)` : ""}${noKpiPrj ? ` · KPI 미연결 프로젝트 ${noKpiPrj}건` : ""}. 측정값을 입력하고, 미연동 지표는 데이터 연동 프로젝트를 만들어 연결하세요. ` +
+      cap([...new Map([...na, ...unlinked].map(k => [k.code, chip(k, "hold")])).values()]) + " " +
+      cap(noData.map(k => `<a href="projects.html?kpi=${k.code}&role=연동" title="데이터 연동 프로젝트 만들기">${chip(k, "overdue")}</a>`)) +
+      (noKpiPrj ? ` <a href="projects.html?kpi=none" title="KPI 미연결 프로젝트 보기"><span class="badge hold">✪ 프로젝트 ${noKpiPrj}건 KPI 미연결</span></a>` : "");
+  } else care.style.display = "none";
+
+  document.getElementById("kpi-grid").innerHTML = S.kpiAreas.map(a => {
+    const list = S.kpis.filter(k => k.area === a.area);
+    return `
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <h2 style="margin:0">${a.area}</h2>${LAMP[a.lamp]}
+        <span class="muted small">측정 ${a.measured}/${a.total}</span>
+        <span style="margin-left:auto" class="small">가중 달성률 <b style="font-size:16px">${pct(a.score)}</b></span>
+        <button class="btn sm" onclick="openKpi('${a.area}', null)">+ KPI</button>
+      </div>
+      ${list.length ? `
+      <table class="tbl">
+        <thead><tr><th>KPI</th><th class="num">목표</th><th class="num">실적</th><th>달성률</th><th>추이</th><th>프로젝트</th><th></th></tr></thead>
+        <tbody>${list.map(k => {
+          const hasSubs = k.subs.length > 0;
+          const hasDetail = hasSubs || k.projects || [k, ...k.subs].some(n => n.sideEffects.length);
+          // KPI 자체 실측 우선(트윈 방식) — 실측 없으면 달성률은 하위 지표 롤업(rollup=true)
+          return `
+          <tr>
+            <td><b>${k.code}.</b> ${k.name} ${conflictBadge(k)}
+              <div class="small muted">${DIR[k.direction] || ""} · 가중치 ${k.weight || 1}${hasSubs ? ` · 하위 지표 ${k.subs.length}개 · 연동 ${k.subs.filter(s => s.dataState === "linked").length}/${k.subs.length}` : ""}</div>
+              <div style="margin-top:2px">${DATA_ST[k.dataState](k)}</div></td>
+            <td class="num">${k.target != null ? fmtV(k.target, k.unit) : (k.rollup ? '<span class="muted small">롤업</span>' : '<span class="muted">미정</span>')}</td>
+            <td class="num">${k.actual ? `<b>${fmtV(k.actual.value, k.unit)}</b><div class="small muted">${(k.actual.at || "").slice(5)}</div>` : '<span class="muted">—</span>'}</td>
+            <td>${attainCell(k)}${LAMP[k.lamp]}${k.rollup ? ' <span class="muted small">(롤업)</span>' : ""}</td>
+            <td>${spark(k)}</td>
+            <td class="small">${prjCell(k)}</td>
+            <td style="text-align:right;white-space:nowrap">
+              ${hasDetail ? `<button class="btn sm" id="det-btn-${k.code}" onclick="toggleDetail('${k.code}')">▾ 세부</button>` : ""}
+              <button class="btn sm" onclick="openSub('${k.code}', null)">＋ 하위</button>
+              <button class="btn sm" onclick="openMeasure('${k.code}')">＋ 측정</button>
+              <button class="btn sm" onclick="openKpi(null,'${k.code}')">✎</button></td>
+          </tr>
+          ${hasDetail ? `<tr id="det-${k.code}" style="display:none"><td colspan="7" style="padding:6px 8px 12px;background:var(--surface-2);border-radius:8px">
+            ${hasSubs ? subTable(k) : ""}${trackTable(k)}${conflictTable(k)}</td></tr>` : ""}`;
+        }).join("")}
+        </tbody>
+      </table>` : `<p class="muted small" style="margin:14px 0 6px">이 영역에 정의된 KPI가 아직 없습니다. [+ KPI]로 측정 지표를 추가하세요.</p>`}
+    </div>`;
+  }).join("");
+}
+
+// 트리에서 코드로 지표 찾기 (KPI 또는 하위 지표)
+function findNode(code) {
+  for (const k of S.kpis) {
+    if (k.code === code) return k;
+    const s = k.subs.find(x => x.code === code);
+    if (s) return s;
+  }
+  return null;
+}
+
+/* ── KPI 정의 추가/편집 ── */
+let kCtx = null;
+function openKpi(area, code) {
+  if (!S) return alert("데이터를 불러오는 중입니다. 잠시 후 다시 시도하세요.");
+  kCtx = { code };
+  const k = code ? S.kpis.find(x => x.code === code) : null;
+  document.getElementById("k-title").textContent = k ? `KPI 편집 — ${k.code}. ${k.name}` : "KPI 추가";
+  document.getElementById("k-area").value = k ? k.area : (area || "재무");
+  document.getElementById("k-code").value = k ? k.code : "자동 채번";
+  document.getElementById("k-name").value = k ? k.name : "";
+  document.getElementById("k-unit").value = k ? (k.unit || "") : "";
+  document.getElementById("k-dir").value = k ? (k.direction || "+") : "+";
+  document.getElementById("k-target").value = k && k.target != null ? k.target : "";
+  document.getElementById("k-weight").value = k ? (k.weight || 1) : 1;
+  document.getElementById("k-source").value = k ? (k.source || "") : "";
+  document.getElementById("k-del").style.display = k ? "" : "none";
+  openModal("kpi-modal");
+}
+async function saveKpi() {
+  const name = document.getElementById("k-name").value.trim();
+  if (!name) { alert("지표명은 필수입니다."); document.getElementById("k-name").focus(); return; }
+  await api("kpi/save", { code: kCtx.code, name,
+    area: document.getElementById("k-area").value,
+    unit: document.getElementById("k-unit").value.trim(),
+    direction: document.getElementById("k-dir").value,
+    target: document.getElementById("k-target").value,
+    weight: document.getElementById("k-weight").value,
+    source: document.getElementById("k-source").value.trim() });
+  closeModal("kpi-modal"); load(); refreshGitChip();
+}
+async function delKpi() {
+  if (!kCtx.code) return;
+  if (!confirm(`${kCtx.code} KPI를 삭제할까요?\n하위 지표·측정 이력도 함께 삭제되고 연결된 프로젝트는 미연결로 바뀝니다.`)) return;
+  await api("kpi/delete", { code: kCtx.code });
+  closeModal("kpi-modal"); load(); refreshGitChip();
+}
+
+/* ── 하위 지표 추가/편집 ── */
+let sCtx = null;
+function openSub(parent, code) {
+  if (!S) return alert("데이터를 불러오는 중입니다. 잠시 후 다시 시도하세요.");
+  sCtx = { parent, code };
+  const pk = S.kpis.find(x => x.code === parent);
+  const s = code ? pk.subs.find(x => x.code === code) : null;
+  document.getElementById("s-title").textContent = s ? `하위 지표 편집 — ${s.code}. ${s.name}` : `하위 지표 추가 — ${pk.code}. ${pk.name}`;
+  document.getElementById("s-parent").value = `${pk.code}. ${pk.name}`;
+  document.getElementById("s-code").value = s ? s.code : "자동 채번";
+  document.getElementById("s-group").value = s ? (s.group || "") : "";
+  document.getElementById("s-name").value = s ? s.name : "";
+  document.getElementById("s-unit").value = s ? (s.unit || "") : "";
+  document.getElementById("s-dir").value = s ? (s.direction || "+") : "+";
+  document.getElementById("s-target").value = s && s.target != null ? s.target : "";
+  document.getElementById("s-weight").value = s ? (s.weight || 1) : 1;
+  document.getElementById("s-source").value = s ? (s.source || "") : "";
+  document.getElementById("s-del").style.display = s ? "" : "none";
+  openModal("sub-modal");
+}
+async function saveSub() {
+  const name = document.getElementById("s-name").value.trim();
+  if (!name) { alert("지표명은 필수입니다."); document.getElementById("s-name").focus(); return; }
+  await api("kpi/sub/save", { parent: sCtx.parent, code: sCtx.code, name,
+    group: document.getElementById("s-group").value.trim(),
+    unit: document.getElementById("s-unit").value.trim(),
+    direction: document.getElementById("s-dir").value,
+    target: document.getElementById("s-target").value,
+    weight: document.getElementById("s-weight").value,
+    source: document.getElementById("s-source").value.trim() });
+  closeModal("sub-modal"); load(); refreshGitChip();
+}
+async function delSub() {
+  if (!sCtx.code) return;
+  if (!confirm(`${sCtx.code} 하위 지표를 삭제할까요?\n측정 이력도 함께 삭제되고 연결된 프로젝트는 미연결로 바뀝니다.`)) return;
+  await api("kpi/sub/delete", { parent: sCtx.parent, code: sCtx.code });
+  closeModal("sub-modal"); load(); refreshGitChip();
+}
+
+/* ── 측정값 입력 ── */
+let mCtx = null;
+function openMeasure(code) {
+  mCtx = { code };
+  const k = findNode(code);
+  document.getElementById("me-title").textContent = `측정값 입력 — ${k.code}. ${k.name}`;
+  document.getElementById("me-info").textContent =
+    `목표 ${k.target != null ? fmtV(k.target, k.unit) : "미정"} · ${DIR[k.direction] || ""}` +
+    (k.source ? ` · 소스: ${k.source}` : " · 미연동(수동 측정)") +
+    (k.actual ? ` · 최근 ${fmtV(k.actual.value, k.unit)} (${k.actual.at})` : "");
+  document.getElementById("me-at").value = new Date().toISOString().slice(0, 10);
+  document.getElementById("me-val").value = "";
+  document.getElementById("me-note").value = "";
+  document.getElementById("me-hist").innerHTML = (k.measures || []).slice(-5).reverse().map(m => `
+    <li><span class="dot"></span>
+      <div class="t-head"><b>${fmtV(m.value, k.unit)}</b> <span class="t-time">· ${m.at}</span></div>
+      ${m.note ? `<div class="t-body">${m.note}</div>` : ""}</li>`).join("") ||
+    '<li><span class="dot"></span><div class="t-body muted small">아직 측정 기록이 없습니다.</div></li>';
+  openModal("measure-modal");
+}
+async function saveMeasure() {
+  const v = document.getElementById("me-val").value;
+  if (v === "") { alert("측정값을 입력하세요."); document.getElementById("me-val").focus(); return; }
+  await api("kpi/measure", { code: mCtx.code, value: v,
+    at: document.getElementById("me-at").value,
+    note: document.getElementById("me-note").value.trim() });
+  closeModal("measure-modal"); load(); refreshGitChip();
+}
+load();
+</script>
+</body>
+</html>

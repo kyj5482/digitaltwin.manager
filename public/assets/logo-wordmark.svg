@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 64" role="img" aria-label="AI/Data North Pole">
+  <!-- AI/Data North Pole 워드마크 — 문서·README용. 라이트/다크 모두에서 읽히도록 미디어 쿼리 사용 -->
+  <style>
+    .eyebrow { fill: #2a78d6; font: 700 13px/1 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; letter-spacing: .12em; }
+    .name    { fill: #0b0b0b; font: 700 27px/1 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    @media (prefers-color-scheme: dark) {
+      .name { fill: #ffffff; }
+    }
+  </style>
+  <rect width="64" height="64" rx="14" fill="#2a78d6"/>
+  <path fill="#ffffff" d="M32 5 L36.4 27.6 L52 32 L36.4 36.4 L32 54 L27.6 36.4 L12 32 L27.6 27.6 Z"/>
+  <circle cx="47.5" cy="13.5" r="2.7" fill="#ffffff" opacity="0.95"/>
+  <circle cx="53.5" cy="21.5" r="1.8" fill="#ffffff" opacity="0.6"/>
+  <circle cx="13.5" cy="49" r="1.8" fill="#ffffff" opacity="0.6"/>
+  <text class="eyebrow" x="80" y="22">AI/DATA</text>
+  <text class="name"   x="80" y="50">North Pole</text>
+</svg>

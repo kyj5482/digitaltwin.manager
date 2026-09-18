@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="AI/Data North Pole 로고">
+  <!-- AI/Data North Pole 앱 마크 — 북극성(길게 뻗은 북쪽 광선의 4방위 별) + 정렬되는 데이터 포인트 -->
+  <rect width="64" height="64" rx="14" fill="#2a78d6"/>
+  <path fill="#ffffff" d="M32 5 L36.4 27.6 L52 32 L36.4 36.4 L32 54 L27.6 36.4 L12 32 L27.6 27.6 Z"/>
+  <circle cx="47.5" cy="13.5" r="2.7" fill="#ffffff" opacity="0.95"/>
+  <circle cx="53.5" cy="21.5" r="1.8" fill="#ffffff" opacity="0.6"/>
+  <circle cx="13.5" cy="49" r="1.8" fill="#ffffff" opacity="0.6"/>
+</svg>

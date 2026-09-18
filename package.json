@@ -1,0 +1,13 @@
+{
+  "name": "ai-data-north-pole",
+  "version": "0.1.0",
+  "description": "AI/Data North Pole — AI/Data TFT 진행 관리·투명 공유 허브 (Product→Goal→Milestone→Project→Sprint→Task, 일일 자동 git 커밋)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "commit-now": "node server.js --commit-now"
+  },
+  "engines": { "node": ">=18" },
+  "license": "UNLICENSED",
+  "private": true
+}

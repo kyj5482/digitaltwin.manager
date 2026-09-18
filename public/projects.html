@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>프로젝트 — AI/Data North Pole</title>
+<link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <div class="topbar">
+      <div class="crumbs">AI/Data North Pole / <b>프로젝트</b></div>
+      <div class="spacer"></div>
+      <button class="theme-toggle" onclick="toggleTheme()">☀ / ☾ 테마</button>
+    </div>
+
+    <div class="page-head">
+      <div>
+        <h1>프로젝트</h1>
+        <div class="sub">마일스톤에 따라 생성된 프로젝트. 이름을 클릭하면 해당 프로젝트의 스프린트 보드로 이동합니다.</div>
+      </div>
+      <div class="actions"><button class="btn primary" onclick="openCreate()">+ 새 프로젝트</button></div>
+    </div>
+
+    <div class="filter-row">
+      <input class="input search" id="f-q" placeholder="🔍 프로젝트명, 담당자 검색" oninput="resetPage()">
+      <select class="input" id="f-dept" onchange="resetPage()"><option value="">부문: 전체</option></select>
+      <select class="input" id="f-status" onchange="resetPage()"><option value="">상태: 전체</option><option value="계획">계획</option><option value="진행중">진행중</option><option value="보류">보류</option><option value="완료">완료</option></select>
+    </div>
+
+    <div class="callout" id="ms-banner" style="display:none"></div>
+
+    <div class="card" style="padding:6px 12px">
+      <table class="tbl">
+        <thead><tr><th>ID</th><th>프로젝트</th><th>부문</th><th>마일스톤</th><th>담당자</th><th>우선순위</th><th>상태</th><th>기간</th><th>진행률</th><th class="num">태스크</th><th></th></tr></thead>
+        <tbody id="prj-tbody"></tbody>
+      </table>
+      <div class="pager" id="prj-pager"></div>
+    </div>
+
+    <!-- 프로젝트 생성/수정 모달 -->
+    <div class="modal-scrim" id="prj-modal">
+      <div class="modal">
+        <h2 id="pm-title">새 프로젝트</h2>
+        <p class="m-sub">프로젝트는 부문(Product)의 마일스톤에 연결되며, 생성 시 첫 스프린트가 자동으로 준비됩니다.</p>
+        <div class="field"><label>프로젝트명 <span class="req">*</span></label><input class="input" id="c-name"></div>
+        <div class="form-2col">
+          <div class="field"><label>부문 <span class="req">*</span></label>
+            <select class="input" id="c-dept" onchange="fillMs()"></select></div>
+          <div class="field"><label>마일스톤 <span class="req">*</span></label><select class="input" id="c-ms"></select></div>
+          <div class="field"><label>기여 KPI (전사 — 부서 무관)</label><select class="input" id="c-kpi"></select></div>
+          <div class="field"><label>기여 유형</label>
+            <select class="input" id="c-kpi-role">
+              <option value="개선">▲ 지표 개선 (액션)</option>
+              <option value="연동">⚡ 데이터 연동 (수집 시스템 연결)</option>
+            </select></div>
+          <div class="field"><label>담당자 <span class="req">*</span></label><input class="input" id="c-owner"></div>
+          <div class="field"><label>우선순위</label>
+            <select class="input" id="c-prio"><option>P0</option><option selected>P1</option><option>P2</option><option>P3</option></select></div>
+          <div class="field"><label>시작일</label><input class="input" type="date" id="c-start"></div>
+          <div class="field"><label>목표 종료일</label><input class="input" type="date" id="c-end"></div>
+          <div class="field" id="c-status-wrap" style="display:none"><label>상태</label>
+            <select class="input" id="c-status"><option value="계획">계획</option><option value="진행중">진행중</option><option value="보류">보류</option><option value="완료">완료</option></select></div>
+        </div>
+        <div class="field"><label>사이드 이펙트 — 이 프로젝트가 다른 지표에 미치는 영향 (상충 관리)</label>
+          <div id="c-impacts"></div>
+          <button class="btn sm" type="button" onclick="addImpact()">+ 영향 추가</button>
+          <div class="muted small" style="margin-top:4px">예: OTA 확대 → 네트워크 비용 증가로 영업이익률 −, 캠페인 → 예약 가능률 −</div>
+        </div>
+        <div class="m-foot">
+          <button class="btn" onclick="closeModal('prj-modal')">취소</button>
+          <button class="btn primary" id="pm-submit" onclick="submitPrj()">프로젝트 생성</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 행 액션 메뉴 -->
+    <div class="menu-pop" id="row-menu">
+      <button onclick="menuEdit()">✎ 수정</button>
+      <button class="danger" onclick="menuDelete()">✕ 삭제</button>
+    </div>
+  </main>
+</div>
+<script src="assets/i18n-dict.js"></script>
+<script src="assets/i18n.js"></script>
+<script src="assets/app.js"></script>
+<script>
+let S = null;
+const Q = new URLSearchParams(location.search);
+let msFilter = Q.get("ms") || null;
+let kpiFilter = Q.get("kpi") || null;
+const PRIO = { P0: '<span class="badge p0">⛨ P0</span>', P1: '<span class="badge p1">▲ P1</span>',
+               P2: '<span class="badge p2">◆ P2</span>', P3: '<span class="badge p3">▽ P3</span>' };
+const ST = { "계획": '<span class="badge plan">○ 계획</span>', "진행중": '<span class="badge doing">● 진행중</span>',
+             "보류": '<span class="badge hold">⏸ 보류</span>', "완료": '<span class="badge done">✓ 완료</span>' };
+
+async function load() {
+  S = await api("state");
+  const dsel = document.getElementById("f-dept");
+  dsel.innerHTML = '<option value="">부문: 전체</option>' + S.products.map(p => `<option>${p.name}</option>`).join("");
+  if (Q.get("dept")) dsel.value = Q.get("dept");
+  render();
+}
+function filtered() {
+  const q = document.getElementById("f-q").value.trim().toLowerCase();
+  const dept = document.getElementById("f-dept").value;
+  const st = document.getElementById("f-status").value;
+  return S.projects.filter(p =>
+    (!q || p.name.toLowerCase().includes(q) || p.owner.includes(q)) &&
+    (!dept || p.dept === dept) &&
+    (!msFilter || p.ms === msFilter) &&
+    (!kpiFilter || (kpiFilter === "none" ? !p.kpi : p.kpi === kpiFilter)) &&
+    (!st || p.status === st))
+    .sort((a, b) => a.prio === b.prio ? b.id - a.id : a.prio.localeCompare(b.prio));
+}
+let page = 1, pageSize = 50;
+function resetPage() { page = 1; render(); }
+function goPage(p, size) { if (size) pageSize = size; page = p; render(); scrollTo(0, 0); }
+function render() {
+  const list = filtered();
+  const pages = Math.max(1, Math.ceil(list.length / pageSize));
+  if (page > pages) page = pages;
+  document.getElementById("prj-tbody").innerHTML = list.slice((page - 1) * pageSize, page * pageSize).map(p => {
+    const prod = S.products.find(x => x.name === p.dept);
+    const msName = prod && prod.ms.find(m => m.code === p.ms);
+    return `<tr>
+      <td class="id">PRJ-${String(p.id).padStart(3, "0")}</td>
+      <td><a class="row-link" href="sprint.html?project=${p.id}">${p.name}</a></td>
+      <td>${p.dept}</td><td class="small">${p.ms}${msName ? ". " + msName.name : ""}${(() => {
+        const k = p.kpi && S.kpis.flatMap(x => [x, ...x.subs]).find(x => x.code === p.kpi);
+        const imp = (p.impacts || []).map(i => `${i.effect === "-" ? "−" : "+"}${i.kpi}`).join(" ");
+        return (k ? `<div class="muted">✪ ${k.code}. ${k.name}${p.kpiRole === "연동" ? " · ⚡ 연동" : ""}</div>` : "") +
+               (imp ? `<div class="muted" title="${(p.impacts || []).map(i => `${i.kpi}: ${i.note || ""}`).join(" · ").replace(/"/g, "&quot;")}">⇄ ${imp}</div>` : "");
+      })()}</td>
+      <td><span class="avatar" title="${p.owner}">${p.owner.slice(1)}</span></td>
+      <td>${PRIO[p.prio] || p.prio}</td><td>${ST[p.status] || p.status}</td>
+      <td class="id">${(p.start || "").slice(5)} ~ ${(p.end || "미정").slice(5) || "미정"}</td>
+      <td><div class="meter"><div class="track"><div class="fill" style="width:${p.pct}%"></div></div><span class="pct">${p.pct}%</span></div></td>
+      <td class="num">${p.tasksDone} / ${p.tasksTotal}</td>
+      <td style="text-align:right"><button class="row-menu-btn" title="수정/삭제" onclick="openRowMenu(event, ${p.id})">⋯</button></td></tr>`;
+  }).join("") || `<tr><td colspan="11" class="muted small" style="text-align:center;padding:24px">조건에 맞는 프로젝트가 없습니다</td></tr>`;
+  renderPager(document.getElementById("prj-pager"), list.length, page, pageSize, "goPage");
+  const b = document.getElementById("ms-banner");
+  if (msFilter) {
+    b.style.display = "";
+    b.innerHTML = `<b>${document.getElementById("f-dept").value}</b> 부문 · 마일스톤 <b>${msFilter}</b> 관련 프로젝트만 표시 중 (${list.length}건)
+      — <a href="javascript:void(0)" onclick="msFilter=null;resetPage()">필터 해제</a> · <a href="products.html">Product &amp; Goal로 돌아가기</a>`;
+  } else if (kpiFilter === "none") {
+    b.style.display = "";
+    b.innerHTML = `<b>KPI 미연결</b> 프로젝트만 표시 중 (${list.length}건) — 모든 프로젝트는 기여 KPI에서 출발하는 것이 원칙입니다. [✎ 수정]으로 KPI를 연결하세요.
+      — <a href="javascript:void(0)" onclick="kpiFilter=null;resetPage()">필터 해제</a> · <a href="kpi.html">KPI 모니터링으로 돌아가기</a>`;
+  } else if (kpiFilter) {
+    b.style.display = "";
+    const k = S.kpis.flatMap(x => [x, ...x.subs]).find(x => x.code === kpiFilter);
+    b.innerHTML = `전사 KPI <b>${kpiFilter}${k ? ". " + k.name : ""}</b> 기여 프로젝트만 표시 중 (${list.length}건)
+      — <a href="javascript:void(0)" onclick="kpiFilter=null;resetPage()">필터 해제</a> · <a href="kpi.html">KPI 모니터링으로 돌아가기</a>`;
+  } else b.style.display = "none";
+}
+let editId = null;
+function openCreate() {
+  editId = null;
+  document.getElementById("pm-title").textContent = "새 프로젝트";
+  document.getElementById("pm-submit").textContent = "프로젝트 생성";
+  document.getElementById("c-status-wrap").style.display = "none";
+  document.getElementById("c-dept").innerHTML = S.products.map(p => `<option>${p.name}</option>`).join("");
+  fillMs(); fillKpi();
+  document.getElementById("c-impacts").innerHTML = "";
+  document.getElementById("c-kpi-role").value = "개선";
+  // KPI 필터로 진입한 경우 해당 KPI(+유형) 프리셋 — 미연동 지표의 "연동 프로젝트 만들기" 동선
+  if (kpiFilter && kpiFilter !== "none") {
+    document.getElementById("c-kpi").value = kpiFilter;
+    if (Q.get("role") === "연동") document.getElementById("c-kpi-role").value = "연동";
+  }
+  ["c-name", "c-owner", "c-start", "c-end"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("c-prio").value = "P1";
+  openModal("prj-modal");
+}
+function openEdit(id) {
+  const p = S.projects.find(x => x.id === id);
+  if (!p) return;
+  editId = id;
+  document.getElementById("pm-title").textContent = `프로젝트 수정 — PRJ-${String(id).padStart(3, "0")}`;
+  document.getElementById("pm-submit").textContent = "저장";
+  document.getElementById("c-status-wrap").style.display = "";
+  document.getElementById("c-dept").innerHTML = S.products.map(x => `<option>${x.name}</option>`).join("");
+  document.getElementById("c-dept").value = p.dept;
+  fillMs(); fillKpi();
+  document.getElementById("c-ms").value = p.ms;
+  document.getElementById("c-kpi").value = p.kpi || "";
+  document.getElementById("c-kpi-role").value = p.kpiRole || "개선";
+  document.getElementById("c-impacts").innerHTML = "";
+  (p.impacts || []).forEach(addImpact);
+  document.getElementById("c-name").value = p.name;
+  document.getElementById("c-owner").value = p.owner;
+  document.getElementById("c-prio").value = p.prio;
+  document.getElementById("c-status").value = p.status;
+  document.getElementById("c-start").value = p.start || "";
+  document.getElementById("c-end").value = p.end || "";
+  openModal("prj-modal");
+}
+function fillMs() {
+  const p = S.products.find(x => x.name === document.getElementById("c-dept").value);
+  document.getElementById("c-ms").innerHTML = p.ms.map(m => `<option value="${m.code}">${m.code}. ${m.name}</option>`).join("");
+}
+/* 사이드 이펙트 편집기 — 행: [지표][영향 +/−][사유][✕] */
+const kpiOptions = sel =>
+  S.kpiAreas.map(a => `<optgroup label="${a.area}">` +
+    S.kpis.filter(k => k.area === a.area).map(k =>
+      `<option value="${k.code}" ${sel === k.code ? "selected" : ""}>${k.code}. ${k.name}</option>` +
+      k.subs.map(s => `<option value="${s.code}" ${sel === s.code ? "selected" : ""}>&nbsp;&nbsp;└ ${s.code}. ${s.name}</option>`).join("")
+    ).join("") + "</optgroup>").join("");
+function addImpact(imp) {
+  const row = document.createElement("div");
+  row.className = "imp-row";
+  row.style.cssText = "display:flex;gap:6px;margin-bottom:6px;align-items:center";
+  row.innerHTML = `
+    <select class="input imp-kpi" style="flex:2">${kpiOptions(imp && imp.kpi)}</select>
+    <select class="input imp-effect" style="width:96px">
+      <option value="-" ${!imp || imp.effect === "-" ? "selected" : ""}>− 부정</option>
+      <option value="+" ${imp && imp.effect === "+" ? "selected" : ""}>+ 긍정</option>
+    </select>
+    <input class="input imp-note" style="flex:3" placeholder="사유 (예: 네트워크 비용 증가)" value="${imp ? (imp.note || "").replace(/"/g, "&quot;") : ""}">
+    <button class="btn sm" type="button" onclick="this.parentNode.remove()">✕</button>`;
+  document.getElementById("c-impacts").appendChild(row);
+}
+function readImpacts() {
+  return [...document.querySelectorAll("#c-impacts .imp-row")].map(r => ({
+    kpi: r.querySelector(".imp-kpi").value,
+    effect: r.querySelector(".imp-effect").value,
+    note: r.querySelector(".imp-note").value.trim(),
+  })).filter(i => i.kpi);
+}
+
+// 기여 KPI 셀렉터 — 전사 KPI + 하위 지표 (영역별 그룹, 부서 무관)
+function fillKpi() {
+  document.getElementById("c-kpi").innerHTML = '<option value="">연결 안 함</option>' +
+    S.kpiAreas.map(a => `<optgroup label="${a.area}">` +
+      S.kpis.filter(k => k.area === a.area).map(k =>
+        `<option value="${k.code}">${k.code}. ${k.name}</option>` +
+        k.subs.map(s => `<option value="${s.code}">&nbsp;&nbsp;└ ${s.code}. ${s.name}</option>`).join("")
+      ).join("") + "</optgroup>").join("");
+}
+async function submitPrj() {
+  const name = document.getElementById("c-name").value.trim();
+  const owner = document.getElementById("c-owner").value.trim();
+  if (!name || !owner) return alert("프로젝트명과 담당자는 필수입니다.");
+  const body = { name, owner,
+    dept: document.getElementById("c-dept").value, ms: document.getElementById("c-ms").value,
+    kpi: document.getElementById("c-kpi").value,
+    kpiRole: document.getElementById("c-kpi-role").value,
+    impacts: readImpacts(),
+    prio: document.getElementById("c-prio").value,
+    start: document.getElementById("c-start").value, end: document.getElementById("c-end").value };
+  if (editId) await api("project/update", { id: editId, ...body, status: document.getElementById("c-status").value });
+  else await api("project/create", body);
+  closeModal("prj-modal"); await load(); refreshGitChip();
+}
+
+// ⋯ 행 메뉴
+let menuId = null;
+function openRowMenu(e, id) {
+  e.stopPropagation();
+  menuId = id;
+  const m = document.getElementById("row-menu");
+  m.classList.add("open");
+  const r = e.currentTarget.getBoundingClientRect();
+  m.style.top = Math.min(r.bottom + 4, innerHeight - m.offsetHeight - 8) + "px";
+  m.style.left = Math.max(8, r.right - m.offsetWidth) + "px";
+}
+document.addEventListener("click", () => document.getElementById("row-menu").classList.remove("open"));
+function menuEdit() { openEdit(menuId); }
+async function menuDelete() {
+  const p = S.projects.find(x => x.id === menuId);
+  if (!p) return;
+  if (!confirm(`'${p.name}' 프로젝트를 삭제할까요?\n연결된 스프린트·태스크도 함께 삭제되며 되돌릴 수 없습니다.`)) return;
+  await api("project/delete", { id: menuId });
+  await load(); refreshGitChip();
+}
+load();
+</script>
+</body>
+</html>

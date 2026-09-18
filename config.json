@@ -1,0 +1,11 @@
+{
+  "port": 8789,
+  "autoCommit": {
+    "enabled": true,
+    "time": "23:50",
+    "paths": ["data"],
+    "message": "chore(data): daily snapshot",
+    "push": true,
+    "remotes": ["origin"]
+  }
+}

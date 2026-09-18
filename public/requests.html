@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>요청 Intake — AI/Data North Pole</title>
+<link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <div class="topbar">
+      <div class="crumbs">AI/Data North Pole / <b>요청 Intake</b></div>
+      <div class="spacer"></div>
+      <button class="theme-toggle" onclick="toggleTheme()">☀ / ☾ 테마</button>
+    </div>
+
+    <div class="page-head">
+      <div>
+        <h1>요청 Intake</h1>
+        <div class="sub">이메일/전화/회의 등 모든 요청을 기록합니다. 단순 요청은 <b>리턴</b>으로 즉시 회신 처리, 분석이 필요한 요청은 <b>프로젝트/태스크로 전환</b>합니다.</div>
+      </div>
+      <div class="actions"><button class="btn primary" onclick="openReq()">+ 요청 등록</button></div>
+    </div>
+
+    <div class="filter-row">
+      <input class="input search" id="f-q" placeholder="🔍 제목, 요청자 검색" oninput="resetPage()">
+      <select class="input" id="f-channel" onchange="resetPage()"><option value="">채널: 전체</option><option value="이메일">이메일</option><option value="전화">전화</option><option value="회의">회의</option><option value="요청서">요청서</option><option value="메신저">메신저</option></select>
+      <select class="input" id="f-status" onchange="resetPage()"><option value="">상태: 전체</option><option value="접수">접수</option><option value="검토중">검토중</option><option value="전환">전환</option><option value="리턴">리턴</option><option value="반려">반려</option></select>
+      <select class="input" id="f-dept" onchange="resetPage()"><option value="">부문: 전체</option></select>
+    </div>
+
+    <div class="card" style="padding:6px 12px">
+      <table class="tbl">
+        <thead><tr><th>ID</th><th>제목 <span class="muted small" style="font-weight:400">(클릭=상세)</span></th><th>채널</th><th>요청자</th><th>부문</th><th>접수일</th><th>상태</th><th>메모 / 연결</th><th></th></tr></thead>
+        <tbody id="req-tbody"></tbody>
+      </table>
+      <div class="pager" id="req-pager"></div>
+    </div>
+
+    <!-- 요청 상세 모달 -->
+    <div class="modal-scrim" id="rd-modal">
+      <div class="modal" style="width:720px;max-width:94vw">
+        <h2><span class="muted" id="rd-id" style="font-weight:500"></span> <span id="rd-title"></span></h2>
+        <p class="m-sub chip-row" id="rd-badges" style="margin-top:6px"></p>
+        <div class="form-2col">
+          <div>
+            <table class="tbl"><tbody>
+              <tr><td class="muted small" style="width:88px">상태</td>
+                <td><div style="display:flex;gap:6px;align-items:center">
+                  <select class="input" id="rd-status" style="width:auto;padding:4px 8px;font-size:12px">
+                    <option value="접수">접수</option><option value="검토중">검토중</option><option value="전환">전환</option><option value="리턴">리턴</option><option value="반려">반려</option>
+                  </select>
+                  <button class="btn sm" onclick="applyStatus()">변경</button>
+                </div></td></tr>
+              <tr><td class="muted small">요청자</td><td id="rd-requester"></td></tr>
+              <tr><td class="muted small">접수일</td><td class="id" id="rd-received"></td></tr>
+              <tr><td class="muted small">관련 부문</td><td id="rd-dept"></td></tr>
+              <tr><td class="muted small">전환 / 연결</td><td id="rd-link"></td></tr>
+              <tr><td class="muted small">처리 소요</td><td id="rd-elapsed"></td></tr>
+            </tbody></table>
+          </div>
+          <div>
+            <div class="field" style="margin-bottom:10px">
+              <label>요청 내용 메모</label>
+              <div class="small" id="rd-note" style="color:var(--ink-2)"></div>
+            </div>
+            <div class="field">
+              <label>첨부 (이메일 원문 / 요청서)</label>
+              <div id="rd-files"></div>
+              <input type="file" id="rd-file" hidden onchange="uploadReqFile(this.files[0])">
+              <div class="dropzone" style="padding:10px;cursor:pointer"
+                onclick="document.getElementById('rd-file').click()"
+                ondragover="event.preventDefault()"
+                ondrop="event.preventDefault();uploadReqFile(event.dataTransfer.files[0])">
+                클릭 또는 파일을 끌어다 놓아 첨부 (10MB 이하)</div>
+            </div>
+          </div>
+        </div>
+        <hr class="divider">
+        <h2 style="font-size:14px;margin:0 0 10px">처리 이력</h2>
+        <div style="display:flex;gap:8px;margin-bottom:14px">
+          <select class="input" id="rd-log-type" style="width:auto;flex:0 0 auto">
+            <option value="메모">메모</option><option value="회신 발송">회신 발송</option><option value="전화 회신">전화 회신</option><option value="회의/협의">회의/협의</option>
+          </select>
+          <input class="input" id="rd-log-input" style="flex:1"
+            placeholder="처리 내용 입력… (예: 요청자에게 중간 결과 회신, 익일 협의 예정)"
+            onkeydown="if(event.key==='Enter')addReqLog()">
+          <button class="btn primary sm" style="flex:0 0 auto" onclick="addReqLog()">이력 기록</button>
+        </div>
+        <ul class="timeline" id="rd-timeline" style="max-height:220px;overflow-y:auto"></ul>
+        <div class="m-foot" id="rd-actions"></div>
+      </div>
+    </div>
+
+    <!-- 요청 등록 모달 -->
+    <div class="modal-scrim" id="req-modal">
+      <div class="modal">
+        <h2>요청 등록</h2>
+        <p class="m-sub">무엇이든 일단 기록합니다 — 요청 소요시간·전환율이 병목 분석의 원천이 됩니다.</p>
+        <div class="field"><label>제목 <span class="req">*</span></label><input class="input" id="r-title"></div>
+        <div class="form-2col">
+          <div class="field"><label>채널</label>
+            <select class="input" id="r-channel"><option value="이메일">이메일</option><option value="전화">전화</option><option value="회의">회의</option><option value="요청서">요청서</option><option value="메신저">메신저</option></select></div>
+          <div class="field"><label>요청자 <span class="req">*</span></label><input class="input" id="r-requester" placeholder="예: 기획팀 홍길동"></div>
+          <div class="field"><label>관련 부문</label><select class="input" id="r-dept"></select></div>
+        </div>
+        <div class="field"><label>내용 메모</label><textarea class="input" rows="2" id="r-note"></textarea></div>
+        <div class="m-foot">
+          <button class="btn" onclick="closeModal('req-modal')">취소</button>
+          <button class="btn primary" onclick="createReq()">등록</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 전환 모달 -->
+    <div class="modal-scrim" id="cv-modal">
+      <div class="modal" style="width:520px">
+        <h2 id="cv-title">요청 전환</h2>
+        <p class="m-sub">분석이 필요한 요청은 프로젝트(신규) 또는 기존 프로젝트의 태스크(백로그)로 전환합니다.</p>
+        <div class="field"><label>전환 대상</label>
+          <select class="input" id="cv-to" onchange="cvMode()">
+            <option value="project">새 프로젝트로</option>
+            <option value="task">기존 프로젝트의 태스크로</option>
+          </select></div>
+        <div class="field" id="cv-prj-wrap" style="display:none"><label>프로젝트 <span class="req">*</span></label>
+          <select class="input" id="cv-project"></select></div>
+        <div class="form-2col">
+          <div class="field"><label>담당자 <span class="req">*</span></label><input class="input" id="cv-owner"></div>
+          <div class="field" id="cv-dept-wrap"><label>부문</label><select class="input" id="cv-dept"></select></div>
+        </div>
+        <div class="m-foot">
+          <button class="btn" onclick="closeModal('cv-modal')">취소</button>
+          <button class="btn primary" onclick="doConvert()">→ 전환</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="assets/i18n-dict.js"></script>
+<script src="assets/i18n.js"></script>
+<script src="assets/app.js"></script>
+<script>
+let S = null;
+const ST = { "접수": '<span class="badge plan">○ 접수</span>', "검토중": '<span class="badge plan">◐ 검토중</span>',
+             "전환": '<span class="badge doing">→ 전환</span>', "리턴": '<span class="badge done">↩ 리턴</span>',
+             "반려": '<span class="badge overdue">✕ 반려</span>' };
+const OPEN_ST = s => s === "접수" || s === "검토중";
+const waitDays = r => Math.round((Date.now() - new Date(r.createdAt + "T00:00:00")) / 864e5);
+
+async function load() {
+  S = await api("state");
+  document.getElementById("f-dept").innerHTML =
+    '<option value="">부문: 전체</option>' + S.products.map(p => `<option>${p.name}</option>`).join("");
+  render();
+}
+let page = 1, pageSize = 50;
+function resetPage() { page = 1; render(); }
+function goPage(p, size) { if (size) pageSize = size; page = p; render(); scrollTo(0, 0); }
+function render() {
+  const q = document.getElementById("f-q").value.trim().toLowerCase();
+  const ch = document.getElementById("f-channel").value;
+  const st = document.getElementById("f-status").value;
+  const dept = document.getElementById("f-dept").value;
+  const list = [...S.requests].reverse().filter(r =>
+    (!q || r.title.toLowerCase().includes(q) || r.requester.toLowerCase().includes(q)) &&
+    (!ch || r.channel === ch) &&
+    (!st || r.status === st) &&
+    (!dept || r.dept === dept));
+  const pages = Math.max(1, Math.ceil(list.length / pageSize));
+  if (page > pages) page = pages;
+  document.getElementById("req-tbody").innerHTML = list.slice((page - 1) * pageSize, page * pageSize).map(r => `
+    <tr>
+      <td class="id">${r.id}</td>
+      <td><a class="row-link" href="javascript:void(0)" onclick="openReqDetail('${r.id}')">${r.title}</a>
+        ${OPEN_ST(r.status) && waitDays(r) > 10 ? ' <span class="badge overdue">⚠ 대기 ' + waitDays(r) + '일</span>' : ""}</td>
+      <td class="small">${r.channel}</td>
+      <td class="small">${r.requester}</td><td class="small">${r.dept || "-"}</td>
+      <td class="id">${r.createdAt}</td><td>${ST[r.status] || r.status}</td>
+      <td class="small">${r.link ? `연결: <b>${r.link}</b>` : (r.note || "")}</td>
+      <td style="text-align:right;white-space:nowrap">${OPEN_ST(r.status)
+        ? `<button class="btn sm" onclick="openConvert('${r.id}')">→ 전환</button>
+           <button class="btn sm" onclick="doReturn('${r.id}')">↩ 리턴</button>` : ""}</td>
+    </tr>`).join("") ||
+    '<tr><td colspan="9" class="muted small" style="text-align:center;padding:24px">조건에 맞는 요청이 없습니다</td></tr>';
+  renderPager(document.getElementById("req-pager"), list.length, page, pageSize, "goPage");
+}
+function openReq() {
+  if (!S) return alert("데이터를 불러오는 중입니다.");
+  document.getElementById("r-dept").innerHTML = S.products.map(p => `<option>${p.name}</option>`).join("");
+  openModal("req-modal");
+}
+async function createReq() {
+  const title = document.getElementById("r-title").value.trim();
+  const requester = document.getElementById("r-requester").value.trim();
+  if (!title || !requester) return alert("제목과 요청자는 필수입니다.");
+  await api("request/create", { title, requester,
+    channel: document.getElementById("r-channel").value,
+    dept: document.getElementById("r-dept").value,
+    note: document.getElementById("r-note").value.trim() });
+  closeModal("req-modal"); await load(); refreshGitChip();
+}
+let cvId = null;
+function openConvert(id) {
+  cvId = id;
+  const r = S.requests.find(x => x.id === id);
+  document.getElementById("cv-title").textContent = `요청 전환 — ${r.id}`;
+  document.getElementById("cv-project").innerHTML =
+    S.projects.map(p => `<option value="${p.id}">PRJ-${String(p.id).padStart(3, "0")} ${p.name}</option>`).join("");
+  document.getElementById("cv-dept").innerHTML =
+    S.products.map(p => `<option ${p.name === r.dept ? "selected" : ""}>${p.name}</option>`).join("");
+  cvMode();
+  openModal("cv-modal");
+}
+function cvMode() {
+  const toPrj = document.getElementById("cv-to").value === "project";
+  document.getElementById("cv-prj-wrap").style.display = toPrj ? "none" : "";
+  document.getElementById("cv-dept-wrap").style.display = toPrj ? "" : "none";
+}
+async function doConvert() {
+  const owner = document.getElementById("cv-owner").value.trim();
+  if (!owner) return alert("담당자는 필수입니다.");
+  const to = document.getElementById("cv-to").value;
+  const r = await api("request/convert", { id: cvId, to, owner,
+    dept: document.getElementById("cv-dept").value,
+    projectId: document.getElementById("cv-project").value });
+  closeModal("cv-modal");
+  alert(`전환 완료 — ${r.link}`);
+  await load(); refreshGitChip();
+}
+async function doReturn(id) {
+  const note = prompt("리턴 회신 메모 (선택):", "");
+  if (note === null) return;
+  await api("request/return", { id, note });
+  await load(); refreshGitChip();
+  if (rdId === id && document.getElementById("rd-modal").classList.contains("open")) openReqDetail(id);
+}
+
+/* ═══ 요청 상세 모달 ═══ */
+let rdId = null;
+const fmtAt = at => (at || "").slice(5, 16).replace("T", " ");
+function linkHtml(link) {
+  if (!link) return '<span class="muted">미정</span>';
+  if (link.startsWith("PRJ-")) return `<a class="row-link" href="projects.html">${link}</a>`;
+  return `<a class="row-link" href="sprint.html">${link}</a>`;
+}
+function openReqDetail(id) {
+  const r = S.requests.find(x => x.id === id);
+  if (!r) return;
+  rdId = id;
+  document.getElementById("rd-id").textContent = r.id;
+  document.getElementById("rd-title").textContent = r.title;
+  document.getElementById("rd-badges").innerHTML =
+    (ST[r.status] || r.status) + ` <span class="badge ch">${r.channel}</span>` +
+    (r.dept ? ` <span class="badge">${r.dept}</span>` : "");
+  document.getElementById("rd-status").value = r.status;
+  document.getElementById("rd-requester").textContent = r.requester;
+  document.getElementById("rd-received").textContent = r.createdAt;
+  document.getElementById("rd-dept").textContent = r.dept || "미정";
+  document.getElementById("rd-link").innerHTML = linkHtml(r.link);
+  const retLog = (r.logs || []).filter(l => l.type === "return").slice(-1)[0];
+  document.getElementById("rd-elapsed").innerHTML = OPEN_ST(r.status)
+    ? (waitDays(r) > 10
+        ? `<span style="color:var(--st-critical)"><b>대기 ${waitDays(r)}일</b> — 기준(10일) 초과</span>`
+        : `<span class="muted">진행중 · 접수 후 ${waitDays(r)}일 경과</span>`)
+    : (retLog ? `<b>${Math.max(0, Math.round((new Date(retLog.at) - new Date(r.createdAt + "T00:00:00")) / 864e5))}일</b> (${r.createdAt} 접수 → ${fmtAt(retLog.at)} 처리)`
+              : '<span class="muted">-</span>');
+  document.getElementById("rd-note").textContent = r.note || "(메모 없음)";
+  document.getElementById("rd-files").innerHTML = fileRows(r.files);
+  document.getElementById("rd-timeline").innerHTML = (r.logs || []).slice().reverse().map(l => `
+    <li class="${l.type === "stage" ? "stage" : (l.type === "return" || l.type === "회신 발송" || l.type === "전화 회신") ? "return" : ""}">
+      <span class="dot"></span>
+      <div class="t-head"><b>${l.type === "return" ? "리턴" : l.type}</b> <span class="t-time">· ${fmtAt(l.at)}</span></div>
+      <div class="t-body">${l.text}</div>
+    </li>`).join("") +
+    `<li><span class="dot"></span>
+      <div class="t-head"><b>접수</b> <span class="t-time">· ${r.createdAt}</span></div>
+      <div class="t-body">${r.channel} 접수 등록 · 요청자 ${r.requester}</div></li>`;
+  document.getElementById("rd-actions").innerHTML = OPEN_ST(r.status)
+    ? `<button class="btn" onclick="closeModal('rd-modal')">닫기</button>
+       <button class="btn" onclick="doReturn('${r.id}')">↩ 단순 리턴 완료</button>
+       <button class="btn primary" onclick="closeModal('rd-modal');openConvert('${r.id}')">→ 프로젝트/태스크로 전환</button>`
+    : `<button class="btn" onclick="closeModal('rd-modal')">닫기</button>`;
+  openModal("rd-modal");
+}
+async function applyStatus() {
+  const status = document.getElementById("rd-status").value;
+  let reason = "";
+  if (status === "반려") {
+    reason = prompt("반려 사유를 입력하세요 (필수):", "");
+    if (reason === null) return;
+    if (!reason.trim()) return alert("반려는 사유 입력이 필수입니다.");
+  }
+  await api("request/status", { id: rdId, status, reason: reason.trim() });
+  S = await api("state"); render(); refreshGitChip();
+  openReqDetail(rdId);                           // 배지·이력 즉시 갱신 (모달 유지)
+}
+async function uploadReqFile(file) {
+  if (!file) return;
+  if (file.size > 10 * 1024 * 1024) return alert("10MB 이하 파일만 업로드할 수 있습니다.");
+  await api("request/file", { id: rdId, name: file.name, data: await readFileB64(file) });
+  document.getElementById("rd-file").value = "";
+  S = await api("state"); render(); refreshGitChip();
+  openReqDetail(rdId);
+}
+async function addReqLog() {
+  const el = document.getElementById("rd-log-input");
+  const text = el.value.trim();
+  if (!text) return el.focus();
+  await api("request/log", { id: rdId, text, type: document.getElementById("rd-log-type").value });
+  el.value = "";
+  S = await api("state"); render();
+  openReqDetail(rdId);
+}
+load();
+</script>
+</body>
+</html>

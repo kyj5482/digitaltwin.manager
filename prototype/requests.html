@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>요청 Intake — AI/Data North Pole 프로토타입</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="crumbs">Digital Twin Manager / <b>AI/Data North Pole</b> / 요청 Intake</div>
+      <div class="spacer"></div>
+      <button class="theme-toggle" onclick="toggleTheme()">☀ / ☾ 테마</button>
+      <span class="avatar" title="김용진">YK</span>
+    </div>
+
+    <div class="page-head">
+      <div>
+        <h1>요청 Intake</h1>
+        <div class="sub">이메일·전화·회의 등 어디에서 들어온 요청이든 먼저 기록합니다. 단순 회신도 소요 시간과 함께 남깁니다.</div>
+      </div>
+      <div class="actions">
+        <button class="btn primary" onclick="openModal('req-modal')">+ 요청 등록</button>
+      </div>
+    </div>
+
+    <div class="filter-row">
+      <input class="input search" id="rf-q" placeholder="🔍 제목, 요청자 검색" oninput="applyReqFilters()">
+      <select class="input" id="rf-ch" onchange="applyReqFilters()"><option>채널: 전체</option><option>이메일</option><option>전화</option><option>회의</option><option>요청서</option></select>
+      <select class="input" id="rf-st" onchange="applyReqFilters()"><option>상태: 전체</option><option>접수</option><option>검토중</option><option>전환됨</option><option>리턴 완료</option><option>반려</option></select>
+      <select class="input" id="rf-dept" onchange="applyReqFilters()"><option>부문: 전체</option><option>Sales</option><option>Finance</option><option>Marketing</option><option>Product Planning</option><option>Service</option></select>
+      <select class="input" id="rf-size" onchange="applyReqFilters()" style="margin-left:auto" title="페이지당 표시 건수">
+        <option value="10">10건씩</option><option value="25">25건씩</option><option value="50" selected>50건씩</option>
+      </select>
+    </div>
+
+    <div class="card" style="padding:6px 12px">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>ID</th><th>채널</th><th>제목</th><th>요청자</th><th>접수일</th>
+            <th>상태</th><th>전환 / 연결</th><th class="num">처리 소요</th>
+          </tr>
+        </thead>
+        <tbody id="req-tbody"></tbody>
+      </table>
+    </div>
+    <div class="pager" id="req-pager"></div>
+    <p class="muted small" style="margin-top:8px">
+      단순 회신으로 끝난 요청도 반드시 기록합니다 — 여기에 쌓인 처리 시간이 “보이지 않던 업무량”의 근거 데이터가 되고,
+      반복되는 단순 요청은 다음 분기 자동화(신규 프로젝트) 후보가 됩니다.
+    </p>
+
+    <!-- 요청 등록 모달 -->
+    <div class="modal-scrim" id="req-modal">
+      <div class="modal">
+        <h2>요청 등록</h2>
+        <p class="m-sub">접수 즉시 기록하는 것이 원칙입니다. 처리 방침(전환/단순 리턴)은 나중에 결정해도 됩니다.</p>
+        <div class="field">
+          <label>제목 <span class="req">*</span></label>
+          <input class="input" placeholder="예: 신제품 수요 예측 가능한지 문의">
+        </div>
+        <div class="form-2col">
+          <div class="field">
+            <label>유입 채널 <span class="req">*</span></label>
+            <select class="input"><option>✉ 이메일</option><option>📞 전화</option><option>🗓 회의</option><option>📄 요청서</option><option>기타</option></select>
+          </div>
+          <div class="field">
+            <label>접수 일시 <span class="req">*</span></label>
+            <input class="input" type="datetime-local" value="2026-08-24T09:30">
+          </div>
+          <div class="field">
+            <label>요청자 / 소속 <span class="req">*</span></label>
+            <input class="input" placeholder="예: 상품기획팀 정과장">
+          </div>
+          <div class="field">
+            <label>관련 부문 (Product)</label>
+            <select class="input"><option>미정 (검토 후 지정)</option><option>Sales</option><option>Finance</option><option>Marketing</option><option>Product Planning</option><option>Service</option></select>
+          </div>
+        </div>
+        <div class="field">
+          <label>요청 내용 요약</label>
+          <textarea class="input" rows="3" placeholder="전화·회의 요청은 핵심 내용을 요약해 남깁니다. 이메일은 원문 첨부로 대체 가능."></textarea>
+        </div>
+        <div class="field">
+          <label>첨부 (이메일 원문 / 요청서)</label>
+          <div class="dropzone">.eml, .pdf, .xlsx 등 원문 파일을 끌어다 놓으세요</div>
+        </div>
+        <hr class="divider">
+        <div class="field">
+          <label>처리 방침 (나중에 변경 가능)</label>
+          <select class="input">
+            <option selected>미정 — 검토 후 결정</option>
+            <option>단순 리턴 — 회신으로 종료 (소요 시간 기록)</option>
+            <option>태스크 전환 — 기존 프로젝트에 태스크 생성</option>
+            <option>프로젝트 전환 — 새 프로젝트 생성</option>
+            <option>Product 신설 — 새 부문/Goal 논의 필요</option>
+          </select>
+          <span class="hint">리턴 완료 시 회신 일시·첨부가 기록되고 접수~리턴 소요 시간이 자동 계산됩니다.</span>
+        </div>
+        <div class="m-foot">
+          <button class="btn" onclick="closeModal('req-modal')">취소</button>
+          <button class="btn primary" onclick="closeModal('req-modal')">등록</button>
+        </div>
+      </div>
+    </div>
+    <!-- 요청 상세 모달 (행 클릭 시 데이터로 채워짐) -->
+    <div class="modal-scrim" id="req-detail-modal">
+      <div class="modal" style="width:720px">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <div style="flex:1">
+            <h2><span class="muted" id="rd-id" style="font-weight:500"></span> <span id="rd-title"></span></h2>
+            <p class="m-sub chip-row" id="rd-badges" style="margin-top:6px"></p>
+          </div>
+        </div>
+
+        <div class="form-2col">
+          <div>
+            <table class="tbl">
+              <tbody>
+                <tr><td class="muted small" style="width:88px">상태</td>
+                  <td><div style="display:flex;gap:6px;align-items:center">
+                    <select class="input" id="rd-status" style="width:auto;padding:4px 8px;font-size:12px">
+                      <option>접수</option><option>검토중</option><option>전환됨</option><option>리턴 완료</option><option>반려</option>
+                    </select>
+                    <button class="btn sm" onclick="applyStatus()">변경</button>
+                  </div></td></tr>
+                <tr><td class="muted small">요청자</td><td id="rd-requester"></td></tr>
+                <tr><td class="muted small">접수 일시</td><td class="id" id="rd-received"></td></tr>
+                <tr><td class="muted small">관련 부문</td><td id="rd-product"></td></tr>
+                <tr><td class="muted small">담당(검토자)</td><td id="rd-handler"></td></tr>
+                <tr><td class="muted small">전환 / 연결</td><td id="rd-link"></td></tr>
+                <tr><td class="muted small">처리 소요</td><td id="rd-elapsed"></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <div class="field" style="margin-bottom:10px">
+              <label>요청 내용 요약</label>
+              <div class="small" id="rd-summary" style="color:var(--ink-2)"></div>
+            </div>
+            <div class="field">
+              <label>첨부</label>
+              <div id="rd-files"></div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="divider">
+        <h2 style="font-size:14px;margin:0 0 10px">처리 이력</h2>
+        <div style="display:flex;gap:8px;margin-bottom:14px">
+          <select class="input" id="rd-log-type" style="width:auto;flex:0 0 auto">
+            <option>메모</option><option>회신 발송</option><option>전화 회신</option><option>회의/협의</option>
+          </select>
+          <input class="input" id="rd-log-input" style="flex:1"
+            placeholder="처리 내용 입력… (예: 요청자에게 중간 결과 회신, 익일 협의 예정)"
+            onkeydown="if(event.key==='Enter')addRequestLog()">
+          <button class="btn primary sm" style="flex:0 0 auto" onclick="addRequestLog()">이력 기록</button>
+        </div>
+        <ul class="timeline" id="rd-timeline"></ul>
+
+        <div class="m-foot" id="rd-actions"></div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="assets/app.js"></script>
+<script>
+// 검토용 목데이터 · 동작 — 실제 구현 시 GET/PUT /api/northpole/requests/{id}, POST /requests/{id}/logs 로 대체
+const CURRENT_USER = "김용진";
+const STATUS_META = {
+  "접수":      { cls: "plan",    ico: "○" },
+  "검토중":    { cls: "plan",    ico: "○" },
+  "전환됨":    { cls: "doing",   ico: "●" },
+  "리턴 완료": { cls: "done",    ico: "✓" },
+  "반려":      { cls: "overdue", ico: "✕" }
+};
+
+const REQUESTS = {
+  "REQ-2026-041": {
+    title: "신제품 수요 예측 가능한지 문의",
+    channel: "✉ 이메일", status: "전환됨", tags: ["Product Planning"],
+    requester: "상품기획팀 정과장", received: "2026-08-21 10:05", product: "Product Planning",
+    handler: "정다현", link: '태스크 <a href="task-detail.html">DT-161</a> 생성 (08-21)',
+    elapsed: '<span class="muted">진행중 · 접수 후 3일 경과</span>',
+    summary: "내년 출시 예정 신제품 2종의 초기 수요를 데이터로 예측할 수 있는지 문의. 과거 유사 제품 판매 데이터 보유 여부 확인 요청 포함.",
+    files: [["✉","요청 원문_수요예측 문의.eml","28KB · 08-21"]],
+    open: ["연결 태스크 열기", "task-detail.html"],
+    timeline: [
+      ["정다현", "요청을 태스크 DT-161로 전환 · Sprint 2026-18 배정", "08-21 11:20", "stage"],
+      ["정다현", "접수 확인 회신 발송 (Intake 협의 일정 제안)", "08-21 10:40", "return"],
+      ["시스템", "이메일 접수 등록 · 첨부 1건 보존", "08-21 10:05", ""]
+    ]
+  },
+  "REQ-2026-040": {
+    title: "지난달 지역별 판매량 집계 요청",
+    channel: "📞 전화", status: "리턴 완료", tags: ["Sales"], repeat: true,
+    requester: "영업1팀 이대리", received: "2026-08-20 14:10", product: "Sales",
+    handler: "김유진", link: '<span class="muted">단순 리턴 (태스크 미생성)</span>',
+    elapsed: "<b>3시간 20분</b> (14:10 접수 → 17:30 리턴)",
+    summary: "7월 지역별 판매량 엑셀 집계 요청. 기존 월간 리포트 쿼리를 재사용해 처리. ※ 3개월 연속 동일 요청 — 자동화 후보로 표시됨.",
+    files: [["📊","7월_지역별판매량.xlsx","210KB · 08-20 (회신 첨부)"]],
+    timeline: [
+      ["김유진", "리턴 완료 — 이메일 회신, 집계 파일 첨부", "08-20 17:30", "return"],
+      ["김유진", "기존 월간 리포트 쿼리 수정하여 집계 수행", "08-20 15:00", ""],
+      ["김유진", "전화 요청 소급 등록 (요약 작성)", "08-20 14:25", ""]
+    ]
+  },
+  "REQ-2026-039": {
+    title: "경영회의: 캠페인 효율 월간 보고 자동화",
+    channel: "🗓 회의", status: "전환됨", tags: ["Marketing"],
+    requester: "마케팅본부장", received: "2026-08-19 09:00", product: "Marketing",
+    handler: "이서연", link: '프로젝트 <a href="projects.html">PRJ-009 캠페인 ROI 대시보드</a> 연결',
+    elapsed: '<span class="muted">진행중 · 접수 후 5일 경과</span>',
+    summary: "8월 경영회의에서 캠페인 효율 보고를 월간 자동 발행으로 전환하기로 결정. 기존 PRJ-009 범위에 포함 가능 여부 검토 후 연결.",
+    files: [["📄","경영회의록_2026-08-19.pdf","540KB · 08-19"]],
+    open: ["연결 프로젝트 열기", "projects.html"],
+    timeline: [
+      ["이서연", "기존 프로젝트 PRJ-009에 연결 (신규 태스크 2건 백로그 추가)", "08-20 10:00", "stage"],
+      ["이서연", "회의 요청 등록 · 회의록 첨부", "08-19 15:30", ""]
+    ]
+  },
+  "REQ-2026-038": {
+    title: "7월 결산 이상 수치 원인 확인 요청",
+    channel: "✉ 이메일", status: "리턴 완료", tags: ["Finance"],
+    requester: "재무팀 한차장", received: "2026-08-18 13:20", product: "Finance",
+    handler: "박민수", link: '<span class="muted">단순 리턴 · 회신 첨부 1건</span>',
+    elapsed: "<b>2일 4시간</b> (08-18 13:20 접수 → 08-20 17:30 리턴)",
+    summary: "7월 결산에서 특정 계정과목 수치가 전월 대비 급증한 원인 확인 요청. 원인은 환율 재평가 반영 시점 차이로 판명 — 분석 메모 회신.",
+    files: [["✉","요청 원문_결산 이상수치.eml","31KB · 08-18"],["📄","분석메모_환율재평가.pdf","180KB · 08-20 (회신 첨부)"]],
+    timeline: [
+      ["박민수", "리턴 완료 — 분석 메모 회신", "08-20 17:30", "return"],
+      ["박민수", "원인 분석 중간 공유 (환율 재평가 가설)", "08-19 16:00", ""],
+      ["박민수", "접수 확인 회신", "08-18 14:00", "return"],
+      ["시스템", "이메일 접수 등록", "08-18 13:20", ""]
+    ]
+  },
+  "REQ-2026-037": {
+    title: "AS 리포트에 분류 정확도 지표 추가",
+    channel: "📄 요청서", status: "검토중", tags: ["Service"],
+    alert: '<span class="badge overdue">⚠ 대기 10일</span>',
+    requester: "서비스운영팀", received: "2026-08-14 11:00", product: "Service",
+    handler: "최현우", link: '<span class="muted">미정 — 우선순위 협의 중</span>',
+    elapsed: '<span style="color:var(--st-critical)"><b>대기 10일</b> — 기준(3일) 초과</span>',
+    summary: "주간 AS 리포트에 VOC 분류 모델의 정확도 지표를 함께 실어달라는 요청. PRJ-007 M2(주간 리포트 자동화) 범위 포함 여부를 검토 중.",
+    files: [["📄","기능요청서_분류정확도지표.pdf","95KB · 08-14"]],
+    timeline: [
+      ["최현우", "PRJ-007 범위 검토 시작 · 부문 오너 협의 요청", "08-15 09:30", ""],
+      ["시스템", "요청서 접수 등록", "08-14 11:00", ""]
+    ]
+  }
+};
+
+let currentReq = null;
+
+function esc(s) {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+function nowLabel() {
+  const d = new Date();
+  return `오늘 ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+}
+function statusBadge(st) {
+  const m = STATUS_META[st];
+  return `<span class="badge ${m.cls}">${m.ico} ${st}</span>`;
+}
+
+function renderBadges(r) {
+  document.getElementById("rd-badges").innerHTML =
+    `<span class="badge ch">${r.channel}</span> ` + statusBadge(r.status) + " " +
+    r.tags.map(t => `<span class="badge">${t}</span>`).join(" ") +
+    (r.alert && r.status === "검토중" ? " " + r.alert : "");
+}
+function renderTimeline(r) {
+  document.getElementById("rd-timeline").innerHTML = r.timeline.map(t =>
+    `<li class="${t[3]}"><span class="dot"></span>
+       <div class="t-head"><b>${t[0]}</b> ${t[1]} <span class="t-time">· ${t[2]}</span></div></li>`).join("");
+}
+function renderActions(r) {
+  let h = `<button class="btn" onclick="closeModal('req-detail-modal')">닫기</button>`;
+  if (r.status === "접수" || r.status === "검토중") {
+    h += `<button class="btn" onclick="quickReturn()">✓ 단순 리턴 완료</button>
+          <button class="btn primary" onclick="quickConvert()">→ 태스크로 전환</button>`;
+  } else if (r.status === "전환됨" && r.open) {
+    h += `<a class="btn primary" href="${r.open[1]}">${r.open[0]}</a>`;
+  } else if (r.status === "리턴 완료" && r.repeat) {
+    h += `<button class="btn" onclick="proposeAutomation()">↻ 자동화 프로젝트 후보로 제안</button>`;
+  }
+  document.getElementById("rd-actions").innerHTML = h;
+}
+function updateRow(id) {
+  const el = document.getElementById("row-st-" + id);
+  if (el) el.innerHTML = statusBadge(REQUESTS[id].status);
+}
+
+function openRequest(id) {
+  currentReq = id;
+  const r = REQUESTS[id];
+  if (!r) return;
+  document.getElementById("rd-id").textContent = id;
+  document.getElementById("rd-title").textContent = r.title;
+  document.getElementById("rd-requester").textContent = r.requester;
+  document.getElementById("rd-received").textContent = r.received;
+  document.getElementById("rd-product").textContent = r.product;
+  document.getElementById("rd-handler").textContent = r.handler;
+  document.getElementById("rd-link").innerHTML = r.link;
+  document.getElementById("rd-elapsed").innerHTML = r.elapsed;
+  document.getElementById("rd-summary").textContent = r.summary;
+  document.getElementById("rd-status").value = r.status;
+  document.getElementById("rd-log-input").value = "";
+  document.getElementById("rd-files").innerHTML = r.files.map(f =>
+    `<div class="file-row"><span class="f-ico">${f[0]}</span> ${f[1]} <span class="f-meta">${f[2]}</span></div>`).join("");
+  renderBadges(r); renderTimeline(r); renderActions(r);
+  openModal("req-detail-modal");
+}
+
+// --- 처리 이력 수동 기록 ---
+function pushHistory(cls, html) {
+  const r = REQUESTS[currentReq];
+  r.timeline.unshift([CURRENT_USER, html, nowLabel(), cls]);
+  renderTimeline(r);
+}
+function addRequestLog() {
+  const input = document.getElementById("rd-log-input");
+  const text = input.value.trim();
+  if (!text) { input.focus(); return; }
+  const type = document.getElementById("rd-log-type").value;
+  const cls = (type === "회신 발송" || type === "전화 회신") ? "return" : "";
+  pushHistory(cls, `[${type}] ${esc(text)}`);
+  input.value = "";
+}
+
+// --- 상태 변경 ---
+function setStatus(to) {
+  const r = REQUESTS[currentReq];
+  r.status = to;
+  document.getElementById("rd-status").value = to;
+  renderBadges(r); renderActions(r); updateRow(currentReq);
+}
+function applyStatus() {
+  const r = REQUESTS[currentReq];
+  const to = document.getElementById("rd-status").value;
+  if (to === r.status) return;
+  if (to === "반려") {
+    const reason = prompt("반려 사유를 입력하세요 (필수):");
+    if (reason === null) { document.getElementById("rd-status").value = r.status; return; }
+    pushHistory("", `상태 변경: <b>${r.status} → 반려</b> · 사유: ${esc(reason.trim() || "미입력")}`);
+  } else {
+    pushHistory(to === "리턴 완료" ? "return" : "stage", `상태 변경: <b>${r.status} → ${to}</b>`);
+  }
+  if (to === "리턴 완료") {
+    r.elapsed = `<b>리턴 완료</b> · ${nowLabel()} (소요 시간은 서버가 접수~리턴으로 자동 계산)`;
+    document.getElementById("rd-elapsed").innerHTML = r.elapsed;
+  }
+  setStatus(to);
+}
+
+// --- 빠른 액션 ---
+function quickReturn() {
+  const note = prompt("회신 내용 요약 (리턴 기록에 남습니다):", "");
+  if (note === null) return;
+  pushHistory("return", `리턴 완료 — 회신 발송${note.trim() ? " · " + esc(note.trim()) : ""}`);
+  const r = REQUESTS[currentReq];
+  r.elapsed = `<b>리턴 완료</b> · ${nowLabel()} (소요 시간은 서버가 접수~리턴으로 자동 계산)`;
+  document.getElementById("rd-elapsed").innerHTML = r.elapsed;
+  setStatus("리턴 완료");
+}
+function quickConvert() {
+  pushHistory("stage", "태스크 전환 — 새 태스크 생성 (실제 구현: 태스크 생성 모달이 프리필되어 열림)");
+  const r = REQUESTS[currentReq];
+  r.link = "태스크 전환됨 (방금)";
+  document.getElementById("rd-link").innerHTML = r.link;
+  setStatus("전환됨");
+}
+function proposeAutomation() {
+  pushHistory("", "반복 요청으로 자동화 프로젝트 후보에 제안됨 (부문 오너에게 알림)");
+}
+</script>
+<script>
+// ===== 목록 55건 + 페이지네이션 — 실제 구현 시 GET /api/northpole/requests?page=&size=&… 서버 페이지네이션으로 대체 =====
+const REQ_HANDLER = { "Sales": "김유진", "Finance": "박민수", "Marketing": "이서연", "Product Planning": "정다현", "Service": "최현우" };
+const REQ_LIST = [
+  { n: 41, ch: "✉ 이메일", title: "신제품 수요 예측 가능한지 문의", clip: 1, requester: "상품기획팀 정과장", date: "08-21", dept: "Product Planning", status: "전환됨",
+    link: '태스크 <a href="task-detail.html">DT-161</a> 생성', elapsed: '<span class="muted">진행중 (3일)</span>' },
+  { n: 40, ch: "📞 전화", title: "지난달 지역별 판매량 집계 요청", clip: 0, requester: "영업1팀 이대리", date: "08-20", dept: "Sales", status: "리턴 완료",
+    link: '<span class="muted">단순 리턴 (태스크 미생성)</span>', elapsed: "3시간 20분" },
+  { n: 39, ch: "🗓 회의", title: "경영회의: 캠페인 효율 월간 보고 자동화", clip: 1, requester: "마케팅본부장", date: "08-19", dept: "Marketing", status: "전환됨",
+    link: '프로젝트 <a href="projects.html">PRJ-009</a> 연결', elapsed: '<span class="muted">진행중 (5일)</span>' },
+  { n: 38, ch: "✉ 이메일", title: "7월 결산 이상 수치 원인 확인 요청", clip: 2, requester: "재무팀 한차장", date: "08-18", dept: "Finance", status: "리턴 완료",
+    link: '<span class="muted">단순 리턴 · 회신 첨부 1건</span>', elapsed: "2일 4시간" },
+  { n: 37, ch: "📄 요청서", title: "AS 리포트에 분류 정확도 지표 추가", clip: 1, requester: "서비스운영팀", date: "08-14", dept: "Service", status: "검토중",
+    link: '<span class="muted">우선순위 협의 중</span>', elapsed: '<span class="muted">대기 (10일) ⚠</span>' }
+];
+(function generateRequests() {
+  const CHS = ["✉ 이메일", "📞 전화", "🗓 회의", "📄 요청서"];
+  const DEPT5 = Object.keys(REQ_HANDLER);
+  const TITLES = ["월간 실적 데이터 추출 요청", "대시보드 지표 추가 문의", "보고서 자동화 가능 여부 문의", "데이터 정합성 확인 요청",
+    "고객 목록 추출 요청", "지표 산출 기준 문의", "과거 데이터 백필 요청", "임원 보고용 차트 작성 요청"];
+  const WHO = ["영업2팀 김주임", "경영기획팀 조부장", "재무팀 한차장", "마케팅팀 노대리", "서비스운영팀 강과장", "상품기획팀 정과장", "영업1팀 이대리", "인사팀 문차장"];
+  const used = new Set(REQ_LIST.map(r => r.n));
+  const fmt = d => `${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  for (let n = 1; n <= 55; n++) {
+    if (used.has(n)) continue;
+    const r = (n * 7919) % 100;
+    const dept = DEPT5[n % 5];
+    let date, status;
+    if (n > 41) { // 커레이티드(08-14~08-21)보다 최근 접수분 — 번호 순서대로 날짜 증가
+      date = "08-2" + (1 + Math.min(3, (n - 42) / 4 | 0));
+      status = r < 40 ? "접수" : r < 70 ? "검토중" : r < 85 ? "전환됨" : "리턴 완료";
+    } else {      // 과거 접수분 (2~8월)
+      const d = new Date(2026, 1, 10); d.setDate(d.getDate() + n * 5);
+      date = fmt(d);
+      status = r < 70 ? "리턴 완료" : r < 92 ? "전환됨" : "반려";
+    }
+    const elapsed =
+      status === "리턴 완료" ? (r % 2 ? `${1 + r % 7}시간 ${10 + r % 45}분` : `${1 + r % 3}일 ${r % 8}시간`) :
+      status === "전환됨" ? '<span class="muted">진행중</span>' :
+      status === "반려" ? '<span class="muted">반려 처리</span>' :
+      `<span class="muted">대기 (${1 + r % 3}일)</span>`;
+    const link =
+      status === "전환됨" ? '<span class="muted">태스크 전환</span>' :
+      status === "리턴 완료" ? '<span class="muted">단순 리턴</span>' : '<span class="muted">—</span>';
+    REQ_LIST.push({ n, ch: CHS[r % 4], title: TITLES[(n + r) % 8], clip: r % 3 === 0 ? 1 : 0,
+      requester: WHO[r % 8], date, dept, status, link, elapsed });
+  }
+  REQ_LIST.sort((a, b) => b.n - a.n);
+})();
+const reqId = n => `REQ-2026-${String(n).padStart(3, "0")}`;
+
+let reqPage = 1;
+function reqFiltered() {
+  const q = document.getElementById("rf-q").value.trim().toLowerCase();
+  const ch = document.getElementById("rf-ch").value, st = document.getElementById("rf-st").value;
+  const dept = document.getElementById("rf-dept").value;
+  return REQ_LIST.filter(r =>
+    (!q || r.title.toLowerCase().includes(q) || r.requester.toLowerCase().includes(q)) &&
+    (ch.includes("전체") || r.ch.includes(ch)) &&
+    (st.includes("전체") || r.status === st) &&
+    (dept.includes("전체") || r.dept === dept));
+}
+function renderRequests() {
+  const size = parseInt(document.getElementById("rf-size").value, 10);
+  const list = reqFiltered();
+  const pages = Math.max(1, Math.ceil(list.length / size));
+  reqPage = Math.min(reqPage, pages);
+  document.getElementById("req-tbody").innerHTML =
+    list.slice((reqPage - 1) * size, reqPage * size).map(r => `
+      <tr>
+        <td class="id">${reqId(r.n)}</td>
+        <td><span class="badge ch">${r.ch}</span></td>
+        <td><a class="row-link" href="javascript:void(0)" onclick="openRequest('${reqId(r.n)}')">${r.title}</a>${r.clip ? ` <span class="muted small">📎 ${r.clip}</span>` : ""}</td>
+        <td class="small">${r.requester}</td>
+        <td class="id">${r.date}</td>
+        <td id="row-st-${reqId(r.n)}">${statusBadge(r.status)}</td>
+        <td class="small">${r.link}</td>
+        <td class="num">${r.elapsed}</td>
+      </tr>`).join("") ||
+    `<tr><td colspan="8" class="muted small" style="text-align:center;padding:24px">조건에 맞는 요청이 없습니다</td></tr>`;
+  renderPager(document.getElementById("req-pager"), list.length, reqPage, size,
+    p => { reqPage = p; renderRequests(); window.scrollTo({ top: 0 }); });
+}
+function applyReqFilters() { reqPage = 1; renderRequests(); }
+
+// 상세 모달 연동: 상태 변경 시 목록 데이터도 갱신 후 재렌더
+updateRow = function (id) {
+  const item = REQ_LIST.find(x => reqId(x.n) === id);
+  if (!item) return;
+  item.status = REQUESTS[id].status;
+  if (item.status === "리턴 완료") item.elapsed = '<span class="muted">방금 완료</span>';
+  if (item.status === "전환됨" && !item.link.includes("<a")) item.link = '<span class="muted">태스크 전환</span>';
+  renderRequests();
+};
+
+// 생성된 목데이터 행은 열 때 상세를 합성 (실제 구현: GET /requests/{id})
+const _openRequest = openRequest;
+openRequest = function (id) {
+  if (!REQUESTS[id]) {
+    const l = REQ_LIST.find(x => reqId(x.n) === id);
+    if (!l) return;
+    const tl = [["시스템", `${l.ch} 접수 등록`, l.date + " 09:00", ""]];
+    if (l.status === "리턴 완료") tl.unshift([REQ_HANDLER[l.dept], "리턴 완료 — 회신 발송", l.date + " 16:00", "return"]);
+    if (l.status === "전환됨") tl.unshift([REQ_HANDLER[l.dept], "태스크 전환", l.date + " 15:00", "stage"]);
+    REQUESTS[id] = {
+      title: l.title, channel: l.ch, status: l.status, tags: [l.dept],
+      requester: l.requester, received: "2026-" + l.date + " 09:00", product: l.dept,
+      handler: REQ_HANDLER[l.dept], link: l.link, elapsed: l.elapsed,
+      summary: `(검토용 생성 데이터) ${l.title} — 상세 요약·첨부는 실제 데이터 연동 시 표시됩니다.`,
+      files: [], timeline: tl
+    };
+  }
+  _openRequest(id);
+};
+
+renderRequests();
+</script>
+</body>
+</html>

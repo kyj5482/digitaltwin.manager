@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DT-142 태스크 상세 — AI/Data North Pole 프로토타입</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="crumbs">… / <a href="projects.html">프로젝트</a> / <a href="sprint.html">수주 파이프라인 예측 모델</a> / <b>DT-142</b></div>
+      <div class="spacer"></div>
+      <button class="theme-toggle" onclick="toggleTheme()">☀ / ☾ 테마</button>
+      <span class="avatar" title="김용진">YK</span>
+    </div>
+
+    <div class="page-head">
+      <div>
+        <h1><span class="muted" style="font-weight:500">DT-142</span> <span id="task-title">수주 예측 피처 마트 구축 + 베이스라인 모델</span></h1>
+        <div class="sub chip-row" style="margin-top:6px">
+          <span class="badge doing">● 진행중 · 모델링 단계</span>
+          <span class="badge p0">⛨ P0</span>
+          <span class="badge">Sales · PRJ-011</span>
+          <span class="badge">Sprint 2026-17</span>
+          <span class="badge overdue">⏰ 목표일 08-22 초과</span>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn" onclick="openModal('task-edit-modal')">✎ 편집</button>
+        <button class="btn primary" onclick="completeStage()">단계 완료 → 파이프라인</button>
+      </div>
+    </div>
+
+    <!-- 6단계 스테퍼: 각 단계의 시작/종료와 소요일을 그대로 보여준다 -->
+    <div class="stepper">
+      <div class="step done">
+        <div class="s-name">✓ Intake 협의</div>
+        <div class="s-dates">07-28 → 07-30</div>
+        <div class="s-days">3일 소요</div>
+      </div>
+      <div class="step done">
+        <div class="s-name">✓ 데이터 준비</div>
+        <div class="s-dates">07-31 → 08-07</div>
+        <div class="s-days">6일 소요</div>
+      </div>
+      <div class="step done">
+        <div class="s-name">✓ EDA</div>
+        <div class="s-dates">08-08 → 08-11</div>
+        <div class="s-days">2일 소요</div>
+      </div>
+      <div class="step current">
+        <div class="s-name">● 모델링</div>
+        <div class="s-dates">08-12 → 진행중</div>
+        <div class="s-days"><b>12일째</b> · 평균 7.9일 초과</div>
+      </div>
+      <div class="step pending">
+        <div class="s-name">파이프라인</div>
+        <div class="s-dates">예정</div>
+      </div>
+      <div class="step pending">
+        <div class="s-name">서비스 개발</div>
+        <div class="s-dates">예정</div>
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-top:16px">
+      <!-- 좌: 로그 -->
+      <div>
+        <div class="card">
+          <h2>활동 로그</h2>
+          <p class="card-sub">Git 커밋(<code>[DT-142]</code> 규약)과 수동 로그, 단계 전환이 시간순으로 합쳐집니다.</p>
+          <div class="field" style="margin-bottom:16px">
+            <textarea class="input" rows="2" id="log-input"
+              placeholder="작업 로그 남기기… (예: 피처 검증 중 CRM 결측 이슈 발견, 영업기획팀 확인 요청)"></textarea>
+            <div style="display:flex;justify-content:flex-end;gap:8px;align-items:center">
+              <span class="small muted" id="log-file-name"></span>
+              <input type="file" id="log-file" hidden onchange="showPickedFile()">
+              <button class="btn sm" onclick="document.getElementById('log-file').click()">📎 첨부</button>
+              <button class="btn primary sm" onclick="addTaskLog()">로그 추가</button>
+            </div>
+          </div>
+          <ul class="timeline" id="task-timeline">
+            <li class="git">
+              <span class="dot"></span>
+              <div class="t-head"><b>김유진</b> 커밋 푸시 <span class="t-time">· 오늘 10:42</span></div>
+              <div class="t-body"><code>a3f92c1</code> [DT-142] 최근 12개월 이동평균 피처 추가 · <span class="muted">branch: feature/DT-142-feature-mart</span></div>
+            </li>
+            <li>
+              <span class="dot"></span>
+              <div class="t-head"><b>김유진</b> 수동 로그 <span class="t-time">· 08-21 15:10</span></div>
+              <div class="t-body">CRM 활동 이력에 2025년 4~5월 결측 구간 발견. 영업기획팀에 원본 확인 요청 — 회신 대기가 지연 원인.</div>
+            </li>
+            <li class="git">
+              <span class="dot"></span>
+              <div class="t-head"><b>김유진</b> 커밋 푸시 <span class="t-time">· 08-19 17:55</span></div>
+              <div class="t-body"><code>c11e8b0</code> [DT-142] 베이스라인 XGBoost 학습 스크립트, MAPE 14.2%</div>
+            </li>
+            <li class="stage">
+              <span class="dot"></span>
+              <div class="t-head">단계 전환: <b>EDA → 모델링</b> <span class="t-time">· 08-12 09:30</span></div>
+              <div class="t-body">EDA 산출물: 피처 후보 42개 정리 노트북 · EDA 단계 소요 2일</div>
+            </li>
+            <li class="stage">
+              <span class="dot"></span>
+              <div class="t-head">단계 전환: <b>데이터 준비 → EDA</b> <span class="t-time">· 08-08 10:02</span></div>
+              <div class="t-body">Deliverable: 학습용 피처 마트 v0 (feature_mart.orders_v0) 적재 완료</div>
+            </li>
+            <li class="return">
+              <span class="dot"></span>
+              <div class="t-head">원천 요청 REQ-2026-027 <b>접수 확인 회신</b> <span class="t-time">· 07-28 11:00</span></div>
+              <div class="t-body">요청자(영업본부장)에게 Intake 협의 일정 회신 · 채널: 이메일</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 우: 메타 정보 -->
+      <div>
+        <div class="card">
+          <h2>정보</h2>
+          <table class="tbl">
+            <tbody>
+              <tr><td class="muted small" style="width:96px">담당자</td><td id="info-assignee"><span class="avatar" title="김유진">유진</span> 김유진</td></tr>
+              <tr><td class="muted small">리뷰어</td><td id="info-reviewer">박민수</td></tr>
+              <tr><td class="muted small">시작일</td><td class="id" id="info-start">2026-07-28</td></tr>
+              <tr><td class="muted small">목표 종료일</td><td class="id" id="info-due">2026-08-22 <span class="badge overdue">⏰ +2일</span></td></tr>
+              <tr><td class="muted small">총 경과</td><td>20영업일 (누적)</td></tr>
+              <tr><td class="muted small">Git 브랜치</td><td><code>feature/DT-142-feature-mart</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <h2>Deliverable</h2>
+          <p class="card-sub">완료 판단 기준. 태스크 생성 시 필수 입력.</p>
+          <ul class="small" id="deliverable-list" style="margin:0;padding-left:18px;color:var(--ink-2)">
+            <li>학습용 피처 마트 <code>feature_mart.orders_v1</code> + 명세서</li>
+            <li>베이스라인 모델 (MAPE ≤ 15%) 및 실험 리포트</li>
+            <li>피처 중요도 Top 20 요약 1페이지</li>
+          </ul>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <h2>원천 요청 &amp; 리턴</h2>
+          <table class="tbl">
+            <tbody>
+              <tr><td class="muted small" style="width:96px">요청</td><td><a href="requests.html">REQ-2026-027</a> · <span class="badge ch">✉ 이메일</span></td></tr>
+              <tr><td class="muted small">요청자</td><td>영업본부장 (07-27 접수)</td></tr>
+              <tr><td class="muted small">중간 회신</td><td class="small">07-28 접수 확인 · 08-11 EDA 요약 공유</td></tr>
+              <tr><td class="muted small">최종 리턴</td><td><span class="badge plan">○ 미완료</span> <span class="muted small">태스크 완료 시 회신 여부·일시 기록</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <h2>첨부파일</h2>
+          <div class="file-row"><span class="f-ico">✉</span> 요청 원문_수주예측 문의.eml <span class="f-meta">34KB · 07-27</span></div>
+          <div class="file-row"><span class="f-ico">📄</span> 분석요청서_수주예측_v2.pdf <span class="f-meta">1.2MB · 07-30</span></div>
+          <div class="file-row"><span class="f-ico">📊</span> EDA_요약_수주예측.pdf <span class="f-meta">2.8MB · 08-11</span></div>
+          <div class="dropzone">파일을 끌어다 놓거나 클릭하여 첨부 (이메일 .eml / 요청서 / 산출물)</div>
+        </div>
+      </div>
+    </div>
+    <!-- 태스크 편집 모달 -->
+    <div class="modal-scrim" id="task-edit-modal">
+      <div class="modal">
+        <h2>태스크 편집 — DT-142</h2>
+        <p class="m-sub">모든 변경은 활동 로그에 자동 기록됩니다. 단계 이동은 여기가 아니라 [단계 완료] 버튼 또는 보드에서 합니다.</p>
+        <div class="field">
+          <label>태스크명 <span class="req">*</span></label>
+          <input class="input" id="edit-title" value="수주 예측 피처 마트 구축 + 베이스라인 모델">
+        </div>
+        <div class="form-2col">
+          <div class="field">
+            <label>담당자 <span class="req">*</span></label>
+            <select class="input" id="edit-assignee">
+              <option selected>김유진</option><option>박민수</option><option>이서연</option><option>정다현</option><option>최현우</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>리뷰어</label>
+            <select class="input" id="edit-reviewer">
+              <option>없음</option><option>김유진</option><option selected>박민수</option><option>이서연</option><option>정다현</option><option>최현우</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>스프린트</label>
+            <select class="input" id="edit-sprint">
+              <option selected>Sprint 2026-17</option><option>Sprint 2026-18</option><option>백로그 (미배정)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>우선순위 (프로젝트 상속)</label>
+            <input class="input" value="P0 — 수주 파이프라인 예측 모델" readonly>
+          </div>
+          <div class="field">
+            <label>시작일 <span class="req">*</span></label>
+            <input class="input" type="date" id="edit-start" value="2026-07-28">
+          </div>
+          <div class="field">
+            <label>목표 종료일 <span class="req">*</span></label>
+            <input class="input" type="date" id="edit-due" value="2026-08-22">
+          </div>
+        </div>
+        <div class="field">
+          <label>Deliverable <span class="req">*</span> <span class="hint">(줄 단위 체크리스트)</span></label>
+          <textarea class="input" rows="3" id="edit-deliverable">학습용 피처 마트 feature_mart.orders_v1 + 명세서
+베이스라인 모델 (MAPE ≤ 15%) 및 실험 리포트
+피처 중요도 Top 20 요약 1페이지</textarea>
+        </div>
+        <div class="field">
+          <label>변경 사유</label>
+          <input class="input" id="edit-reason" placeholder="예: 데이터 결측 이슈로 목표일 3일 연장">
+        </div>
+        <div class="m-foot">
+          <button class="btn" onclick="closeModal('task-edit-modal')">취소</button>
+          <button class="btn primary" onclick="applyTaskEdit()">저장</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="assets/app.js"></script>
+<script>
+// 프로토타입 동작 — 실제 구현 시 PUT /api/northpole/tasks/{id} 및 POST /tasks/{id}/logs 호출로 대체
+const CURRENT_USER = "김용진";
+
+function esc(s) {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+function nowLabel() {
+  const d = new Date();
+  return `오늘 ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+}
+function avatarOf(name) {
+  return `<span class="avatar" title="${name}">${name.slice(1)}</span> ${name}`;
+}
+function prependLog(cls, headHtml, bodyHtml) {
+  const li = document.createElement("li");
+  if (cls) li.className = cls;
+  li.innerHTML =
+    `<span class="dot"></span>
+     <div class="t-head">${headHtml} <span class="t-time">· ${nowLabel()}</span></div>` +
+    (bodyHtml ? `<div class="t-body">${bodyHtml}</div>` : "");
+  const ul = document.getElementById("task-timeline");
+  ul.insertBefore(li, ul.firstElementChild);
+}
+
+// --- 활동 로그 추가 ---
+function showPickedFile() {
+  const f = document.getElementById("log-file").files[0];
+  document.getElementById("log-file-name").textContent = f ? `📎 ${f.name}` : "";
+}
+function addTaskLog() {
+  const ta = document.getElementById("log-input");
+  const text = ta.value.trim();
+  const fileInput = document.getElementById("log-file");
+  const file = fileInput.files[0];
+  if (!text && !file) { ta.focus(); return; }
+  let body = esc(text);
+  if (file) body += `${body ? "<br>" : ""}📎 첨부: ${esc(file.name)}`;
+  prependLog("", `<b>${CURRENT_USER}</b> 수동 로그`, body);
+  ta.value = ""; fileInput.value = "";
+  document.getElementById("log-file-name").textContent = "";
+}
+
+// --- 태스크 편집 저장 ---
+function applyTaskEdit() {
+  const title = document.getElementById("edit-title").value.trim();
+  if (!title) { document.getElementById("edit-title").focus(); return; }
+  const deliverable = document.getElementById("edit-deliverable").value.trim();
+  if (!deliverable) { document.getElementById("edit-deliverable").focus(); return; }
+  const assignee = document.getElementById("edit-assignee").value;
+  const reviewer = document.getElementById("edit-reviewer").value;
+  const start = document.getElementById("edit-start").value;
+  const due = document.getElementById("edit-due").value;
+  const reason = document.getElementById("edit-reason").value.trim();
+
+  document.getElementById("task-title").textContent = title;
+  document.getElementById("info-assignee").innerHTML = avatarOf(assignee);
+  document.getElementById("info-reviewer").textContent = reviewer;
+  document.getElementById("info-start").textContent = start;
+  const overdue = due < "2026-08-24"; // 프로토타입 기준일
+  document.getElementById("info-due").innerHTML =
+    due + (overdue ? ' <span class="badge overdue">⏰ 초과</span>' : "");
+  document.getElementById("deliverable-list").innerHTML =
+    deliverable.split("\n").filter(Boolean).map(l => `<li>${esc(l)}</li>`).join("");
+
+  prependLog("", `<b>${CURRENT_USER}</b> 태스크 정보 수정`,
+    `담당 ${esc(assignee)} · 기간 ${start} ~ ${due}` + (reason ? ` · 사유: ${esc(reason)}` : ""));
+  closeModal("task-edit-modal");
+}
+
+// --- 단계 완료 (프로토타입: 로그만 기록) ---
+function completeStage() {
+  const note = prompt("모델링 단계 산출물 요약을 입력하세요 (StageLog에 기록됩니다):");
+  if (note === null) return;
+  prependLog("stage", `단계 전환: <b>모델링 → 파이프라인</b>`,
+    `모델링 단계 소요 12일` + (note.trim() ? ` · 산출물: ${esc(note.trim())}` : ""));
+}
+</script>
+</body>
+</html>

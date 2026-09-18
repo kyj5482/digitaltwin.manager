@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>대시보드 — AI/Data North Pole</title>
+<link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <div class="topbar">
+      <div class="crumbs">AI/Data North Pole / <b>대시보드</b></div>
+      <div class="spacer"></div>
+      <button class="theme-toggle" onclick="toggleTheme()">☀ / ☾ 테마</button>
+    </div>
+
+    <div class="page-head">
+      <div>
+        <h1>대시보드</h1>
+        <div class="sub">Product → Goal → Milestone → Project → Sprint → Task. 데이터는 이 저장소의 <code>data/db.json</code>에 저장되며 매일 자동으로 git 커밋됩니다.</div>
+      </div>
+    </div>
+
+    <div class="kpi-row" id="kpis"></div>
+
+    <div class="grid cols-2" style="margin-top:16px">
+      <div class="card">
+        <h2>KPI 달성 현황</h2>
+        <p class="card-sub">영역(재무·사업·지속경영)별 가중 달성률 — 방향(높을수록/낮을수록 좋음) 반영, 미측정 지표는 집계에서 제외.</p>
+        <table class="tbl" id="kpi-tbl"><thead><tr><th>영역</th><th>달성률</th><th>상태</th><th class="num">측정</th></tr></thead><tbody></tbody></table>
+        <p class="muted small" style="margin:8px 0 0"><a href="kpi.html">KPI 모니터링 열기 →</a></p>
+      </div>
+      <div class="card">
+        <h2>단계별 평균 소요시간</h2>
+        <p class="card-sub">완료된 단계 전환 기록 기준 평균. 가장 오래 걸리는 단계가 병목입니다.</p>
+        <div class="filter-row" style="margin:0 0 12px">
+          <select class="input" id="c-days" onchange="load()">
+            <option value="30">최근 30일</option><option value="90" selected>최근 90일</option><option value="180">최근 180일</option></select>
+          <select class="input" id="c-dept" onchange="load()"><option value="">부문: 전체</option></select>
+        </div>
+        <div id="stage-chart"></div>
+      </div>
+      <div class="card">
+        <h2>부문별 프로젝트 현황</h2>
+        <div class="chart-legend">
+          <span><span class="sw" style="background:var(--series-3)"></span>완료</span>
+          <span><span class="sw" style="background:var(--accent)"></span>진행중</span>
+          <span><span class="sw" style="background:var(--series-neutral)"></span>계획</span>
+        </div>
+        <div id="dept-chart"></div>
+        <p class="muted small" id="dept-note" style="margin:8px 0 0"></p>
+      </div>
+      <div class="card">
+        <h2>병목 태스크</h2>
+        <p class="card-sub">현재 단계 체류일이 긴 순서. 행을 클릭하면 해당 프로젝트 보드로 이동합니다.</p>
+        <table class="tbl" id="btl-tbl"><thead><tr><th>태스크</th><th>단계</th><th class="num">체류</th><th>담당</th></tr></thead><tbody></tbody></table>
+      </div>
+      <div class="card">
+        <h2>최근 활동</h2>
+        <p class="card-sub">태스크·요청의 활동 로그 최신순 (git 커밋/단계 전환/리턴 구분).</p>
+        <ul class="timeline" id="act-timeline" style="max-height:300px;overflow-y:auto"></ul>
+      </div>
+      <div class="card">
+        <h2>git 자동 커밋</h2>
+        <div class="card-sub" id="git-card">불러오는 중…</div>
+        <div style="margin-top:10px"><button class="btn primary" onclick="commitNow().then(loadGit)">지금 커밋·푸시 실행</button></div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="assets/i18n-dict.js"></script>
+<script src="assets/i18n.js"></script>
+<script src="assets/app.js"></script>
+<script>
+async function load() {
+  const s = await api("state");
+  const doing = s.projects.filter(p => p.status === "진행중").length;
+  const tot = s.tasks.length, done = s.tasks.filter(t => t.done).length;
+  const carried = s.tasks.filter(t => t.carry > 0 && !t.done).length;
+  const inActiveSp = s.tasks.filter(t =>
+    s.sprints.some(sp => sp.projectId === t.projectId && sp.status === "active" && sp.no === t.sprintNo));
+  const spDone = inActiveSp.filter(t => t.done).length;
+  const waiting = s.requests.filter(r => r.status === "접수" || r.status === "검토중").length;
+  document.getElementById("kpis").innerHTML = [
+    ["진행중 프로젝트", doing + "개", `전체 ${s.projects.length}개`],
+    ["활성 태스크", inActiveSp.filter(t => !t.done).length + "건", "진행중 스프린트 기준"],
+    ["현재 스프린트 완료율", inActiveSp.length ? Math.round(spDone / inActiveSp.length * 100) + "%" : "-", `${spDone} / ${inActiveSp.length}`],
+    ["이월 태스크", carried + "건", "반복 이월 추적 대상"],
+    ["대기중 요청", waiting + "건", '<a href="requests.html">요청 Intake 열기</a>'],
+  ].map(([l, v, d]) => `<div class="stat"><div class="label">${l}</div><div class="value">${v}</div><div class="delta">${d}</div></div>`).join("");
+  // KPI 달성 현황 (FR-160): 영역(재무/사업/지속경영)별 가중 달성률 + 신호등 — 상세는 kpi.html
+  const KPI_LAMP = { good: '<span class="badge done">● 달성</span>', warn: '<span class="badge p2">◐ 주의</span>',
+                     crit: '<span class="badge p0">⚠ 위험</span>', na: '<span class="badge plan">○ 미측정</span>' };
+  const KPI_COLOR = { good: "var(--st-good)", warn: "var(--st-warning)", crit: "var(--st-critical)", na: "var(--series-neutral)" };
+  document.querySelector("#kpi-tbl tbody").innerHTML = s.kpiAreas.map(a => {
+    const score = a.score == null ? "—" : Math.round(a.score * 100) + "%";
+    const width = a.score == null ? 0 : Math.min(100, Math.round(a.score * 100));
+    return `<tr>
+      <td><a class="row-link" href="kpi.html">${a.area}</a></td>
+      <td><div class="meter" title="${a.area} — 가중 달성률 ${score}"><div class="track"><div class="fill" style="width:${width}%;background:${KPI_COLOR[a.lamp]}"></div></div><span class="pct">${score}</span></div></td>
+      <td>${a.total ? KPI_LAMP[a.lamp] : '<span class="muted small">지표 미정</span>'}</td>
+      <td class="num small">${a.measured} / ${a.total}</td></tr>`;
+  }).join("");
+  // 단계별 평균 소요시간 (FR-110/111): 단계 전환 로그의 days 필드 집계
+  const dsel = document.getElementById("c-dept");
+  const keep = dsel.value;
+  dsel.innerHTML = '<option value="">부문: 전체</option>' + s.products.map(p => `<option>${p.name}</option>`).join("");
+  dsel.value = keep;
+  const cutoff = new Date(Date.now() - (+document.getElementById("c-days").value) * 864e5).toISOString();
+  const deptOf = t => (s.projects.find(p => p.id === t.projectId) || {}).dept || "";
+  const agg = s.stages.map(() => ({ sum: 0, n: 0 }));
+  for (const t of s.tasks) {
+    if (dsel.value && deptOf(t) !== dsel.value) continue;
+    for (const l of (t.logs || []))
+      if (l.days != null && l.stageIdx != null && l.at >= cutoff) { agg[l.stageIdx].sum += l.days; agg[l.stageIdx].n++; }
+  }
+  const avgs = agg.map(a => a.n ? a.sum / a.n : null);
+  const maxAvg = Math.max(0, ...avgs.filter(v => v != null));
+  document.getElementById("stage-chart").innerHTML = avgs.some(v => v != null)
+    ? s.stages.map((st, i) => {
+        const v = avgs[i];
+        return `<div class="hbar-row" title="${v != null ? `표본 ${agg[i].n}건` : "표본 없음"}">
+          <span class="h-label">${st}</span>
+          <span class="h-track">${v != null ? `<span class="h-fill" style="width:${maxAvg ? Math.max(2, v / maxAvg * 100) : 2}%"></span>` : ""}</span>
+          <span class="h-val">${v != null ? v.toFixed(1) + "일" : '<span class="muted">—</span>'}${v != null && v === maxAvg && maxAvg > 0 ? '<span class="bneck">병목</span>' : ""}</span>
+        </div>`;
+      }).join("")
+    : '<p class="muted small" style="margin:16px 0">선택한 기간·부문에 완료된 단계 전환 기록이 아직 없습니다.<br>보드에서 태스크를 다음 단계로 이동하면 소요시간이 쌓입니다.</p>';
+  // 부문별 프로젝트 현황 스택 바 (FR-120): 완료/진행중/계획, 보류는 제외
+  const held = s.projects.filter(p => p.status === "보류").length;
+  const rows = s.products.map(pr => {
+    const rel = s.projects.filter(p => p.dept === pr.name);
+    return { name: pr.name,
+      done: rel.filter(p => p.status === "완료").length,
+      doing: rel.filter(p => p.status === "진행중").length,
+      plan: rel.filter(p => p.status === "계획").length };
+  });
+  const maxTot = Math.max(1, ...rows.map(r => r.done + r.doing + r.plan));
+  document.getElementById("dept-chart").innerHTML = rows.map(r => {
+    const tot = r.done + r.doing + r.plan;
+    const seg = (cls, n) => n ? `<span class="seg ${cls}" style="flex:${n} 1 0">${n}</span>` : "";
+    return `<div class="stack-row">
+      <a class="s-label row-link" href="projects.html?dept=${encodeURIComponent(r.name)}">${r.name}</a>
+      <div class="stack-bar" style="width:${tot / maxTot * 100}%" title="${r.name} — 완료 ${r.done} · 진행중 ${r.doing} · 계획 ${r.plan}">
+        ${seg("done", r.done)}${seg("doing", r.doing)}${seg("plan", r.plan)}
+      </div>
+      <span class="s-total">${tot}</span>
+    </div>`;
+  }).join("");
+  document.getElementById("dept-note").textContent = held ? `※ 보류 ${held}건은 합계에서 제외` : "";
+  // 병목 태스크 (FR-130): 현재 단계 체류일 상위
+  const stay = t => Math.max(1, Math.round((Date.now() - new Date(t.stageAt + "T00:00:00")) / 864e5));
+  document.querySelector("#btl-tbl tbody").innerHTML =
+    s.tasks.filter(t => !t.done && t.sprintNo != null).sort((a, b) => stay(b) - stay(a)).slice(0, 6).map(t => `
+      <tr style="cursor:pointer" onclick="location.href='sprint.html?project=${t.projectId}'">
+        <td><span class="id">${t.id}</span> <span class="small">${t.title}</span></td>
+        <td class="small">${s.stages[t.stage]}</td>
+        <td class="num"><b style="${stay(t) >= 7 ? "color:var(--st-critical)" : ""}">${stay(t)}일${stay(t) >= 7 ? " ⚠" : ""}</b></td>
+        <td class="small">${t.owner}</td></tr>`).join("") ||
+    '<tr><td colspan="4" class="muted small" style="text-align:center;padding:16px">진행중 태스크가 없습니다</td></tr>';
+  // 최근 활동 (FR-140): 태스크·요청 로그 병합
+  const acts = [];
+  for (const t of s.tasks) for (const l of (t.logs || [])) acts.push({ ...l, src: t.id });
+  for (const r of s.requests) for (const l of (r.logs || [])) acts.push({ ...l, src: r.id });
+  acts.sort((a, b) => (b.at || "").localeCompare(a.at || ""));
+  document.getElementById("act-timeline").innerHTML = acts.slice(0, 12).map(l => `
+    <li class="${l.type === "stage" ? "stage" : (l.type === "return" || l.type === "회신 발송" || l.type === "전화 회신") ? "return" : ""}">
+      <span class="dot"></span>
+      <div class="t-head"><b>${l.src}</b> <span class="t-time">· ${(l.at || "").slice(5, 16).replace("T", " ")}</span></div>
+      <div class="t-body">${l.text}</div>
+    </li>`).join("") ||
+    '<li><span class="dot"></span><div class="t-body muted small">아직 활동 기록이 없습니다. 태스크 단계 전환·로그, 요청 처리 이력이 여기에 쌓입니다.</div></li>';
+}
+async function loadGit() {
+  const g = await api("git/status");
+  document.getElementById("git-card").innerHTML =
+    `브랜치 <b>${g.branch}</b> · 리모트: <b>${g.remotes.length ? g.remotes.join(", ") : "미설정 — README의 GitHub/GitLab 설정 참고"}</b><br>` +
+    `데이터 변경: ${g.dirty ? `<b>${g.changes}건 대기</b>` : "없음"} · 자동 커밋 ${g.config?.enabled ? `매일 ${g.config.time}` : "꺼짐"}<br>` +
+    `최근 커밋: ${g.lastLog || "없음"}<br>` +
+    `최근 자동 실행: ${g.lastAuto?.at ? g.lastAuto.at.slice(0, 16).replace("T", " ") + " — " + g.lastAuto.result : "이번 세션에서 아직 없음"}`;
+}
+load(); loadGit();
+</script>
+</body>
+</html>

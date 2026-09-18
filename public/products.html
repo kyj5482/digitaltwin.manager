@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Product &amp; Goal — AI/Data North Pole</title>
+<link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main">
+    <div class="topbar">
+      <div class="crumbs">AI/Data North Pole / <b>Product &amp; Goal</b></div>
+      <div class="spacer"></div>
+      <button class="theme-toggle" onclick="toggleTheme()">☀ / ☾ 테마</button>
+    </div>
+
+    <div class="page-head">
+      <div>
+        <h1>Product &amp; Goal</h1>
+        <div class="sub">부문별 Goal과 마일스톤. 마일스톤 이름을 클릭하면 관련 프로젝트 목록으로 이동합니다.</div>
+      </div>
+      <div class="actions">
+        <button class="btn" onclick="openNewProd()">+ 새 Product</button>
+        <button class="btn primary" onclick="openGoal()">✎ Goal 편집</button>
+      </div>
+    </div>
+
+    <div class="grid cols-2" id="prod-grid"></div>
+
+    <!-- Goal 편집 모달 -->
+    <div class="modal-scrim" id="goal-modal">
+      <div class="modal">
+        <h2 id="g-title">Goal 편집</h2>
+        <p class="m-sub">모든 변경은 이력으로 남아 연말 방향성 결정의 근거가 됩니다.</p>
+        <div class="field"><label>Product (부문) <span class="req">*</span></label>
+          <select class="input" id="g-prod" onchange="loadGoal(this.value)"></select></div>
+        <div class="field"><label>Goal 문장 <span class="req">*</span></label>
+          <textarea class="input" rows="3" id="g-text"></textarea></div>
+        <div class="form-2col">
+          <div class="field"><label>상태</label>
+            <select class="input" id="g-status"><option value="draft">초안</option><option value="shaping">구체화중</option><option value="fixed">확정</option></select></div>
+          <div class="field"><label>오너</label><input class="input" id="g-owner"></div>
+        </div>
+        <div class="field"><label>측정 지표 (KPI)</label><input class="input" id="g-kpi"></div>
+        <div class="field"><label>변경 사유 <span class="req">*</span></label><input class="input" id="g-why" placeholder="예: 1차 프로젝트 결과 반영해 KPI 구체화"></div>
+        <div class="m-foot">
+          <button class="btn" onclick="closeModal('goal-modal')">취소</button>
+          <button class="btn primary" onclick="saveGoal()">저장</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 새 Product 모달 -->
+    <div class="modal-scrim" id="prod-modal">
+      <div class="modal" style="width:520px">
+        <h2>새 Product (부문)</h2>
+        <p class="m-sub">부문을 신설하고 Goal은 초안부터 시작합니다. 마일스톤은 생성 후 카드에서 추가하세요.</p>
+        <div class="form-2col">
+          <div class="field"><label>부문명 <span class="req">*</span></label><input class="input" id="np-name" placeholder="예: HR"></div>
+          <div class="field"><label>오너 <span class="req">*</span></label><input class="input" id="np-owner"></div>
+        </div>
+        <div class="field"><label>Goal 문장 (초안)</label>
+          <textarea class="input" rows="3" id="np-goal" placeholder="이 부문이 데이터로 이루려는 것 — 나중에 구체화 가능"></textarea></div>
+        <div class="field"><label>측정 지표 (KPI · 미정 허용)</label><input class="input" id="np-kpi"></div>
+        <div class="m-foot">
+          <button class="btn" onclick="closeModal('prod-modal')">취소</button>
+          <button class="btn primary" onclick="createProd()">Product 생성</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Goal 변경 이력 모달 -->
+    <div class="modal-scrim" id="hist-modal">
+      <div class="modal" style="width:640px">
+        <h2 id="h-title">Goal 변경 이력</h2>
+        <p class="m-sub">누가 · 언제 · 무엇을 · 왜 바꿨는지 — 연말 방향성 결정의 근거입니다.</p>
+        <ul class="timeline" id="h-timeline" style="max-height:320px;overflow-y:auto"></ul>
+        <div class="m-foot"><button class="btn" onclick="closeModal('hist-modal')">닫기</button></div>
+      </div>
+    </div>
+
+    <!-- 마일스톤 추가/수정 모달 -->
+    <div class="modal-scrim" id="ms-modal">
+      <div class="modal" style="width:520px">
+        <h2 id="m-title">마일스톤</h2>
+        <p class="m-sub">진행률은 소속 프로젝트의 태스크 완료율에서 자동 계산됩니다.</p>
+        <div class="form-2col">
+          <div class="field"><label>코드</label><input class="input" id="m-code" readonly></div>
+          <div class="field"><label>기한 <span class="req">*</span></label>
+            <select class="input" id="m-due"><option>2026-Q1</option><option>2026-Q2</option><option selected>2026-Q3</option><option>2026-Q4</option></select></div>
+        </div>
+        <div class="field"><label>마일스톤명 <span class="req">*</span></label><input class="input" id="m-name"></div>
+        <div class="field"><label>상태</label>
+          <select class="input" id="m-hold"><option value="">진행</option><option value="hold">보류</option></select></div>
+        <div class="m-foot">
+          <button class="btn" onclick="closeModal('ms-modal')">취소</button>
+          <button class="btn primary" onclick="saveMs()">저장</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="assets/i18n-dict.js"></script>
+<script src="assets/i18n.js"></script>
+<script src="assets/app.js"></script>
+<script>
+let S = null;
+const ST_BADGE = { fixed: '<span class="badge goal-fixed">✓ Goal 확정</span>',
+  shaping: '<span class="badge goal-shaping">● 구체화중</span>', draft: '<span class="badge goal-draft">초안</span>' };
+
+async function load() {
+  S = await api("state");
+  document.getElementById("prod-grid").innerHTML = S.products.map((p, pi) => {
+    const rel = S.projects.filter(x => x.dept === p.name);
+    return `
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:8px">
+        <h2 style="margin:0">${p.name}</h2>${ST_BADGE[p.status] || ""}
+        <span class="muted small" style="margin-left:auto">오너: ${p.owner}</span>
+        <button class="btn sm" onclick="openHist('${p.name}')" title="Goal 변경 이력">🕘 이력${(p.history || []).length ? " " + p.history.length : ""}</button>
+        <button class="btn sm" onclick="openGoal('${p.name}')">✎ Goal 편집</button>
+      </div>
+      <p class="card-sub" style="margin-top:8px"><b>2026 Goal</b> — ${p.goal}</p>
+      ${p.kpi ? `<p class="card-sub">KPI: ${p.kpi}</p>` : ""}
+      <table class="tbl">
+        <thead><tr><th>마일스톤 <span class="muted small" style="font-weight:400">(클릭=관련 프로젝트)</span></th><th>기한</th><th>진행</th><th></th></tr></thead>
+        <tbody>${p.ms.map((m, mi) => `
+          <tr><td><a class="row-link" href="projects.html?dept=${encodeURIComponent(p.name)}&ms=${m.code}">${m.code}. ${m.name}</a>
+              ${m.hold ? ' <span class="badge hold">⏸ 보류</span>' : ""}
+              <span class="muted small">· 프로젝트 ${m.projects}개</span></td>
+            <td class="id">${m.due}</td>
+            <td><div class="meter"><div class="track"><div class="fill" style="width:${m.pct}%"></div></div><span class="pct">${m.pct}%</span></div></td>
+            <td style="text-align:right"><button class="btn sm" onclick="openMs('${p.name}','${m.code}')">✎</button></td></tr>`).join("")}
+        </tbody>
+      </table>
+      <div class="axis-note" style="display:flex;align-items:center">
+        프로젝트 ${rel.length}개 · <a href="projects.html?dept=${encodeURIComponent(p.name)}" style="margin-left:4px">프로젝트 보기</a>
+        <button class="btn sm" style="margin-left:auto" onclick="openMs('${p.name}', null)">+ 마일스톤</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function openGoal(name) {
+  if (!S) return alert("데이터를 불러오는 중입니다. 잠시 후 다시 시도하세요.");
+  document.getElementById("g-prod").innerHTML =
+    S.products.map(p => `<option ${p.name === name ? "selected" : ""}>${p.name}</option>`).join("");
+  loadGoal(name || S.products[0].name);
+  openModal("goal-modal");
+}
+function loadGoal(name) {
+  const p = S.products.find(p => p.name === name);
+  document.getElementById("g-title").textContent = `Goal 편집 — ${p.name} · 2026`;
+  document.getElementById("g-text").value = p.goal;
+  document.getElementById("g-status").value = p.status;
+  document.getElementById("g-owner").value = p.owner;
+  document.getElementById("g-kpi").value = p.kpi || "";
+  document.getElementById("g-why").value = "";
+}
+async function saveGoal() {
+  const why = document.getElementById("g-why").value.trim();
+  if (!why) { alert("변경 사유를 입력해야 저장됩니다 (goal_history 기록용)."); document.getElementById("g-why").focus(); return; }
+  await api("goal/save", {
+    product: document.getElementById("g-prod").value,
+    goal: document.getElementById("g-text").value.trim(),
+    status: document.getElementById("g-status").value,
+    owner: document.getElementById("g-owner").value.trim(),
+    kpi: document.getElementById("g-kpi").value.trim(), why });
+  closeModal("goal-modal"); load(); refreshGitChip();
+}
+
+function openNewProd() {
+  if (!S) return alert("데이터를 불러오는 중입니다. 잠시 후 다시 시도하세요.");
+  ["np-name", "np-owner", "np-goal", "np-kpi"].forEach(id => document.getElementById(id).value = "");
+  openModal("prod-modal");
+}
+async function createProd() {
+  const name = document.getElementById("np-name").value.trim();
+  const owner = document.getElementById("np-owner").value.trim();
+  if (!name || !owner) return alert("부문명과 오너는 필수입니다.");
+  await api("product/create", { name, owner,
+    goal: document.getElementById("np-goal").value.trim(),
+    kpi: document.getElementById("np-kpi").value.trim() });
+  closeModal("prod-modal"); load(); refreshGitChip();
+}
+
+function openHist(name) {
+  const p = S.products.find(x => x.name === name);
+  document.getElementById("h-title").textContent = `Goal 변경 이력 — ${name}`;
+  document.getElementById("h-timeline").innerHTML = (p.history || []).slice().reverse().map(h => `
+    <li>
+      <span class="dot"></span>
+      <div class="t-head"><b>변경</b> <span class="t-time">· ${(h.at || "").slice(0, 16).replace("T", " ")}</span></div>
+      <div class="t-body">사유: ${h.why || "(미기재)"}<br><span class="muted">변경 전: ${h.before || "(없음)"}</span></div>
+    </li>`).join("") ||
+    '<li><span class="dot"></span><div class="t-body muted small">아직 변경 이력이 없습니다.</div></li>';
+  openModal("hist-modal");
+}
+
+let msCtx = null;
+function openMs(product, code) {
+  if (!S) return alert("데이터를 불러오는 중입니다. 잠시 후 다시 시도하세요.");
+  msCtx = { product, code };
+  const p = S.products.find(x => x.name === product);
+  const m = code ? p.ms.find(x => x.code === code) : null;
+  document.getElementById("m-title").textContent = m ? `마일스톤 수정 — ${product} ${code}` : `마일스톤 추가 — ${product}`;
+  document.getElementById("m-code").value = m ? m.code : "M" + (p.ms.length + 1) + " (자동)";
+  document.getElementById("m-name").value = m ? m.name : "";
+  document.getElementById("m-due").value = m ? m.due : "2026-Q3";
+  document.getElementById("m-hold").value = m && m.hold ? "hold" : "";
+  openModal("ms-modal");
+}
+async function saveMs() {
+  const name = document.getElementById("m-name").value.trim();
+  if (!name) { alert("마일스톤명은 필수입니다."); document.getElementById("m-name").focus(); return; }
+  await api("milestone/save", { product: msCtx.product, code: msCtx.code, name,
+    due: document.getElementById("m-due").value,
+    hold: document.getElementById("m-hold").value === "hold" });
+  closeModal("ms-modal"); load(); refreshGitChip();
+}
+load();
+</script>
+</body>
+</html>

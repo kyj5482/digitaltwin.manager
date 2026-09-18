@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>대시보드 (North Pole) — AI/Data North Pole 프로토타입</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="crumbs">Digital Twin Manager / <b>AI/Data North Pole</b> / 대시보드</div>
+      <div class="spacer"></div>
+      <button class="theme-toggle" onclick="toggleTheme()">☀ / ☾ 테마</button>
+      <span class="avatar" title="김용진">YK</span>
+    </div>
+
+    <div class="page-head">
+      <div>
+        <h1>North Pole 대시보드</h1>
+        <div class="sub">전 부문의 데이터 기반 의사결정 진행 현황을 한 화면에서 투명하게 공유합니다. · 기준: 2026-08-24</div>
+      </div>
+      <div class="actions">
+        <a class="btn" href="requests.html">✉ 요청 접수함</a>
+        <a class="btn primary" href="projects.html">+ 새 프로젝트</a>
+      </div>
+    </div>
+
+    <!-- KPI -->
+    <div class="kpi-row">
+      <div class="stat">
+        <div class="label">진행중 프로젝트</div>
+        <div class="value">12</div>
+        <div class="delta up">▲ 2 vs 지난달</div>
+      </div>
+      <div class="stat">
+        <div class="label">활성 태스크</div>
+        <div class="value">34</div>
+        <div class="delta">스프린트 2026-17 기준</div>
+      </div>
+      <div class="stat">
+        <div class="label">이번 스프린트 완료율</div>
+        <div class="value">68%</div>
+        <div class="delta up">▲ 6%p vs 직전 스프린트</div>
+      </div>
+      <div class="stat">
+        <div class="label">평균 단계 리드타임</div>
+        <div class="value">4.2일</div>
+        <div class="delta down">▼ 0.5일 단축 목표 미달</div>
+      </div>
+      <div class="stat">
+        <div class="label">대기중 요청</div>
+        <div class="value">7건</div>
+        <div class="delta">최장 대기 3일 (REQ-2026-041)</div>
+      </div>
+    </div>
+
+    <div class="grid cols-2">
+      <!-- 단계별 평균 소요시간: 단일 시리즈 → 단일 색, 범례 없음, 값 직접 라벨 -->
+      <div class="card">
+        <h2>단계별 평균 소요시간</h2>
+        <p class="card-sub">최근 90일 완료 태스크 기준 · 어느 단계에서 오래 걸리는지 파악해 병목을 개선합니다.</p>
+        <div class="chart">
+          <div class="hbar-row"><div class="cat">Intake 협의</div>
+            <div class="hbar-track" data-tip="Intake 협의|평균 2.1일 · 21건 표본">
+              <div class="hbar" style="width:23%"></div><span class="hbar-val" style="left:23%">2.1일</span></div></div>
+          <div class="hbar-row"><div class="cat">데이터 준비</div>
+            <div class="hbar-track" data-tip="데이터 준비|평균 6.8일 · 19건 표본">
+              <div class="hbar" style="width:76%"></div><span class="hbar-val" style="left:76%">6.8일</span></div></div>
+          <div class="hbar-row"><div class="cat">EDA</div>
+            <div class="hbar-track" data-tip="EDA (탐색적 데이터 분석)|평균 4.5일 · 19건 표본">
+              <div class="hbar" style="width:50%"></div><span class="hbar-val" style="left:50%">4.5일</span></div></div>
+          <div class="hbar-row"><div class="cat">모델링</div>
+            <div class="hbar-track" data-tip="모델링|평균 7.9일 · 14건 표본 — 최대 병목">
+              <div class="hbar" style="width:88%"></div><span class="hbar-val" style="left:88%">7.9일 · 병목</span></div></div>
+          <div class="hbar-row"><div class="cat">파이프라인</div>
+            <div class="hbar-track" data-tip="파이프라인 구축|평균 3.4일 · 12건 표본">
+              <div class="hbar" style="width:38%"></div><span class="hbar-val" style="left:38%">3.4일</span></div></div>
+          <div class="hbar-row"><div class="cat">서비스 개발</div>
+            <div class="hbar-track" data-tip="서비스 개발|평균 5.2일 · 11건 표본">
+              <div class="hbar" style="width:58%"></div><span class="hbar-val" style="left:58%">5.2일</span></div></div>
+        </div>
+        <div class="axis-note">단위: 일(영업일) · StageLog의 단계 진입~완료 시각으로 자동 집계</div>
+      </div>
+
+      <!-- 부문별 프로젝트 현황: 3시리즈 스택 → 범례 + 세그먼트 값 라벨 + 2px 표면 갭 -->
+      <div class="card">
+        <h2>부문(Product)별 프로젝트 현황</h2>
+        <p class="card-sub">2026년 Goal에 연결된 프로젝트의 상태 분포입니다.</p>
+        <div class="legend">
+          <span class="key"><span class="sw" style="background:var(--series-3)"></span> 완료</span>
+          <span class="key"><span class="sw" style="background:var(--accent)"></span> 진행중</span>
+          <span class="key"><span class="sw" style="background:var(--series-neutral)"></span> 계획</span>
+        </div>
+        <div class="chart">
+          <div class="stack-row"><div class="cat">Sales</div>
+            <div class="stack">
+              <div class="seg s-done"  style="width:44%" data-tip="Sales · 완료|4개 프로젝트"><span class="seg-val">4</span></div>
+              <div class="seg s-doing" style="width:33%" data-tip="Sales · 진행중|3개 프로젝트"><span class="seg-val">3</span></div>
+              <div class="seg s-plan"  style="width:22%" data-tip="Sales · 계획|2개 프로젝트"><span class="seg-val">2</span></div>
+            </div><div class="total">9</div></div>
+          <div class="stack-row"><div class="cat">Finance</div>
+            <div class="stack">
+              <div class="seg s-done"  style="width:22%" data-tip="Finance · 완료|2개 프로젝트"><span class="seg-val">2</span></div>
+              <div class="seg s-doing" style="width:22%" data-tip="Finance · 진행중|2개 프로젝트"><span class="seg-val">2</span></div>
+              <div class="seg s-plan"  style="width:11%" data-tip="Finance · 계획|1개 프로젝트"><span class="seg-val">1</span></div>
+            </div><div class="total">5</div></div>
+          <div class="stack-row"><div class="cat">Marketing</div>
+            <div class="stack">
+              <div class="seg s-done"  style="width:33%" data-tip="Marketing · 완료|3개 프로젝트"><span class="seg-val">3</span></div>
+              <div class="seg s-doing" style="width:22%" data-tip="Marketing · 진행중|2개 프로젝트"><span class="seg-val">2</span></div>
+              <div class="seg s-plan"  style="width:22%" data-tip="Marketing · 계획|2개 프로젝트"><span class="seg-val">2</span></div>
+            </div><div class="total">7</div></div>
+          <div class="stack-row"><div class="cat">Product Planning</div>
+            <div class="stack">
+              <div class="seg s-done"  style="width:11%" data-tip="Product Planning · 완료|1개 프로젝트"><span class="seg-val">1</span></div>
+              <div class="seg s-doing" style="width:22%" data-tip="Product Planning · 진행중|2개 프로젝트"><span class="seg-val">2</span></div>
+              <div class="seg s-plan"  style="width:33%" data-tip="Product Planning · 계획|3개 프로젝트"><span class="seg-val">3</span></div>
+            </div><div class="total">6</div></div>
+          <div class="stack-row"><div class="cat">Service</div>
+            <div class="stack">
+              <div class="seg s-done"  style="width:33%" data-tip="Service · 완료|3개 프로젝트"><span class="seg-val">3</span></div>
+              <div class="seg s-doing" style="width:33%" data-tip="Service · 진행중|3개 프로젝트"><span class="seg-val">3</span></div>
+              <div class="seg s-plan"  style="width:11%" data-tip="Service · 계획|1개 프로젝트"><span class="seg-val">1</span></div>
+            </div><div class="total">7</div></div>
+        </div>
+        <div class="axis-note">보류 프로젝트 1건(마케팅 고객 세그먼테이션)은 별도 집계 · <a href="projects.html">전체 목록 보기</a></div>
+      </div>
+    </div>
+
+    <div class="grid cols-2" style="margin-top:16px">
+      <!-- 병목 태스크 -->
+      <div class="card">
+        <h2>단계 체류 상위 태스크 (병목 후보)</h2>
+        <p class="card-sub">현재 단계에 머무른 일수가 해당 단계 평균의 1.5배를 넘는 태스크입니다.</p>
+        <table class="tbl">
+          <thead><tr><th>태스크</th><th>프로젝트</th><th>현재 단계</th><th class="num">체류</th><th>담당</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><a class="row-link" href="task-detail.html">DT-142 수주 예측 피처 마트 구축</a></td>
+              <td class="small">수주 파이프라인 예측 모델</td>
+              <td><span class="badge doing">● 모델링</span></td>
+              <td class="num"><b style="color:var(--st-critical)">12일</b></td>
+              <td><span class="avatar" title="김유진">유진</span></td>
+            </tr>
+            <tr>
+              <td><a class="row-link" href="task-detail.html">DT-155 결산 데이터 정합성 검증</a></td>
+              <td class="small">월 결산 자동화 및 이상 탐지</td>
+              <td><span class="badge doing">● 데이터 준비</span></td>
+              <td class="num"><b style="color:var(--st-critical)">11일</b></td>
+              <td><span class="avatar" title="박민수">민수</span></td>
+            </tr>
+            <tr>
+              <td><a class="row-link" href="task-detail.html">DT-149 캠페인 비용 데이터 연동</a></td>
+              <td class="small">캠페인 ROI 대시보드</td>
+              <td><span class="badge doing">● 데이터 준비</span></td>
+              <td class="num">9일</td>
+              <td><span class="avatar" title="이서연">서연</span></td>
+            </tr>
+            <tr>
+              <td><a class="row-link" href="task-detail.html">DT-131 VOC 분류 모델 재학습</a></td>
+              <td class="small">AS 접수 VOC 분류 자동화</td>
+              <td><span class="badge doing">● 파이프라인</span></td>
+              <td class="num">7일</td>
+              <td><span class="avatar" title="최현우">현우</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 최근 활동 (Git + 단계 전환 + 리턴) -->
+      <div class="card">
+        <h2>최근 활동</h2>
+        <p class="card-sub">Git 커밋, 단계 전환, 요청 리턴이 하나의 로그로 합쳐져 모두에게 공유됩니다.</p>
+        <ul class="timeline">
+          <li class="git">
+            <span class="dot"></span>
+            <div class="t-head"><b>김유진</b>이 커밋을 푸시 <span class="t-time">· 오늘 10:42</span></div>
+            <div class="t-body"><code>a3f92c1</code> [DT-142] 수주 예측 피처 마트: 최근 12개월 이동평균 피처 추가</div>
+          </li>
+          <li class="stage">
+            <span class="dot"></span>
+            <div class="t-head"><b>최현우</b>가 DT-131을 <b>파이프라인 → 서비스 개발</b>로 이동 <span class="t-time">· 오늘 09:15</span></div>
+            <div class="t-body">파이프라인 단계 소요 7일 · Deliverable: Airflow DAG 배포 완료</div>
+          </li>
+          <li class="return">
+            <span class="dot"></span>
+            <div class="t-head"><b>박민수</b>가 REQ-2026-038을 리턴 완료 <span class="t-time">· 어제 17:30</span></div>
+            <div class="t-body">채널: 이메일 · 처리 소요 2일 4시간 · 회신 첨부 1건</div>
+          </li>
+          <li class="git">
+            <span class="dot"></span>
+            <div class="t-head"><b>이서연</b>이 커밋을 푸시 <span class="t-time">· 어제 16:02</span></div>
+            <div class="t-body"><code>7be104d</code> [DT-149] GA4-비용 데이터 조인 키 정규화</div>
+          </li>
+          <li>
+            <span class="dot"></span>
+            <div class="t-head"><b>정다현</b>이 REQ-2026-041을 태스크로 전환 <span class="t-time">· 08-21 11:20</span></div>
+            <div class="t-body">신규 태스크 DT-161 “신제품 수요 예측 Intake 협의” 생성 · Sprint 2026-18 배정</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top:20px">
+      <b>North Pole 원칙</b> — 모든 요청은 기록에서 시작하고(Intake), 모든 진행은 로그로 남기며(Git·StageLog),
+      모든 완료는 리턴 여부와 소요 시간까지 기록합니다. 이 데이터가 쌓여 부문별 Goal을 매년 구체화하는 근거가 됩니다.
+    </div>
+  </main>
+</div>
+<script src="assets/app.js"></script>
+</body>
+</html>

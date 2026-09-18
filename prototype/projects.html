@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>프로젝트 — AI/Data North Pole 프로토타입</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="crumbs">Digital Twin Manager / <b>AI/Data North Pole</b> / 프로젝트</div>
+      <div class="spacer"></div>
+      <button class="theme-toggle" onclick="toggleTheme()">☀ / ☾ 테마</button>
+      <span class="avatar" title="김용진">YK</span>
+    </div>
+
+    <div class="page-head">
+      <div>
+        <h1>프로젝트</h1>
+        <div class="sub">마일스톤에 따라 생성된 프로젝트를 담당자·우선순위와 함께 관리합니다.</div>
+      </div>
+      <div class="actions">
+        <button class="btn primary" onclick="openModal('prj-modal')">+ 새 프로젝트</button>
+      </div>
+    </div>
+
+    <div class="filter-row">
+      <input class="input search" id="f-q" placeholder="🔍 프로젝트명, 담당자 검색" oninput="applyFilters()">
+      <select class="input" id="f-dept" onchange="applyFilters()"><option>부문: 전체</option><option>Sales</option><option>Finance</option><option>Marketing</option><option>Product Planning</option><option>Service</option></select>
+      <select class="input" id="f-prio" onchange="applyFilters()"><option>우선순위: 전체</option><option>P0</option><option>P1</option><option>P2</option><option>P3</option></select>
+      <select class="input" id="f-status" onchange="applyFilters()"><option>상태: 전체</option><option>계획</option><option>진행중</option><option>보류</option><option>완료</option></select>
+      <select class="input" id="f-owner" onchange="applyFilters()"><option>담당자: 전체</option><option>김유진</option><option>박민수</option><option>이서연</option><option>정다현</option><option>최현우</option><option>한지민</option><option>오세훈</option><option>윤아름</option></select>
+      <select class="input" id="f-size" onchange="applyFilters()" style="margin-left:auto" title="페이지당 표시 건수">
+        <option value="10">10건씩</option><option value="25">25건씩</option><option value="50" selected>50건씩</option>
+      </select>
+    </div>
+
+    <div class="callout" id="ms-banner" style="display:none"></div>
+
+    <div class="card" style="padding:6px 12px">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>ID</th><th>프로젝트</th><th>부문</th><th>마일스톤</th>
+            <th>담당자</th><th>우선순위</th><th>상태</th><th>기간</th><th>진행률</th><th class="num">태스크</th>
+          </tr>
+        </thead>
+        <tbody id="prj-tbody"></tbody>
+      </table>
+    </div>
+    <div class="pager" id="prj-pager"></div>
+    <p class="muted small" style="margin-top:6px">정렬: 우선순위 ↑ (P0가 항상 위), 같은 우선순위는 최신 순 · 목록은 검토용 목데이터 68건</p>
+
+    <!-- 새 프로젝트 모달 -->
+    <div class="modal-scrim" id="prj-modal">
+      <div class="modal">
+        <h2>새 프로젝트</h2>
+        <p class="m-sub">프로젝트는 반드시 부문(Product)의 마일스톤에 연결됩니다. 요청 Intake에서 전환하여 생성할 수도 있습니다.</p>
+        <div class="field">
+          <label>프로젝트명 <span class="req">*</span></label>
+          <input class="input" placeholder="예: 수주 파이프라인 예측 모델">
+        </div>
+        <div class="form-2col">
+          <div class="field">
+            <label>부문 (Product) <span class="req">*</span></label>
+            <select class="input"><option>Sales</option><option>Finance</option><option>Marketing</option><option>Product Planning</option><option>Service</option></select>
+          </div>
+          <div class="field">
+            <label>마일스톤 <span class="req">*</span></label>
+            <select class="input"><option>M2. 수주 파이프라인 예측 모델</option><option>M3. 예측 기반 목표 수립</option><option>+ 새 마일스톤 생성…</option></select>
+          </div>
+          <div class="field">
+            <label>담당자 <span class="req">*</span></label>
+            <select class="input"><option>김유진</option><option>박민수</option><option>이서연</option><option>정다현</option><option>최현우</option></select>
+          </div>
+          <div class="field">
+            <label>우선순위 <span class="req">*</span></label>
+            <select class="input"><option>P0 — 최우선 (경영 직결)</option><option selected>P1 — 높음</option><option>P2 — 보통</option><option>P3 — 낮음</option></select>
+          </div>
+          <div class="field">
+            <label>시작일</label>
+            <input class="input" type="date" value="2026-09-01">
+          </div>
+          <div class="field">
+            <label>목표 종료일</label>
+            <input class="input" type="date" value="2026-12-18">
+          </div>
+        </div>
+        <div class="field">
+          <label>목적 / 기대 Deliverable</label>
+          <textarea class="input" rows="3" placeholder="이 프로젝트가 끝났을 때 부문 Goal에 어떤 기여를 하는지 한 문단으로 적습니다."></textarea>
+        </div>
+        <div class="field">
+          <label>연결 요청 (선택)</label>
+          <select class="input"><option>없음</option><option>REQ-2026-041 · 신제품 수요 예측 문의 (이메일)</option></select>
+          <span class="hint">요청에서 시작된 프로젝트는 원천 요청과 자동으로 연결되어 추적됩니다.</span>
+        </div>
+        <div class="m-foot">
+          <button class="btn" onclick="closeModal('prj-modal')">취소</button>
+          <button class="btn primary" onclick="closeModal('prj-modal')">프로젝트 생성</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="assets/app.js"></script>
+<script>
+// 검토용 목데이터 68건 — 실제 구현 시 GET /api/northpole/projects?page=&size=&… 서버 페이지네이션으로 대체
+const CURATED = [
+  { id: 11, name: "수주 파이프라인 예측 모델", dept: "Sales", ms: "M2. 수주 예측", owner: "김유진", prio: "P0", status: "진행중", period: "06-01 ~ 09-30", pct: 72, tasks: "6 / 9" },
+  { id: 7,  name: "AS 접수 VOC 분류 자동화", dept: "Service", ms: "M1. VOC 분류", owner: "최현우", prio: "P0", status: "진행중", period: "04-14 ~ 09-12", pct: 83, tasks: "10 / 12" },
+  { id: 14, name: "월 결산 자동화 및 이상 탐지", dept: "Finance", ms: "M1. 결산 자동화", owner: "박민수", prio: "P1", status: "진행중", period: "07-06 ~ 11-27", pct: 45, tasks: "4 / 11" },
+  { id: 9,  name: "캠페인 ROI 대시보드", dept: "Marketing", ms: "M1. 캠페인 ROI", owner: "이서연", prio: "P1", status: "진행중", period: "05-18 ~ 10-16", pct: 60, tasks: "7 / 10" },
+  { id: 16, name: "신제품 수요 예측", dept: "Product Planning", ms: "M1. 수요 예측 PoC", owner: "정다현", prio: "P2", status: "계획", period: "09-01 ~ 12-18", pct: 5, tasks: "1 / 8" },
+  { id: 12, name: "마케팅 고객 세그먼테이션", dept: "Marketing", ms: "M2. 세그먼테이션", owner: "한지민", prio: "P2", status: "보류", period: "06-15 ~ 미정", pct: 20, tasks: "2 / 9" },
+  { id: 3,  name: "영업 리드 스코어링", dept: "Sales", ms: "M1. 리드 스코어링", owner: "김유진", prio: "P2", status: "완료", period: "01-12 ~ 05-29", pct: 100, tasks: "11 / 11" }
+];
+const TOPIC = {
+  "Sales": ["대리점 판매 실적 예측", "견적-수주 전환율 분석", "이탈 거래처 조기 감지", "영업 활동 로그 분석", "채권 회수 리스크 스코어링"],
+  "Finance": ["비용 절감 시뮬레이션", "현금흐름 예측", "예산-실적 편차 분석", "구매 단가 이상 탐지", "환리스크 모니터링"],
+  "Marketing": ["채널별 광고 믹스 최적화", "이메일 캠페인 반응 예측", "브랜드 검색량 트렌드 분석", "프로모션 효과 측정", "웹 유입 퍼널 분석"],
+  "Product Planning": ["경쟁사 가격 모니터링", "제품 리뷰 텍스트 마이닝", "라인업 포트폴리오 분석", "출시 시점 최적화", "사양별 선호도 분석"],
+  "Service": ["수리 부품 수요 예측", "기사 배차 최적화", "재방문 AS 원인 분석", "고객 만족도 드라이버 분석", "콜센터 상담 유형 분류"]
+};
+const DEPTS = Object.keys(TOPIC);
+const OWNERS = ["김유진", "박민수", "이서연", "정다현", "최현우", "한지민", "오세훈", "윤아름"];
+const MS_POOL = ["M1. 상반기 기반 구축", "M2. 하반기 자동화", "M3. 연말 고도화"];
+
+const PROJECTS = [...CURATED];
+(function generate() {
+  const used = new Set(CURATED.map(p => p.id));
+  const roman = ["", " Ⅱ", " Ⅲ"];
+  for (let id = 1, i = 0; id <= 68; id++) {
+    if (used.has(id)) continue;
+    const dept = DEPTS[i % 5];
+    const pool = TOPIC[dept];
+    const name = pool[(i / 5 | 0) % pool.length] + roman[(i / 25 | 0) % 3];
+    const r = (id * 7919) % 100;               // 결정적 의사난수
+    const status = r < 45 ? "완료" : r < 70 ? "진행중" : r < 90 ? "계획" : "보류";
+    const pct = status === "완료" ? 100 : status === "계획" ? r % 11 : status === "보류" ? 10 + r % 30 : 20 + r % 70;
+    const total = 5 + (r % 8);
+    const sm = 1 + (id % 8), em = Math.min(12, sm + 3 + (r % 3));
+    PROJECTS.push({
+      id, name, dept, ms: MS_POOL[id % 3], owner: OWNERS[r % 8],
+      prio: "P" + [0, 1, 1, 2, 2, 2, 3][r % 7], status,
+      period: `${String(sm).padStart(2, "0")}-0${1 + r % 9} ~ ${String(em).padStart(2, "0")}-${10 + r % 18}`,
+      pct, tasks: `${Math.round(total * pct / 100)} / ${total}`
+    });
+    i++;
+  }
+  PROJECTS.sort((a, b) => a.prio === b.prio ? b.id - a.id : a.prio.localeCompare(b.prio));
+})();
+
+const PRIO_BADGE = {
+  P0: '<span class="badge p0">⛨ P0</span>', P1: '<span class="badge p1">▲ P1</span>',
+  P2: '<span class="badge p2">◆ P2</span>', P3: '<span class="badge p3">▽ P3</span>'
+};
+const ST_BADGE = {
+  "계획": '<span class="badge plan">○ 계획</span>', "진행중": '<span class="badge doing">● 진행중</span>',
+  "보류": '<span class="badge hold">⏸ 보류</span>', "완료": '<span class="badge done">✓ 완료</span>'
+};
+
+/* URL 파라미터: Product & Goal의 마일스톤 클릭 → 부문+마일스톤 필터로 진입 */
+const Q = new URLSearchParams(location.search);
+let msFilter = Q.get("ms") || null;                 // 예: "M2" — p.ms 접두 일치
+if (Q.get("dept")) {
+  const sel = document.getElementById("f-dept");
+  if ([...sel.options].some(o => o.value === Q.get("dept"))) sel.value = Q.get("dept");
+}
+function renderMsBanner() {
+  const b = document.getElementById("ms-banner");
+  if (!msFilter) { b.style.display = "none"; return; }
+  b.style.display = "";
+  b.innerHTML = `<b>${document.getElementById("f-dept").value}</b> 부문 · 마일스톤 <b>${msFilter}</b> 관련 프로젝트만 표시 중
+    (${filtered().length}건) — <a href="javascript:void(0)" onclick="clearMsFilter()">필터 해제</a>
+    · <a href="products.html">Product &amp; Goal로 돌아가기</a>`;
+}
+function clearMsFilter() { msFilter = null; page = 1; render(); }
+
+let page = 1;
+function filtered() {
+  const q = document.getElementById("f-q").value.trim().toLowerCase();
+  const dept = document.getElementById("f-dept").value, prio = document.getElementById("f-prio").value;
+  const st = document.getElementById("f-status").value, ow = document.getElementById("f-owner").value;
+  return PROJECTS.filter(p =>
+    (!q || p.name.toLowerCase().includes(q) || p.owner.includes(q)) &&
+    (dept.includes("전체") || p.dept === dept) &&
+    (!msFilter || p.ms.startsWith(msFilter + ".")) &&
+    (prio.includes("전체") || p.prio === prio) &&
+    (st.includes("전체") || p.status === st) &&
+    (ow.includes("전체") || p.owner === ow));
+}
+function render() {
+  const size = parseInt(document.getElementById("f-size").value, 10);
+  const list = filtered();
+  const pages = Math.max(1, Math.ceil(list.length / size));
+  page = Math.min(page, pages);
+  document.getElementById("prj-tbody").innerHTML =
+    list.slice((page - 1) * size, page * size).map(p => `
+      <tr>
+        <td class="id">PRJ-${String(p.id).padStart(3, "0")}</td>
+        <td><a class="row-link" href="sprint.html?project=${p.id}&pname=${encodeURIComponent(p.name)}">${p.name}</a></td>
+        <td>${p.dept}</td><td class="small">${p.ms}</td>
+        <td><span class="avatar" title="${p.owner}">${p.owner.slice(1)}</span></td>
+        <td>${PRIO_BADGE[p.prio]}</td>
+        <td>${ST_BADGE[p.status]}</td>
+        <td class="id">${p.period}</td>
+        <td><div class="meter"><div class="track"><div class="fill" style="width:${p.pct}%"></div></div><span class="pct">${p.pct}%</span></div></td>
+        <td class="num">${p.tasks}</td>
+      </tr>`).join("") ||
+    `<tr><td colspan="10" class="muted small" style="text-align:center;padding:24px">조건에 맞는 프로젝트가 없습니다</td></tr>`;
+  renderPager(document.getElementById("prj-pager"), list.length, page, size,
+    p => { page = p; render(); window.scrollTo({ top: 0 }); });
+  renderMsBanner();
+}
+function applyFilters() { page = 1; render(); }
+render();
+</script>
+</body>
+</html>

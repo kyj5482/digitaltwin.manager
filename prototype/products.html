@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Product &amp; Goal — AI/Data North Pole 프로토타입</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="crumbs">Digital Twin Manager / <b>AI/Data North Pole</b> / Product &amp; Goal</div>
+      <div class="spacer"></div>
+      <button class="theme-toggle" onclick="toggleTheme()">☀ / ☾ 테마</button>
+      <span class="avatar" title="김용진">YK</span>
+    </div>
+
+    <div class="page-head">
+      <div>
+        <h1>Product &amp; Goal</h1>
+        <div class="sub">각 부문을 하나의 Product로 정의하고, 빅픽처(Goal)를 프로젝트를 통해 매년 구체화합니다.</div>
+      </div>
+      <div class="actions">
+        <select class="input" style="width:auto">
+          <option selected>2026년</option>
+          <option>2025년</option>
+        </select>
+        <button class="btn primary" onclick="openGoal()">✎ Goal 편집</button>
+      </div>
+    </div>
+
+    <div class="callout">
+      Goal은 처음부터 완성될 필요가 없습니다. <span class="badge goal-draft">초안</span> →
+      <span class="badge goal-shaping">● 구체화중</span> → <span class="badge goal-fixed">✓ 확정</span>
+      단계로 관리하며, 프로젝트 진행에서 얻은 데이터와 회고를 근거로 매년 말 방향성을 확정합니다.
+      마일스톤 이름을 클릭하면 관련 프로젝트 목록으로 이동합니다.
+    </div>
+
+    <div class="grid cols-2" style="margin-top:16px" id="prod-grid"></div>
+
+    <!-- Goal 편집 모달 — 프로덕트를 선택해 해당 Goal을 편집 -->
+    <div class="modal-scrim" id="goal-modal">
+      <div class="modal">
+        <h2 id="g-title">Goal 편집 · 2026</h2>
+        <p class="m-sub">Goal은 언제든 수정할 수 있으며, 모든 변경은 이력(goal_history)으로 남아 연말 방향성 결정의 근거가 됩니다.</p>
+        <div class="field">
+          <label>Product (부문) <span class="req">*</span></label>
+          <select class="input" id="g-prod" onchange="loadGoal(this.value)"></select>
+          <span class="hint">부문을 바꾸면 해당 부문의 Goal이 아래에 로드됩니다.</span>
+        </div>
+        <div class="field">
+          <label>Goal 문장 <span class="req">*</span></label>
+          <textarea class="input" rows="3" id="g-text"></textarea>
+        </div>
+        <div class="form-2col">
+          <div class="field">
+            <label>상태</label>
+            <select class="input" id="g-status">
+              <option value="draft">초안</option>
+              <option value="shaping">구체화중</option>
+              <option value="fixed">확정</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>오너</label>
+            <select class="input" id="g-owner"><option>김유진</option><option>박민수</option><option>이서연</option><option>정다현</option><option>최현우</option></select>
+          </div>
+        </div>
+        <div class="field">
+          <label>측정 지표 (KPI)</label>
+          <input class="input" id="g-kpi">
+          <span class="hint">미정이면 비워 두세요. 프로젝트 결과가 쌓이면 채웁니다.</span>
+        </div>
+        <div class="field">
+          <label>변경 사유 <span class="req">*</span></label>
+          <input class="input" id="g-why" placeholder="예: 결산 자동화 1차 결과 반영해 KPI 수치 구체화">
+        </div>
+        <div class="m-foot">
+          <button class="btn" onclick="closeModal('goal-modal')">취소</button>
+          <button class="btn primary" onclick="saveGoal()">저장</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 마일스톤 추가/수정 모달 -->
+    <div class="modal-scrim" id="ms-modal">
+      <div class="modal" style="width:520px">
+        <h2 id="m-title">마일스톤 추가</h2>
+        <p class="m-sub" id="m-sub">마일스톤은 다수의 프로젝트를 묶는 단위입니다. 진행률은 소속 프로젝트 진행률의 가중 평균(태스크 수 기준)으로 자동 계산됩니다.</p>
+        <div class="form-2col">
+          <div class="field">
+            <label>코드 (자동 채번)</label>
+            <input class="input" id="m-code" readonly>
+          </div>
+          <div class="field">
+            <label>기한 <span class="req">*</span></label>
+            <select class="input" id="m-due">
+              <option>2026-Q1</option><option>2026-Q2</option><option selected>2026-Q3</option><option>2026-Q4</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>마일스톤명 <span class="req">*</span></label>
+          <input class="input" id="m-name" placeholder="예: 수주 파이프라인 예측 모델">
+        </div>
+        <div class="form-2col">
+          <div class="field">
+            <label>상태</label>
+            <select class="input" id="m-hold"><option value="">진행</option><option value="hold">보류</option></select>
+          </div>
+          <div class="field">
+            <label>진행률 (자동)</label>
+            <input class="input" id="m-pct" readonly title="소속 프로젝트에서 자동 계산 — 직접 수정 불가">
+          </div>
+        </div>
+        <div class="field" id="m-why-wrap">
+          <label>변경 사유</label>
+          <input class="input" id="m-why" placeholder="예: 배포 일정 조정으로 기한 Q4로 연기">
+        </div>
+        <div class="m-foot">
+          <button class="btn" onclick="closeModal('ms-modal')">취소</button>
+          <button class="btn primary" onclick="saveMs()">저장</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="assets/app.js"></script>
+<script>
+/* 검토용 목데이터 — 실제 구현 시 GET /api/northpole/products?year=2026 로 대체.
+   저장 동작은 화면 내 즉시 반영(메모리)이며 새로고침 시 초기화됩니다. */
+const PRODUCTS = [
+  { name: "Sales", status: "fixed", owner: "김유진",
+    goal: "감(感)이 아닌 데이터로 수주를 예측한다: 분기 수주 예측 오차 ±10% 이내, 리드 스코어링 전 영업조직 적용.",
+    kpi: "분기 수주 예측 오차 ±10% · 리드 스코어링 적용률 100%",
+    stats: "프로젝트 9개 (완료 4 · 진행 3 · 계획 2)",
+    ms: [ { code: "M1", name: "리드 스코어링 v1 적용", due: "2026-Q2", pct: 100 },
+          { code: "M2", name: "수주 파이프라인 예측 모델", due: "2026-Q3", pct: 72 },
+          { code: "M3", name: "예측 기반 목표 수립 프로세스", due: "2026-Q4", pct: 10 } ] },
+  { name: "Finance", status: "shaping", owner: "박민수",
+    goal: "결산·재무 리포트의 수작업 제거와 이상 징후 조기 탐지. KPI는 결산 자동화 프로젝트 결과를 보고 4분기에 확정 예정.",
+    kpi: "월 결산 소요일 5일 → 2일 (안), 4분기 확정 예정",
+    stats: "프로젝트 5개 (완료 2 · 진행 2 · 계획 1)",
+    ms: [ { code: "M1", name: "월 결산 자동화 파이프라인", due: "2026-Q3", pct: 45 },
+          { code: "M2", name: "이상 거래 탐지 PoC", due: "2026-Q4", pct: 0 } ] },
+  { name: "Marketing", status: "shaping", owner: "이서연",
+    goal: "캠페인 집행을 ROI 데이터로 의사결정: 전 캠페인 ROI 측정 체계 구축, 세그먼트 기반 타게팅 전환.",
+    kpi: "캠페인 ROI 측정 커버리지 100% (안)",
+    stats: "프로젝트 7개 (완료 3 · 진행 2 · 계획 2)",
+    ms: [ { code: "M1", name: "캠페인 ROI 대시보드", due: "2026-Q3", pct: 60 },
+          { code: "M2", name: "고객 세그먼테이션", due: "2026-Q4", pct: 20, hold: true } ] },
+  { name: "Product Planning", status: "draft", owner: "정다현",
+    goal: "신제품 기획에 수요 예측 데이터를 반영한다. 아직 KPI·범위 미정. 첫 프로젝트(신제품 수요 예측)의 Intake 협의 결과로 방향을 구체화한다.",
+    kpi: "",
+    stats: "프로젝트 6개 (완료 1 · 진행 2 · 계획 3)",
+    ms: [ { code: "M1", name: "신제품 수요 예측 PoC", due: "2026-Q4", pct: 5 } ] },
+  { name: "Service", status: "fixed", owner: "최현우",
+    goal: "VOC를 실시간으로 읽는 서비스 조직: AS 접수 자동 분류 정확도 90%, VOC 리포트 주간 자동 발행.",
+    kpi: "AS 자동 분류 정확도 90% · VOC 리포트 주간 발행",
+    stats: "프로젝트 7개 (완료 3 · 진행 3 · 계획 1)",
+    ms: [ { code: "M1", name: "VOC 분류 자동화 배포", due: "2026-Q3", pct: 83 },
+          { code: "M2", name: "주간 VOC 리포트 자동화", due: "2026-Q4", pct: 15 } ] },
+];
+const ST_BADGE = {
+  fixed: '<span class="badge goal-fixed">✓ Goal 확정</span>',
+  shaping: '<span class="badge goal-shaping">● 구체화중</span>',
+  draft: '<span class="badge goal-draft">초안</span>',
+};
+const ST_LABEL = { fixed: "2026 Goal", shaping: "2026 Goal(안)", draft: "2026 Goal(초안)" };
+
+function render() {
+  document.getElementById("prod-grid").innerHTML = PRODUCTS.map((p, pi) => `
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:8px">
+        <h2 style="margin:0">${p.name}</h2>
+        ${ST_BADGE[p.status]}
+        <span class="muted small" style="margin-left:auto">오너: ${p.owner}</span>
+        <button class="btn sm" onclick="openGoal('${p.name}')">✎ Goal 편집</button>
+      </div>
+      <p class="card-sub" style="margin-top:8px"><b>${ST_LABEL[p.status]}</b> — ${p.goal}</p>
+      <table class="tbl">
+        <thead><tr><th>마일스톤 <span class="muted small" style="font-weight:400">(클릭=관련 프로젝트)</span></th><th>기한</th><th>진행</th><th></th></tr></thead>
+        <tbody>
+          ${p.ms.map((m, mi) => `
+            <tr>
+              <td><a class="row-link" href="projects.html?dept=${encodeURIComponent(p.name)}&ms=${m.code}"
+                     title="${p.name} 부문 ${m.code} 관련 프로젝트 목록으로 이동">${m.code}. ${m.name}</a>
+                ${m.hold ? ' <span class="badge hold">⏸ 보류</span>' : ""}</td>
+              <td class="id">${m.due}</td>
+              <td><div class="meter"><div class="track"><div class="fill" style="width:${m.pct}%"></div></div><span class="pct">${m.pct}%</span></div></td>
+              <td style="text-align:right"><button class="btn sm" title="마일스톤 수정" onclick="openMs(${pi}, ${mi})">✎</button></td>
+            </tr>`).join("")}
+        </tbody>
+      </table>
+      <div class="axis-note" style="display:flex;align-items:center">
+        ${p.stats} · <a href="projects.html?dept=${encodeURIComponent(p.name)}" style="margin-left:4px">프로젝트 보기</a>
+        <button class="btn sm" style="margin-left:auto" onclick="openMs(${pi}, null)">+ 마일스톤</button>
+      </div>
+    </div>`).join("") + `
+    <div class="card" style="border-style:dashed;display:flex;align-items:center;justify-content:center;min-height:180px">
+      <button class="btn" onclick="openGoal()">+ 새 Product(부문) 추가</button>
+    </div>`;
+}
+
+/* ── Goal 편집: 프로덕트 셀렉터로 대상 선택 → 로드/저장 ── */
+function openGoal(name) {
+  const sel = document.getElementById("g-prod");
+  sel.innerHTML = PRODUCTS.map(p => `<option ${p.name === name ? "selected" : ""}>${p.name}</option>`).join("");
+  loadGoal(name || PRODUCTS[0].name);
+  openModal("goal-modal");
+}
+function loadGoal(name) {
+  const p = PRODUCTS.find(p => p.name === name);
+  document.getElementById("g-title").textContent = `Goal 편집 — ${p.name} · 2026`;
+  document.getElementById("g-text").value = p.goal;
+  document.getElementById("g-status").value = p.status;
+  document.getElementById("g-owner").value = p.owner;
+  document.getElementById("g-kpi").value = p.kpi;
+  document.getElementById("g-why").value = "";
+}
+function saveGoal() {
+  const p = PRODUCTS.find(x => x.name === document.getElementById("g-prod").value);
+  p.goal = document.getElementById("g-text").value.trim() || p.goal;
+  p.status = document.getElementById("g-status").value;
+  p.owner = document.getElementById("g-owner").value;
+  p.kpi = document.getElementById("g-kpi").value.trim();
+  closeModal("goal-modal");
+  render();   // 실제 구현: PATCH /goals/:id + goal_history 기록(변경 사유 필수)
+}
+
+/* ── 마일스톤 추가/수정 ── */
+let msCtx = null;   // {pi, mi|null}
+function openMs(pi, mi) {
+  msCtx = { pi, mi };
+  const p = PRODUCTS[pi];
+  const isNew = mi == null;
+  const m = isNew ? null : p.ms[mi];
+  document.getElementById("m-title").textContent = isNew ? `마일스톤 추가 — ${p.name}` : `마일스톤 수정 — ${p.name} ${m.code}`;
+  document.getElementById("m-code").value = isNew ? "M" + (p.ms.length + 1) : m.code;
+  document.getElementById("m-name").value = isNew ? "" : m.name;
+  document.getElementById("m-due").value = isNew ? "2026-Q3" : m.due;
+  document.getElementById("m-hold").value = !isNew && m.hold ? "hold" : "";
+  document.getElementById("m-pct").value = isNew ? "0% (프로젝트 배정 전)" : m.pct + "% (자동 계산)";
+  document.getElementById("m-why-wrap").style.display = isNew ? "none" : "";
+  document.getElementById("m-why").value = "";
+  openModal("ms-modal");
+}
+function saveMs() {
+  const p = PRODUCTS[msCtx.pi];
+  const name = document.getElementById("m-name").value.trim();
+  if (!name) { document.getElementById("m-name").focus(); return; }
+  const rec = {
+    code: document.getElementById("m-code").value, name,
+    due: document.getElementById("m-due").value,
+    hold: document.getElementById("m-hold").value === "hold",
+    pct: msCtx.mi == null ? 0 : p.ms[msCtx.mi].pct,
+  };
+  if (msCtx.mi == null) p.ms.push(rec); else p.ms[msCtx.mi] = rec;
+  closeModal("ms-modal");
+  render();   // 실제 구현: POST/PATCH /milestones + 변경 이력 기록
+}
+
+render();
+</script>
+</body>
+</html>
