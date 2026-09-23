@@ -7,7 +7,7 @@
 | ID | 요구사항 |
 |---|---|
 | FR-000 | 본 모듈은 기존 서비스(Digital Twin Manager)의 **세부 메뉴 그룹 "AI/Data North Pole"** 으로 편입된다. 별도 로그인 없이 기존 세션·권한을 상속한다 |
-| FR-001 | 메뉴 구성: 대시보드(North Pole) / Product & Goal / 프로젝트 / 스프린트 보드 / 요청 Intake. 태스크 상세는 보드·목록에서 진입 |
+| FR-001 | 메뉴 구성(순서 고정): 대시보드(North Pole) / KPI 모니터링 / Product & Goal / 프로젝트 / 스프린트 보드 / 요청 Intake — KPI에서 출발해 Goal·프로젝트로 내려가는 흐름. 태스크 상세는 보드·목록에서 진입 |
 | FR-002 | 라우팅(제안): `/northpole/dashboard`, `/northpole/products`, `/northpole/projects`, `/northpole/projects/:id/board?sprints=…`(프로젝트 스코프 스프린트 보드), `/northpole/tasks/:id`, `/northpole/requests` |
 | FR-003 | 라이트/다크 테마 지원. 기존 서비스에 테마 설정이 있으면 그 값을 따른다 |
 | FR-004 | 모든 목록은 검색 + 필터(부문/상태/담당자 등) + 정렬을 지원하고, 필터 상태를 URL 쿼리에 보존한다 |

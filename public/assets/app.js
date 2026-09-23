@@ -2,8 +2,8 @@
 (function () {
   const MENUS = [
     { href: "index.html", ico: "◎", label: "대시보드" },
-    { href: "products.html", ico: "▣", label: "Product & Goal" },
     { href: "kpi.html", ico: "✪", label: "KPI 모니터링" },
+    { href: "products.html", ico: "▣", label: "Product & Goal" },
     { href: "projects.html", ico: "≡", label: "프로젝트" },
     { href: "sprint.html", ico: "▤", label: "스프린트 보드" },
     { href: "requests.html", ico: "✉", label: "요청 Intake" },

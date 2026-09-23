@@ -16,7 +16,9 @@ Product(부문) → Goal → Milestone → Project → Sprint → Task(6단계 �
 - 외부 패키지 의존성 **0** — Node.js 내장 모듈만 사용 (`npm install` 불필요)
 - 데이터는 **티켓 1건 = 파일 1개**의 계층 트리(`data/`) — git이 곧 백업·이력·동기화 수단.
   디렉터리가 곧 계층: `projects/PRJ-###/{project.json, sprints/, tasks/}` (레이아웃: `store.js`)
-- 티켓 작성은 `/ticket` 클로드 스킬로 — 자연어 요구를 올바른 티켓 타입·계층·필드로 변환해 등록
+- 최초 셋업은 `/setup` 클로드 스킬로 — clone 후 부문(Product)·Goal 선정과 KPI 트리 설정
+- 티켓 작성은 `/ticket` 클로드 스킬로 — 자연어 요구를 올바른 티켓 타입·계층·필드로 변환해
+  등록하고, 등록된 KPI·Product & Goal 데이터에서 나머지 필드를 자동 채움
 - **매일 데이터 변경분의 git 자동 커밋·푸시** (GitHub / GitLab 모두 지원)
 - 첫 실행 시 검토용 시드 데이터가 자동 생성된다
 
@@ -68,8 +70,8 @@ Manager 또는 Personal Access Token(GitLab은 `read_repository, write_repositor
 | 경로 | 화면 |
 |---|---|
 | `/` | 대시보드 — KPI, 단계별 소요시간, 부문별 현황, 병목, 최근 활동, git 자동 커밋 상태 |
-| `/products.html` | Product & Goal — Goal 편집(변경 사유 필수), 마일스톤 추가/수정, 마일스톤 클릭 → 관련 프로젝트 |
 | `/kpi.html` | KPI 모니터링 — **트윈(digitaltwin.retail.vehicle) 실질 KPI 트리 이식**(`data/governance/ceo_tree.csv` 정본): 3영역(재무 37·사업 35·지속경영 25) × 14 KPI(ASP, 경상이익률, 합산손익 등) × 하위 드라이버 노드, 이 지표들을 기반으로 하위 프로젝트 생성·연결. AI/Data 과제 지표(K1~K7)도 실질 KPI 하위에 매칭(예: 월 결산 소요일→경상이익률). 지표마다 **데이터 연동 상태**(⚡연동/◌진행중/⛓미연동 — 미연동은 연동 프로젝트 필수, 트윈 bind 규약), 달성률 신호등(자체 실측 우선·하위 롤업 폴백), **끊김 없는 계층 추적**([▾ 세부] — KPI → 하위 지표 → 프로젝트(기여 유형 ⚡연동/▲개선) → 진행중 스프린트 → 태스크 인라인), **상충 관리**(프로젝트가 다른 지표에 미치는 영향 ± 선언 → ⇄ 가드레일 배지·상충 테이블), 미측정·미연결·미연동·상충 관리 배너 |
+| `/products.html` | Product & Goal — Goal 편집(변경 사유 필수), 마일스톤 추가/수정, 마일스톤 클릭 → 관련 프로젝트 |
 | `/projects.html` | 프로젝트 목록·생성 (생성 시 첫 스프린트 자동 준비, 기여 KPI 연결) — 이름 클릭 → 스프린트 보드 |
 | `/sprint.html?project=ID` | 스프린트 보드 — 프로젝트 스코프, 스프린트 다중 선택, 생성/시작/종료(미완료 이월·↻ 횟수 누적), 태스크 생성·단계 이동 |
 | `/requests.html` | 요청 Intake — 채널별 요청 등록, 단순 요청 ↩리턴, 분석 요청 →전환(새 프로젝트 / 백로그 태스크) |
