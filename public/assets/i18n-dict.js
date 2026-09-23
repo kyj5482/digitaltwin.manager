@@ -90,11 +90,10 @@ const E = {
   "백로그 (미배정)": "Backlog (unassigned)",
 
   /* ── 대시보드 ── */
-  "Product → Goal → Milestone → Project → Sprint → Task. 데이터는 이 저장소의": "Product → Goal → Milestone → Project → Sprint → Task. Data lives in this repository's",
-  "디렉터리에 저장됩니다.": "directory.",
   "단계별 평균 소요시간": "Average time per stage",
   "완료된 단계 전환 기록 기준 평균. 가장 오래 걸리는 단계가 병목입니다.": "Average over completed stage transitions. The slowest stage is the bottleneck.",
-  "부문별 프로젝트 현황": "Projects by department",
+  "부문별 진행 파이프라인": "Pipeline by department",
+  "현재 진행중·계획 프로젝트만 집계 — 완료는 누적될수록 비율을 왜곡하므로 막대에서 제외합니다.": "Counts only projects currently in progress or planned — completed projects accumulate over time and would distort the ratios, so they are excluded from the bars.",
   "병목 태스크": "Bottleneck tasks",
   "현재 단계 체류일이 긴 순서. 행을 클릭하면 해당 프로젝트 보드로 이동합니다.": "Sorted by days stuck in the current stage. Click a row to open that project's board.",
   "태스크": "Task",
@@ -421,9 +420,10 @@ const P = [
   [/^(\d+)일째 ⚠$/, "day $1 ⚠"],
   [/^표본 (\d+)건$/, "$1 samples"],
   [/^※ 보류 (\d+)건은 합계에서 제외$/, "※ Excludes $1 on hold"],
+  [/^※ (.+)은 막대에서 제외$/, m => `※ Excluded from bars: ${m[1].replace(/완료 누적 (\d+)건/, "$1 completed (cumulative)").replace(/보류 (\d+)건/, "$1 on hold")}`],
 
   /* 대시보드 */
-  [/^(.+) — 완료 (\d+) · 진행중 (\d+) · 계획 (\d+)$/, "$1 — done $2 · in progress $3 · planned $4"],
+  [/^(.+) — 진행중 (\d+) · 계획 (\d+) \(완료 누적 (\d+)\)$/, "$1 — in progress $2 · planned $3 (completed to date $4)"],
 
   /* 프로젝트 */
   [/^프로젝트 수정 — (.+)$/, "Edit project — $1"],
