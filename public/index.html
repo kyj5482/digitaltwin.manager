@@ -44,13 +44,10 @@
       </div>
       <div class="card">
         <h2>부문별 진행 파이프라인</h2>
-        <p class="card-sub">현재 진행중·계획 프로젝트만 집계 — 완료는 누적될수록 비율을 왜곡하므로 막대에서 제외합니다.</p>
-        <div class="chart-legend">
-          <span><span class="sw" style="background:var(--accent)"></span>진행중</span>
-          <span><span class="sw" style="background:var(--series-neutral)"></span>계획</span>
-        </div>
-        <div id="dept-chart"></div>
+        <p class="card-sub">현재 진행중·계획 프로젝트만 집계 — 완료는 누적될수록 비율을 왜곡하므로 집계에서 제외합니다.</p>
+        <table class="tbl" id="dept-tbl"><thead><tr><th>부문</th><th>파이프라인</th><th>상태</th><th class="num">진행중 / 계획</th></tr></thead><tbody></tbody></table>
         <p class="muted small" id="dept-note" style="margin:8px 0 0"></p>
+        <p class="muted small" style="margin:8px 0 0"><a href="projects.html">프로젝트 열기 →</a></p>
       </div>
       <div class="card">
         <h2>병목 태스크</h2>
@@ -123,8 +120,8 @@ async function load() {
         </div>`;
       }).join("")
     : '<p class="muted small" style="margin:16px 0">선택한 기간·부문에 완료된 단계 전환 기록이 아직 없습니다.<br>보드에서 태스크를 다음 단계로 이동하면 소요시간이 쌓입니다.</p>';
-  // 부문별 진행 파이프라인 스택 바 (FR-120): 진행중/계획 스냅숏만 집계 —
-  // 완료는 누적될수록 막대·비율이 과거 이력에 지배되므로 제외 (툴팁·주석으로만 표시)
+  // 부문별 진행 파이프라인 (FR-120): KPI 달성 현황과 동일한 테이블+미터 패턴 —
+  // 진행중/계획 스냅숏만 집계. 완료는 누적될수록 비율이 과거 이력에 지배되므로 제외
   const held = s.projects.filter(p => p.status === "보류").length;
   const doneAll = s.projects.filter(p => p.status === "완료").length;
   const rows = s.products.map(pr => {
@@ -132,25 +129,27 @@ async function load() {
     return { name: pr.name,
       done: rel.filter(p => p.status === "완료").length,
       doing: rel.filter(p => p.status === "진행중").length,
-      plan: rel.filter(p => p.status === "계획").length };
+      plan: rel.filter(p => p.status === "계획").length,
+      held: rel.filter(p => p.status === "보류").length };
   });
   const maxTot = Math.max(1, ...rows.map(r => r.doing + r.plan));
-  document.getElementById("dept-chart").innerHTML = rows.map(r => {
+  document.querySelector("#dept-tbl tbody").innerHTML = rows.map(r => {
     const tot = r.doing + r.plan;
-    const seg = (cls, n) => n ? `<span class="seg ${cls}" style="flex:${n} 1 0">${n}</span>` : "";
-    return `<div class="stack-row">
-      <a class="s-label row-link" href="projects.html?dept=${encodeURIComponent(r.name)}">${r.name}</a>
-      <div class="stack-bar" style="width:${tot / maxTot * 100}%" title="${r.name} — 진행중 ${r.doing} · 계획 ${r.plan} (완료 누적 ${r.done})">
-        ${seg("doing", r.doing)}${seg("plan", r.plan)}
-      </div>
-      <span class="s-total">${tot}</span>
-    </div>`;
+    const badge = r.doing ? '<span class="badge doing">● 진행중</span>'
+      : r.plan ? '<span class="badge plan">○ 계획</span>'
+      : '<span class="muted small">프로젝트 없음</span>';
+    const fill = (n, bg) => n ? `<div class="fill" style="width:${n / maxTot * 100}%${bg ? `;background:${bg}` : ""}"></div>` : "";
+    return `<tr>
+      <td><a class="row-link" href="projects.html?dept=${encodeURIComponent(r.name)}">${r.name}</a></td>
+      <td><div class="meter" title="${r.name} — 진행중 ${r.doing} · 계획 ${r.plan} (완료 누적 ${r.done})"><div class="track" style="display:flex;gap:2px">${fill(r.doing)}${fill(r.plan, "var(--series-neutral)")}</div><span class="pct">${tot}건</span></div></td>
+      <td>${badge}${r.held ? ' <span class="badge hold">⏸ ' + r.held + "</span>" : ""}</td>
+      <td class="num small">${r.doing} / ${r.plan}</td></tr>`;
   }).join("");
   const noteParts = [];
   if (doneAll) noteParts.push(`완료 누적 ${doneAll}건`);
   if (held) noteParts.push(`보류 ${held}건`);
   document.getElementById("dept-note").textContent =
-    noteParts.length ? `※ ${noteParts.join(" · ")}은 막대에서 제외` : "";
+    noteParts.length ? `※ ${noteParts.join(" · ")}은 집계에서 제외` : "";
   // 병목 태스크 (FR-130): 현재 단계 체류일 상위
   const stay = t => Math.max(1, Math.round((Date.now() - new Date(t.stageAt + "T00:00:00")) / 864e5));
   document.querySelector("#btl-tbl tbody").innerHTML =
