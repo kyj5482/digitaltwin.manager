@@ -101,6 +101,12 @@
         </div>
       </div>
     </div>
+
+    <!-- 마일스톤 행 액션 메뉴 -->
+    <div class="menu-pop" id="ms-menu">
+      <button onclick="msMenuEdit()">✎ 수정</button>
+      <button class="danger" onclick="msMenuDelete()">✕ 삭제</button>
+    </div>
   </main>
 </div>
 <script src="assets/i18n-dict.js"></script>
@@ -133,7 +139,7 @@ async function load() {
               <span class="muted small">· 프로젝트 ${m.projects}개</span></td>
             <td class="id">${m.due}</td>
             <td><div class="meter"><div class="track"><div class="fill" style="width:${m.pct}%"></div></div><span class="pct">${m.pct}%</span></div></td>
-            <td style="text-align:right"><button class="btn sm" onclick="openMs('${p.name}','${m.code}')">✎</button></td></tr>`).join("")}
+            <td style="text-align:right"><button class="row-menu-btn" title="수정/삭제" onclick="openMsMenu(event,'${p.name}','${m.code}')">⋯</button></td></tr>`).join("")}
         </tbody>
       </table>
       <div class="axis-note" style="display:flex;align-items:center">
@@ -169,7 +175,7 @@ async function saveGoal() {
     status: document.getElementById("g-status").value,
     owner: document.getElementById("g-owner").value.trim(),
     kpi: document.getElementById("g-kpi").value.trim(), why });
-  closeModal("goal-modal"); load(); refreshGitChip();
+  closeModal("goal-modal"); load();
 }
 
 function openNewProd() {
@@ -184,7 +190,7 @@ async function createProd() {
   await api("product/create", { name, owner,
     goal: document.getElementById("np-goal").value.trim(),
     kpi: document.getElementById("np-kpi").value.trim() });
-  closeModal("prod-modal"); load(); refreshGitChip();
+  closeModal("prod-modal"); load();
 }
 
 function openHist(name) {
@@ -207,7 +213,8 @@ function openMs(product, code) {
   const p = S.products.find(x => x.name === product);
   const m = code ? p.ms.find(x => x.code === code) : null;
   document.getElementById("m-title").textContent = m ? `마일스톤 수정 — ${product} ${code}` : `마일스톤 추가 — ${product}`;
-  document.getElementById("m-code").value = m ? m.code : "M" + (p.ms.length + 1) + " (자동)";
+  document.getElementById("m-code").value = m ? m.code
+    : "M" + (p.ms.reduce((mx, x) => Math.max(mx, +String(x.code).slice(1) || 0), 0) + 1) + " (자동)";
   document.getElementById("m-name").value = m ? m.name : "";
   document.getElementById("m-due").value = m ? m.due : "2026-Q3";
   document.getElementById("m-hold").value = m && m.hold ? "hold" : "";
@@ -219,7 +226,28 @@ async function saveMs() {
   await api("milestone/save", { product: msCtx.product, code: msCtx.code, name,
     due: document.getElementById("m-due").value,
     hold: document.getElementById("m-hold").value === "hold" });
-  closeModal("ms-modal"); load(); refreshGitChip();
+  closeModal("ms-modal"); load();
+}
+
+let msMenuCtx = null;
+function openMsMenu(e, product, code) {
+  e.stopPropagation();
+  msMenuCtx = { product, code };
+  const m = document.getElementById("ms-menu");
+  m.classList.add("open");
+  const r = e.currentTarget.getBoundingClientRect();
+  m.style.top = Math.min(r.bottom + 4, innerHeight - m.offsetHeight - 8) + "px";
+  m.style.left = Math.max(8, r.right - m.offsetWidth) + "px";
+}
+document.addEventListener("click", () => document.getElementById("ms-menu").classList.remove("open"));
+function msMenuEdit() { openMs(msMenuCtx.product, msMenuCtx.code); }
+async function msMenuDelete() {
+  const p = S.products.find(x => x.name === msMenuCtx.product);
+  const m = p && p.ms.find(x => x.code === msMenuCtx.code);
+  if (!m) return;
+  if (!confirm(`'${m.code}. ${m.name}' 마일스톤을 삭제할까요?\n관련 프로젝트 ${m.projects}개는 삭제되지 않고 마일스톤 연결만 해제됩니다. 되돌릴 수 없습니다.`)) return;
+  await api("milestone/delete", { product: msMenuCtx.product, code: msMenuCtx.code });
+  load();
 }
 load();
 </script>

@@ -46,7 +46,7 @@ curl -s -m 2 "localhost:$PORT/api/state?lang=ko" > /dev/null && echo "서버 ON 
 
 - 생성: `POST /api/product/create` `{name, owner, goal, kpi, status}`
 - Goal 수정: `POST /api/goal/save` `{product, goal, kpi, status, why}` — **why(변경 사유) 필수**, 이력에 남는다
-- 마일스톤: `POST /api/milestone/save` `{product, name, due}` (code 없으면 추가)
+- 마일스톤: `POST /api/milestone/save` `{product, name, due}` (code 없으면 추가) · 삭제는 `/api/milestone/delete` `{product, code}` (관련 프로젝트는 연결만 해제)
 - 파일 모드: `data/products/<부문명>.json` — `{"name","status","owner","goal","kpi","ms":[{"code":"M1","name","due"}],"history":[],"order":<숫자>}`
 
 ## 3. KPI 설정 — 트리 구조로
@@ -79,5 +79,5 @@ Goal 문장을 측정 가능한 지표로 분해한다. 상위 KPI → 하위 �
 
 등록 결과를 표로 보고한다: 부문(owner·status·마일스톤 수) / KPI(code·area·target·하위 수).
 확인 화면: `/kpi.html`(KPI 모니터링), `/products.html`(Product & Goal).
-다음 단계로 "`/ticket`으로 첫 프로젝트를 만들고 기여 KPI를 연결하라"고 안내하고,
-`data/`는 매일 자동 커밋된다는 점을 알린다.
+다음 단계로 "`/ticket`으로 첫 프로젝트를 만들고 기여 KPI를 연결하라"고 안내한다.
+git 커밋·push는 사용자가 요청할 때만 한다 (자동 커밋·push 기능 없음).

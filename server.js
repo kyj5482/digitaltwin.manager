@@ -1,7 +1,6 @@
 /* AI/Data North Pole — 실행형 서비스 (의존성 0, Node 18+)
    - 정적 화면(public/) + JSON API + 계층 티켓 파일 저장소(store.js — 티켓 1건 = 파일 1개)
-   - 매일 지정 시각에 데이터 변경분 자동 git commit → 설정된 모든 리모트(GitHub/GitLab)로 push
-   실행: node server.js  ·  즉시 커밋: node server.js --commit-now */
+   실행: node server.js */
 "use strict";
 const http = require("http");
 const fs = require("fs");
@@ -711,53 +710,11 @@ function updTr(rec, field, val) {
   }
 }
 
-/* ═══════════ Git 자동 커밋 ═══════════ */
+/* ═══════════ 로컬 git 조회 (읽기 전용 — [DT-###] 커밋 로그 스캔용, 커밋·push 없음) ═══════════ */
 function git(args, opts = {}) {
   return new Promise(resolve =>
     execFile("git", args, { cwd: ROOT, ...opts }, (err, stdout, stderr) =>
       resolve({ ok: !err, out: (stdout || "").trim(), err: (stderr || "").trim() })));
-}
-let lastCommit = { at: null, result: "" };
-async function autoCommit(reason = "daily") {
-  const ac = CFG.autoCommit || {};
-  const paths = ac.paths && ac.paths.length ? ac.paths : ["data"];
-  const st = await git(["status", "--porcelain", "--", ...paths]);
-  if (!st.out) { lastCommit = { at: new Date().toISOString(), result: "변경 없음 — 커밋 생략" }; return lastCommit; }
-  await git(["add", "--", ...paths]);
-  const msg = `${ac.message || "chore(data): daily snapshot"} ${new Date().toISOString().slice(0, 10)} (${reason})`;
-  const cm = await git(["commit", "-m", msg]);
-  if (!cm.ok) { lastCommit = { at: new Date().toISOString(), result: "커밋 실패: " + cm.err }; return lastCommit; }
-  let pushed = [];
-  if (ac.push) {
-    for (const r of ac.remotes || ["origin"]) {
-      const p = await git(["push", r, "HEAD"]);
-      pushed.push(`${r}: ${p.ok ? "OK" : "실패(" + (p.err.split("\n")[0] || "원격 미설정") + ")"}`);
-    }
-  }
-  lastCommit = { at: new Date().toISOString(), result: `커밋 완료 — ${msg}` + (pushed.length ? ` · push ${pushed.join(", ")}` : "") };
-  console.log("[autocommit]", lastCommit.result);
-  return lastCommit;
-}
-function scheduleDaily() {
-  const ac = CFG.autoCommit || {};
-  if (!ac.enabled) return;
-  const [h, m] = (ac.time || "23:50").split(":").map(Number);
-  const now = new Date();
-  const next = new Date(now); next.setHours(h, m, 0, 0);
-  if (next <= now) next.setDate(next.getDate() + 1);
-  console.log(`[autocommit] 다음 자동 커밋: ${next.toLocaleString()}`);
-  setTimeout(async () => { await autoCommit("daily"); scheduleDaily(); }, next - now);
-}
-async function gitStatus() {
-  const [dirty, branch, remotes, last] = await Promise.all([
-    git(["status", "--porcelain", "--", ...(CFG.autoCommit?.paths || ["data"])]),
-    git(["rev-parse", "--abbrev-ref", "HEAD"]),
-    git(["remote", "-v"]),
-    git(["log", "-1", "--format=%h %ad %s", "--date=format:%m-%d %H:%M"]),
-  ]);
-  return { dirty: !!dirty.out, changes: dirty.out.split("\n").filter(Boolean).length,
-           branch: branch.out, remotes: [...new Set(remotes.out.split("\n").map(l => l.split("\t")[0]).filter(Boolean))],
-           lastLog: last.out, lastAuto: lastCommit, config: CFG.autoCommit };
 }
 
 /* ═══════════ API ═══════════ */
@@ -800,8 +757,6 @@ function uploadFile(coll, b) {
 
 const API = {
   "GET /api/state": (b, q) => localize(enrich(), (q && q.get("lang")) || "ko"),
-  "GET /api/git/status": () => gitStatus(),
-  "POST /api/git/commit": () => autoCommit("manual"),
 
   "POST /api/product/create": b => {
     if (!b.name || !b.owner) throw { code: 400, msg: "부문명과 오너는 필수입니다" };
@@ -827,9 +782,20 @@ const API = {
       updTr(m, "name", b.name);
       Object.assign(m, { due: b.due ?? m.due, hold: !!b.hold });
     } else {
-      p.ms.push({ code: "M" + (p.ms.length + 1), name: b.name, due: b.due || "2026-Q4", hold: !!b.hold });
+      // 삭제로 번호가 비어도 중복되지 않도록 최대 번호 +1로 채번
+      const n = p.ms.reduce((m, x) => Math.max(m, +String(x.code).slice(1) || 0), 0) + 1;
+      p.ms.push({ code: "M" + n, name: b.name, due: b.due || "2026-Q4", hold: !!b.hold });
     }
     saveDb(); return { ok: true };
+  },
+  "POST /api/milestone/delete": b => {
+    const p = db.products.find(x => x.name === b.product);
+    if (!p) throw { code: 404, msg: "product not found" };
+    const i = p.ms.findIndex(x => x.code === b.code);
+    if (i < 0) throw { code: 404, msg: "milestone not found" };
+    // 관련 프로젝트는 삭제하지 않고 마일스톤 연결만 해제 (kpi/delete와 동일 원칙)
+    for (const prj of db.projects) if (prj.dept === p.name && prj.ms === b.code) prj.ms = "";
+    p.ms.splice(i, 1); saveDb(); return { ok: true };
   },
   "POST /api/kpi/save": b => {
     db.kpis = db.kpis || [];
@@ -997,6 +963,21 @@ const API = {
                        createdAt: new Date().toISOString().slice(0, 10), link: null });
     saveDb(); return { ok: true, id };
   },
+  "POST /api/request/update": b => {
+    const r = db.requests.find(x => x.id === b.id);
+    if (!r) throw { code: 404, msg: "request not found" };
+    if (b.title !== undefined && !b.title) throw { code: 400, msg: "제목과 요청자는 필수입니다" };
+    if (b.requester !== undefined && !b.requester) throw { code: 400, msg: "제목과 요청자는 필수입니다" };
+    updTr(r, "title", b.title); updTr(r, "note", b.note); updTr(r, "requester", b.requester);
+    Object.assign(r, { channel: b.channel ?? r.channel, dept: b.dept ?? r.dept });
+    saveDb(); return { ok: true };
+  },
+  "POST /api/request/delete": b => {
+    const i = db.requests.findIndex(x => x.id === b.id);
+    if (i < 0) throw { code: 404, msg: "request not found" };
+    // 전환으로 생성된 프로젝트/태스크는 유지 — 요청 기록만 삭제
+    db.requests.splice(i, 1); saveDb(); return { ok: true };
+  },
   "POST /api/request/return": b => {
     const r = db.requests.find(x => x.id === b.id);
     if (!r) throw { code: 404, msg: "request not found" };
@@ -1133,11 +1114,6 @@ const server = http.createServer(async (req, res) => {
 });
 
 loadDb();
-if (process.argv.includes("--commit-now")) {
-  autoCommit("manual").then(r => { console.log(r.result); process.exit(0); });
-} else {
-  server.listen(CFG.port, () => {
-    console.log(`AI/Data North Pole ▶ http://localhost:${CFG.port}`);
-    scheduleDaily();
-  });
-}
+server.listen(CFG.port, () => {
+  console.log(`AI/Data North Pole ▶ http://localhost:${CFG.port}`);
+});

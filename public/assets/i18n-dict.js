@@ -16,7 +16,6 @@ const E = {
   "요청 Intake": "Request Intake",
   "데이터 의사결정": "Data-driven Decisions",
   "☀ / ☾ 테마": "☀ / ☾ Theme",
-  "git 상태 확인 중…": "Checking git status…",
   "취소": "Cancel",
   "저장": "Save",
   "닫기": "Close",
@@ -37,7 +36,6 @@ const E = {
   "미정": "TBD",
   "없음": "none",
   "불러오는 중…": "Loading…",
-  "지금 커밋·푸시 실행": "Commit & push now",
   "‹ 이전": "‹ Prev",
   "다음 ›": "Next ›",
   "첨부 없음": "No attachments",
@@ -46,7 +44,6 @@ const E = {
   "데이터를 불러오는 중입니다.": "Data is still loading.",
   "데이터를 불러오는 중입니다. 잠시 후 다시 시도하세요.": "Data is still loading. Please try again shortly.",
   "요청 실패": "Request failed",
-  "git 상태를 가져오지 못했습니다.": "Could not fetch git status.",
   "변경 없음": "No changes",
   "시스템": "System",
 
@@ -94,7 +91,7 @@ const E = {
 
   /* ── 대시보드 ── */
   "Product → Goal → Milestone → Project → Sprint → Task. 데이터는 이 저장소의": "Product → Goal → Milestone → Project → Sprint → Task. Data lives in this repository's",
-  "에 저장되며 매일 자동으로 git 커밋됩니다.": "and is committed to git automatically every day.",
+  "디렉터리에 저장됩니다.": "directory.",
   "단계별 평균 소요시간": "Average time per stage",
   "완료된 단계 전환 기록 기준 평균. 가장 오래 걸리는 단계가 병목입니다.": "Average over completed stage transitions. The slowest stage is the bottleneck.",
   "부문별 프로젝트 현황": "Projects by department",
@@ -105,7 +102,6 @@ const E = {
   "체류": "Stay",
   "최근 활동": "Recent activity",
   "태스크·요청의 활동 로그 최신순 (git 커밋/단계 전환/리턴 구분).": "Latest activity across tasks and requests (git commits / stage moves / returns).",
-  "git 자동 커밋": "git auto-commit",
   "진행중 프로젝트": "Active projects",
   "활성 태스크": "Active tasks",
   "현재 스프린트 완료율": "Current sprint completion",
@@ -120,13 +116,7 @@ const E = {
   "보드에서 태스크를 다음 단계로 이동하면 소요시간이 쌓입니다.": "Move tasks to the next stage on the board to accumulate timing data.",
   "진행중 태스크가 없습니다": "No active tasks",
   "아직 활동 기록이 없습니다. 태스크 단계 전환·로그, 요청 처리 이력이 여기에 쌓입니다.": "No activity yet. Task stage moves, logs, and request handling will appear here.",
-  "브랜치": "Branch",
-  "커밋 없음": "no commits",
   "AI/Data North Pole 로고": "AI/Data North Pole logo",
-  "· 리모트:": "· remotes:",
-  "미설정 — README의 GitHub/GitLab 설정 참고": "not set — see README for GitHub/GitLab setup",
-  "데이터 변경:": "Data changes:",
-  "최근 자동 실행: 이번 세션에서 아직 없음": "Last auto-run: none yet this session",
 
   /* ── 프로젝트 ── */
   "마일스톤에 따라 생성된 프로젝트. 이름을 클릭하면 해당 프로젝트의 스프린트 보드로 이동합니다.": "Projects created under milestones. Click a name to open that project's sprint board.",
@@ -434,20 +424,6 @@ const P = [
 
   /* 대시보드 */
   [/^(.+) — 완료 (\d+) · 진행중 (\d+) · 계획 (\d+)$/, "$1 — done $2 · in progress $3 · planned $4"],
-  [/^(\S+) · 리모트 (.+)$/, "$1 · remotes $2"],
-  [/^데이터 변경 (\d+)건 대기 · 매일 (\S+) 자동 커밋$/, "$1 data change(s) pending · auto-commit daily at $2"],
-  [/^변경 없음 · 매일 (\S+) 자동 커밋$/, "No changes · auto-commit daily at $1"],
-  [/^최근: (.*)$/, m => `Latest: ${G(m[1])}`],
-  [/^데이터 변경: 없음 · 자동 커밋 매일 (\S+)$/, "Data changes: none · auto-commit daily at $1"],
-  [/^데이터 변경: 없음 · 자동 커밋 꺼짐$/, "Data changes: none · auto-commit off"],
-  [/^(\d+)건 대기$/, "$1 pending"],
-  [/^(없음 )?· 자동 커밋 매일 (\S+)$/, m => `${m[1] ? "none " : ""}· auto-commit daily at ${m[2]}`],
-  [/^(없음 )?· 자동 커밋 꺼짐$/, m => `${m[1] ? "none " : ""}· auto-commit off`],
-  [/^최근 커밋: (.*)$/, "Latest commit: $1"],
-  [/^최근 자동 실행: (.+)$/, "Last auto-run: $1"],
-  [/^커밋 완료 — (.+)$/, "Committed — $1"],
-  [/^커밋 실패: (.+)$/, "Commit failed: $1"],
-  [/^변경 없음 — 커밋 생략$/, "No changes — commit skipped"],
 
   /* 프로젝트 */
   [/^프로젝트 수정 — (.+)$/, "Edit project — $1"],
@@ -464,6 +440,8 @@ const P = [
   [/^프로젝트 (\d+)개 ·$/, "$1 project(s) ·"],
   [/^마일스톤 수정 — (.+)$/, "Edit milestone — $1"],
   [/^마일스톤 추가 — (.+)$/, "Add milestone — $1"],
+  [/^'(.+)' 마일스톤을 삭제할까요\?\n관련 프로젝트 (\d+)개는 삭제되지 않고 마일스톤 연결만 해제됩니다\. 되돌릴 수 없습니다\.$/,
+    "Delete milestone '$1'?\n$2 related project(s) will be kept and only unlinked. This cannot be undone."],
   [/^사유: (.*)$/, m => `Reason: ${G(m[1])}`],
   [/^변경 전: (.*)$/, m => `Before: ${G(m[1])}`],
 
@@ -534,6 +512,9 @@ const P = [
 
   /* 요청 Intake */
   [/^요청 전환 — (.+)$/, "Convert request — $1"],
+  [/^요청 수정 — (.+)$/, "Edit request — $1"],
+  [/^'(.+)' 요청을 삭제할까요\?\n처리 이력·첨부가 함께 삭제되며 되돌릴 수 없습니다\.(?:\n\(전환으로 생성된 (.+)은\(는\) 유지됩니다\))?$/,
+    m => `Delete request '${m[1]}'?\nIts logs and attachments will be deleted. This cannot be undone.${m[2] ? `\n(${m[2]}, created by conversion, will be kept)` : ""}`],
   [/^⚠ 대기 (\d+)일$/, "⚠ waiting $1d"],
   [/^대기 (\d+)일$/, "Waiting $1d"],
   [/^진행중 · 접수 후 (\d+)일 경과$/, "Open · $1 day(s) since received"],

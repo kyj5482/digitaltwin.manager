@@ -20,7 +20,7 @@
     <div class="page-head">
       <div>
         <h1>대시보드</h1>
-        <div class="sub">Product → Goal → Milestone → Project → Sprint → Task. 데이터는 이 저장소의 <code>data/db.json</code>에 저장되며 매일 자동으로 git 커밋됩니다.</div>
+        <div class="sub">Product → Goal → Milestone → Project → Sprint → Task. 데이터는 이 저장소의 <code>data/</code> 디렉터리에 저장됩니다.</div>
       </div>
     </div>
 
@@ -62,11 +62,6 @@
         <h2>최근 활동</h2>
         <p class="card-sub">태스크·요청의 활동 로그 최신순 (git 커밋/단계 전환/리턴 구분).</p>
         <ul class="timeline" id="act-timeline" style="max-height:300px;overflow-y:auto"></ul>
-      </div>
-      <div class="card">
-        <h2>git 자동 커밋</h2>
-        <div class="card-sub" id="git-card">불러오는 중…</div>
-        <div style="margin-top:10px"><button class="btn primary" onclick="commitNow().then(loadGit)">지금 커밋·푸시 실행</button></div>
       </div>
     </div>
   </main>
@@ -174,15 +169,7 @@ async function load() {
     </li>`).join("") ||
     '<li><span class="dot"></span><div class="t-body muted small">아직 활동 기록이 없습니다. 태스크 단계 전환·로그, 요청 처리 이력이 여기에 쌓입니다.</div></li>';
 }
-async function loadGit() {
-  const g = await api("git/status");
-  document.getElementById("git-card").innerHTML =
-    `브랜치 <b>${g.branch}</b> · 리모트: <b>${g.remotes.length ? g.remotes.join(", ") : "미설정 — README의 GitHub/GitLab 설정 참고"}</b><br>` +
-    `데이터 변경: ${g.dirty ? `<b>${g.changes}건 대기</b>` : "없음"} · 자동 커밋 ${g.config?.enabled ? `매일 ${g.config.time}` : "꺼짐"}<br>` +
-    `최근 커밋: ${g.lastLog || "없음"}<br>` +
-    `최근 자동 실행: ${g.lastAuto?.at ? g.lastAuto.at.slice(0, 16).replace("T", " ") + " — " + g.lastAuto.result : "이번 세션에서 아직 없음"}`;
-}
-load(); loadGit();
+load();
 </script>
 </body>
 </html>

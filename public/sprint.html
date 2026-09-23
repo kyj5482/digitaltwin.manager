@@ -246,7 +246,7 @@ async function advance(id) {
                            : `'${S.stages[t.stage]}' 단계 산출물 요약을 입력하세요 (StageLog에 기록):`, "");
   if (note === null) return;                     // 취소 시 이동하지 않음
   await api("task/advance", { id, note: note.trim() });
-  await load(); refreshGitChip();
+  await load();
   if (dId === id && document.getElementById("detail-modal").classList.contains("open")) openDetail(id);
 }
 
@@ -318,7 +318,7 @@ async function uploadTaskFile(file) {
   await api("task/file", { id: dId, name: file.name, data: await readFileB64(file) });
   document.getElementById("d-file").value = "";
   S = await api("state");
-  openDetail(dId); refreshGitChip();
+  openDetail(dId);
 }
 
 /* ═══ 드래그&드롭 단계 이동 (FR-410) ═══ */
@@ -342,7 +342,7 @@ async function dropTask(e, si) {
     if (!reason.trim()) return alert("이전 단계로 되돌리려면 사유가 필요합니다.");
   }
   await api("task/move", { id, stage: si, note: note.trim(), reason: reason.trim() });
-  await load(); refreshGitChip();
+  await load();
 }
 async function saveTask() {
   const title = document.getElementById("d-title").value.trim();
@@ -354,7 +354,7 @@ async function saveTask() {
     deliverable: document.getElementById("d-deliverable").value.trim(),
     sprintNo: spv === "" ? null : +spv,
     reason: document.getElementById("d-reason").value.trim() });
-  closeModal("detail-modal"); await load(); refreshGitChip();
+  closeModal("detail-modal"); await load();
 }
 async function addTaskLog() {
   const el = document.getElementById("d-log");
@@ -369,13 +369,13 @@ async function deleteTask() {
   const t = S.tasks.find(x => x.id === dId);
   if (!confirm(`'${t ? t.title : dId}' 태스크를 삭제할까요? 되돌릴 수 없습니다.`)) return;
   await api("task/delete", { id: dId });
-  closeModal("detail-modal"); await load(); refreshGitChip();
+  closeModal("detail-modal"); await load();
 }
 async function createSprint() {
   const r = await api("sprint/create", { projectId: prjId });
-  selSp.add(r.sprint.no); await load(); refreshGitChip();
+  selSp.add(r.sprint.no); await load();
 }
-async function startSprint(sprintId) { await api("sprint/start", { sprintId }); await load(); refreshGitChip(); }
+async function startSprint(sprintId) { await api("sprint/start", { sprintId }); await load(); }
 let closeCtx = null;
 function openClose(sprintId) {
   closeCtx = sprintId;
@@ -393,7 +393,7 @@ async function doClose() {
     retro: document.getElementById("cl-retro").value });
   closeModal("close-modal");
   alert(`종료 완료 — 미완료 ${r.carried}건 → ${r.to || "이월 없음"}`);
-  selSp = new Set(); await load(); refreshGitChip();
+  selSp = new Set(); await load();
 }
 function openTask() {
   document.getElementById("t-project").innerHTML =
@@ -418,7 +418,7 @@ async function createTask() {
   await api("task/create", { projectId: document.getElementById("t-project").value,
     sprintNo: spv === "" ? null : +spv, title, owner, deliverable,
     due: document.getElementById("t-due").value });
-  closeModal("task-modal"); await load(); refreshGitChip();
+  closeModal("task-modal"); await load();
 }
 load();
 </script>

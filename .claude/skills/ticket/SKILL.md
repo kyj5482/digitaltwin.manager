@@ -63,6 +63,7 @@ OFF면 `data/products/*.json`·`data/kpis/*.json`을 읽는다. 사용자가 KPI
 |---|---|---|
 | 요청 접수 | `POST /api/request/create` | title, requester (+channel, dept, note) |
 | 요청 리턴/전환 | `POST /api/request/return` · `/convert` | id / id, to:"project"·projectId, owner |
+| 요청 수정/삭제 | `POST /api/request/update` · `/delete` | id (+변경 필드) / id — 삭제해도 전환된 프로젝트/태스크는 유지 |
 | 프로젝트 생성 | `POST /api/project/create` | name, dept, owner (+kpi, kpiRole:연동·개선, impacts[], ms, prio, start, end) |
 | 프로젝트 수정 | `POST /api/project/update` | id (+변경 필드) |
 | 스프린트 생성/시작/종료 | `POST /api/sprint/create` · `/start` · `/close` | projectId / sprintId / sprintId, carry:"next"·"backlog", retro |
@@ -113,5 +114,6 @@ OFF면 `data/products/*.json`·`data/kpis/*.json`을 읽는다. 사용자가 KPI
 
 생성·변경한 티켓을 표로 보고한다: ID · 타입 · 제목 · 파일 경로 · 확인 화면
 (`/projects.html`, `/sprint.html?project=ID`, `/requests.html`, `/kpi.html`).
-커밋은 사용자가 요청할 때만 — 단, `data/`는 매일 자동 커밋된다는 점을 알린다.
+커밋·push는 사용자가 요청할 때만 한다 — 자동 커밋·push 기능은 없으므로, 변경분 보존이
+필요해 보이면 로컬 커밋을 제안만 하고 push는 사용자의 명시적 지시 없이 하지 않는다.
 태스크 관련 코드 작업 시 커밋 메시지에 `[DT-###]`를 넣으면 활동 로그에 자동 연결된다.

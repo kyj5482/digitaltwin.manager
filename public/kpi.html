@@ -392,13 +392,13 @@ async function saveKpi() {
     target: document.getElementById("k-target").value,
     weight: document.getElementById("k-weight").value,
     source: document.getElementById("k-source").value.trim() });
-  closeModal("kpi-modal"); load(); refreshGitChip();
+  closeModal("kpi-modal"); load();
 }
 async function delKpi() {
   if (!kCtx.code) return;
   if (!confirm(`${kCtx.code} KPI를 삭제할까요?\n하위 지표·측정 이력도 함께 삭제되고 연결된 프로젝트는 미연결로 바뀝니다.`)) return;
   await api("kpi/delete", { code: kCtx.code });
-  closeModal("kpi-modal"); load(); refreshGitChip();
+  closeModal("kpi-modal"); load();
 }
 
 /* ── 하위 지표 추가/편집 ── */
@@ -431,13 +431,13 @@ async function saveSub() {
     target: document.getElementById("s-target").value,
     weight: document.getElementById("s-weight").value,
     source: document.getElementById("s-source").value.trim() });
-  closeModal("sub-modal"); load(); refreshGitChip();
+  closeModal("sub-modal"); load();
 }
 async function delSub() {
   if (!sCtx.code) return;
   if (!confirm(`${sCtx.code} 하위 지표를 삭제할까요?\n측정 이력도 함께 삭제되고 연결된 프로젝트는 미연결로 바뀝니다.`)) return;
   await api("kpi/sub/delete", { parent: sCtx.parent, code: sCtx.code });
-  closeModal("sub-modal"); load(); refreshGitChip();
+  closeModal("sub-modal"); load();
 }
 
 /* ── 측정값 입력 ── */
@@ -466,7 +466,7 @@ async function saveMeasure() {
   await api("kpi/measure", { code: mCtx.code, value: v,
     at: document.getElementById("me-at").value,
     note: document.getElementById("me-note").value.trim() });
-  closeModal("measure-modal"); load(); refreshGitChip();
+  closeModal("measure-modal"); load();
 }
 load();
 </script>
