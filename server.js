@@ -863,6 +863,20 @@ const API = {
                                            value: +b.value, note: b.note || "" });
     saveDb(); return { ok: true };
   },
+  // 측정 기록 삭제 — 오입력 정정용. 상위 KPI의 실측을 모두 지우면 하위 롤업으로 폴백된다
+  "POST /api/kpi/measure/delete": b => {
+    let k = null;
+    for (const x of db.kpis || []) {
+      if (x.code === b.code) { k = x; break; }
+      k = (x.subs || []).find(s => s.code === b.code);
+      if (k) break;
+    }
+    if (!k) throw { code: 404, msg: "kpi not found" };
+    const arr = k.measures || [];
+    const i = arr.findLastIndex(m => m.at === b.at && +m.value === +b.value);
+    if (i < 0) throw { code: 404, msg: "measure not found" };
+    arr.splice(i, 1); saveDb(); return { ok: true };
+  },
   "POST /api/kpi/delete": b => {
     const i = (db.kpis || []).findIndex(x => x.code === b.code);
     if (i < 0) throw { code: 404, msg: "kpi not found" };

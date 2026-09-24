@@ -100,6 +100,7 @@
       <div class="modal" style="width:560px">
         <h2 id="me-title">측정값 입력</h2>
         <p class="m-sub" id="me-info"></p>
+        <p class="m-sub" id="me-warn" style="display:none;color:var(--st-critical)"></p>
         <div class="form-2col">
           <div class="field"><label>측정일 <span class="req">*</span></label><input class="input" type="date" id="me-at"></div>
           <div class="field"><label>측정값 <span class="req">*</span></label><input class="input" type="number" step="any" id="me-val"></div>
@@ -466,15 +467,26 @@ function openMeasure(code) {
     `목표 ${k.target != null ? fmtV(k.target, k.unit) : "미정"} · ${DIR[k.direction] || ""}` +
     (k.source ? ` · 소스: ${k.source}` : " · 미연동(수동 측정)") +
     (k.actual ? ` · 최근 ${fmtV(k.actual.value, k.unit)} (${k.actual.at})` : "");
+  const warn = document.getElementById("me-warn");
+  warn.style.display = k.target == null ? "" : "none";
+  warn.textContent = k.target == null
+    ? "⚠ 목표 미정 — 목표값을 입력해야 달성률이 계산됩니다. 행 [⋯] → ✎ 수정에서 목표를 설정하세요." : "";
   document.getElementById("me-at").value = new Date().toISOString().slice(0, 10);
   document.getElementById("me-val").value = "";
   document.getElementById("me-note").value = "";
   document.getElementById("me-hist").innerHTML = (k.measures || []).slice(-5).reverse().map(m => `
     <li><span class="dot"></span>
-      <div class="t-head"><b>${fmtV(m.value, k.unit)}</b> <span class="t-time">· ${m.at}</span></div>
+      <div class="t-head" style="display:flex;align-items:center;gap:6px"><b>${fmtV(m.value, k.unit)}</b> <span class="t-time">· ${m.at}</span>
+        <button class="btn sm" style="margin-left:auto" title="측정 기록 삭제" onclick="delMeasure('${m.at}',${m.value})">✕</button></div>
       ${m.note ? `<div class="t-body">${m.note}</div>` : ""}</li>`).join("") ||
     '<li><span class="dot"></span><div class="t-body muted small">아직 측정 기록이 없습니다.</div></li>';
   openModal("measure-modal");
+}
+async function delMeasure(at, value) {
+  if (!confirm(`${at} 측정값 ${value} 기록을 삭제할까요? 달성률이 재계산됩니다.`)) return;
+  await api("kpi/measure/delete", { code: mCtx.code, at, value });
+  await load();
+  openMeasure(mCtx.code);                          // 이력·달성률 즉시 갱신 (모달 유지)
 }
 async function saveMeasure() {
   const v = document.getElementById("me-val").value;

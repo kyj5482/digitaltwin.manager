@@ -384,6 +384,9 @@ const E = {
   "기록": "Record",
   "예: 8월 마감 기준": "e.g., as of August close",
   "아직 측정 기록이 없습니다.": "No measurements yet.",
+  "측정 기록 삭제": "Delete measurement",
+  "⚠ 목표 미정 — 목표값을 입력해야 달성률이 계산됩니다. 행 [⋯] → ✎ 수정에서 목표를 설정하세요.":
+    "⚠ No target set — attainment cannot be computed until a target is entered. Set it via the row [⋯] → ✎ Edit.",
   "지표명은 필수입니다.": "Metric name is required.",
   "측정값을 입력하세요.": "Please enter a value.",
   "기여 KPI (전사 — 부서 무관)": "Contributing KPI (company-wide)",
@@ -507,6 +510,8 @@ const P = [
   [/^\((재무|사업|지속경영)\) 기여 프로젝트만 표시 중 \((\d+)건\)\s*—$/,
     m => `(${G(m[1])}) showing contributing projects only (${m[2]}) —`],
   [/^기여 프로젝트만 표시 중 \((\d+)건\)\s*—$/, "showing contributing projects only ($1) —"],
+  [/^(\S+) 측정값 (.+) 기록을 삭제할까요\? 달성률이 재계산됩니다\.$/,
+    "Delete the measurement $2 recorded on $1? Attainment will be recalculated."],
   [/^([\w-]+) KPI를 삭제할까요\?\n하위 지표·측정 이력도 함께 삭제되고 연결된 프로젝트는 미연결로 바뀝니다\.$/,
     "Delete KPI $1?\nIts sub-metrics and measurements are removed and linked projects become unlinked."],
   [/^([\w-]+) 하위 지표를 삭제할까요\?\n측정 이력도 함께 삭제되고 연결된 프로젝트는 미연결로 바뀝니다\.$/,

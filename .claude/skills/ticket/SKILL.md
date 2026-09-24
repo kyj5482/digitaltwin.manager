@@ -70,6 +70,7 @@ OFF면 `data/products/*.json`·`data/kpis/*.json`을 읽는다. 사용자가 KPI
 | 태스크 생성 | `POST /api/task/create` | projectId, title, owner (+sprintNo — 없으면 백로그, due, deliverable) |
 | 태스크 진행/이동 | `POST /api/task/advance` · `/move` | id (+note 산출물) / id, stage (되돌림은 reason 필수) |
 | KPI 정의/하위/측정 | `POST /api/kpi/save` · `/sub/save` · `/measure` | area·name / parent·name / code·value |
+| 측정 기록 삭제(정정) | `POST /api/kpi/measure/delete` | code·at·value — 상위 KPI 실측을 모두 지우면 하위 롤업으로 폴백 |
 
 서버가 강제하는 규칙(409·400 에러)은 `docs/09-ticket-guide.md` 4장 표 참고.
 에러가 나면 규칙 위반을 사용자에게 설명하고 대안(예: 진행중 스프린트 먼저 종료)을 제시.

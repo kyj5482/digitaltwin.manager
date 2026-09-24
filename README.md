@@ -48,7 +48,7 @@ node server.js
 ## 3. API 요약
 
 `GET /api/state`
-`POST /api/goal/save` · `POST /api/milestone/save|delete` · `POST /api/kpi/save|measure|delete` · `POST /api/kpi/sub/save|delete`
+`POST /api/goal/save` · `POST /api/milestone/save|delete` · `POST /api/kpi/save|measure|measure/delete|delete` · `POST /api/kpi/sub/save|delete`
 `POST /api/project/create`
 `POST /api/sprint/create|start|close` · `POST /api/task/create|advance`
 `POST /api/request/create|update|delete|convert|return`
