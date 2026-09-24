@@ -1,9 +1,9 @@
-/* AI/Data North Pole 공용 스크립트 — 사이드바 · 테마 · 모달 · API 헬퍼 · git 상태 칩 */
+/* AI/Data North Pole 공용 스크립트 — 사이드바 · 테마 · 모달 · API 헬퍼 */
 (function () {
   const MENUS = [
     { href: "index.html", ico: "◎", label: "대시보드" },
-    { href: "products.html", ico: "▣", label: "Product & Goal" },
     { href: "kpi.html", ico: "✪", label: "KPI 모니터링" },
+    { href: "products.html", ico: "▣", label: "Product & Goal" },
     { href: "projects.html", ico: "≡", label: "프로젝트" },
     { href: "sprint.html", ico: "▤", label: "스프린트 보드" },
     { href: "requests.html", ico: "✉", label: "요청 Intake" },
@@ -19,8 +19,7 @@
         <div class="nav-title">데이터 의사결정</div>
         ${MENUS.map(m => `<a class="nav-item ${m.href === here ? "active" : ""}" href="${m.href}">
           <span class="ico">${m.ico}</span> ${m.label}</a>`).join("")}
-      </div></nav>
-      <div class="nav-note" id="git-chip">git 상태 확인 중…</div>`;
+      </div></nav>`;
   }
 
   // 테마
@@ -93,25 +92,4 @@
         `<option value="${n}" ${n === size ? "selected" : ""}>${n}건씩</option>`).join("")}</select>`;
   };
 
-  // git 자동 커밋 상태 칩 (사이드바 하단)
-  window.refreshGitChip = async function () {
-    const el = document.getElementById("git-chip");
-    if (!el) return;
-    try {
-      const g = await window.api("git/status");
-      el.innerHTML =
-        `<b>git</b> ${g.branch} · 리모트 ${g.remotes.length ? g.remotes.join(", ") : "없음"}<br>` +
-        `${g.dirty ? `데이터 변경 ${g.changes}건 대기` : "변경 없음"} · 매일 ${g.config?.time || "-"} 자동 커밋<br>` +
-        `최근: ${g.lastLog || "커밋 없음"}<br>` +
-        `<a href="javascript:void(0)" onclick="commitNow()">지금 커밋·푸시 실행</a>`;
-    } catch (_) { el.textContent = "git 상태를 가져오지 못했습니다."; }
-  };
-  window.commitNow = async function () {
-    const r = await window.api("git/commit", {});
-    alert(r.result);
-    refreshGitChip();
-    return r;
-  };
-
-  if (sidebar) refreshGitChip();   // 정의가 끝난 뒤 호출
 })();

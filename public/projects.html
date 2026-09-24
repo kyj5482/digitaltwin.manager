@@ -256,7 +256,7 @@ async function submitPrj() {
     start: document.getElementById("c-start").value, end: document.getElementById("c-end").value };
   if (editId) await api("project/update", { id: editId, ...body, status: document.getElementById("c-status").value });
   else await api("project/create", body);
-  closeModal("prj-modal"); await load(); refreshGitChip();
+  closeModal("prj-modal"); await load();
 }
 
 // ⋯ 행 메뉴
@@ -277,7 +277,7 @@ async function menuDelete() {
   if (!p) return;
   if (!confirm(`'${p.name}' 프로젝트를 삭제할까요?\n연결된 스프린트·태스크도 함께 삭제되며 되돌릴 수 없습니다.`)) return;
   await api("project/delete", { id: menuId });
-  await load(); refreshGitChip();
+  await load();
 }
 load();
 </script>

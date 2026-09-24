@@ -186,7 +186,7 @@ git 이력에 남아 있으므로 언제든 복원 가능. 구버전 단일 `db.
 1. `data/db.json` 삭제 후 재시작 — 또는 데모 위에 실데이터를 쌓다가 `[샘플]` 표기 레코드만 정리.
 2. `/products.html`에서 실제 부문·Goal·마일스톤 등록 (`POST /api/product/create`, `/api/goal/save`, `/api/milestone/save`).
 3. `/kpi.html`에서 실제 KPI 정의·데이터 소스 연결 → 미연동 지표마다 연동 프로젝트 생성.
-4. 이후는 3장의 워크플로 그대로. `data/`는 매일 `config.json`의 `autoCommit.time`에 자동 커밋·푸시된다.
+4. 이후는 3장의 워크플로 그대로. `data/` 변경분의 git 커밋·push는 운영자가 수동으로 결정한다 (자동 커밋·push 없음).
 
 ## 6. 이중 언어 — 티켓은 한 언어로만 쓰면 된다
 

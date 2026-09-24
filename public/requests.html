@@ -95,10 +95,10 @@
       </div>
     </div>
 
-    <!-- 요청 등록 모달 -->
+    <!-- 요청 등록/수정 모달 -->
     <div class="modal-scrim" id="req-modal">
       <div class="modal">
-        <h2>요청 등록</h2>
+        <h2 id="rq-title">요청 등록</h2>
         <p class="m-sub">무엇이든 일단 기록합니다 — 요청 소요시간·전환율이 병목 분석의 원천이 됩니다.</p>
         <div class="field"><label>제목 <span class="req">*</span></label><input class="input" id="r-title"></div>
         <div class="form-2col">
@@ -110,7 +110,7 @@
         <div class="field"><label>내용 메모</label><textarea class="input" rows="2" id="r-note"></textarea></div>
         <div class="m-foot">
           <button class="btn" onclick="closeModal('req-modal')">취소</button>
-          <button class="btn primary" onclick="createReq()">등록</button>
+          <button class="btn primary" id="rq-submit" onclick="createReq()">등록</button>
         </div>
       </div>
     </div>
@@ -136,6 +136,12 @@
           <button class="btn primary" onclick="doConvert()">→ 전환</button>
         </div>
       </div>
+    </div>
+
+    <!-- 요청 행 액션 메뉴 -->
+    <div class="menu-pop" id="req-menu">
+      <button onclick="reqMenuEdit()">✎ 수정</button>
+      <button class="danger" onclick="reqMenuDelete()">✕ 삭제</button>
     </div>
   </main>
 </div>
@@ -182,25 +188,71 @@ function render() {
       <td class="small">${r.link ? `연결: <b>${r.link}</b>` : (r.note || "")}</td>
       <td style="text-align:right;white-space:nowrap">${OPEN_ST(r.status)
         ? `<button class="btn sm" onclick="openConvert('${r.id}')">→ 전환</button>
-           <button class="btn sm" onclick="doReturn('${r.id}')">↩ 리턴</button>` : ""}</td>
+           <button class="btn sm" onclick="doReturn('${r.id}')">↩ 리턴</button> ` : ""
+        }<button class="row-menu-btn" title="수정/삭제" onclick="openReqMenu(event,'${r.id}')">⋯</button></td>
     </tr>`).join("") ||
     '<tr><td colspan="9" class="muted small" style="text-align:center;padding:24px">조건에 맞는 요청이 없습니다</td></tr>';
   renderPager(document.getElementById("req-pager"), list.length, page, pageSize, "goPage");
 }
+let reqEditId = null;
 function openReq() {
   if (!S) return alert("데이터를 불러오는 중입니다.");
+  reqEditId = null;
+  document.getElementById("rq-title").textContent = "요청 등록";
+  document.getElementById("rq-submit").textContent = "등록";
+  document.getElementById("r-title").value = "";
+  document.getElementById("r-requester").value = "";
+  document.getElementById("r-note").value = "";
+  document.getElementById("r-channel").value = "이메일";
   document.getElementById("r-dept").innerHTML = S.products.map(p => `<option>${p.name}</option>`).join("");
+  openModal("req-modal");
+}
+function openReqEdit(id) {
+  const r = S.requests.find(x => x.id === id);
+  if (!r) return;
+  reqEditId = id;
+  document.getElementById("rq-title").textContent = `요청 수정 — ${r.id}`;
+  document.getElementById("rq-submit").textContent = "저장";
+  document.getElementById("r-title").value = r.title;
+  document.getElementById("r-requester").value = r.requester;
+  document.getElementById("r-note").value = r.note || "";
+  document.getElementById("r-channel").value = r.channel;
+  document.getElementById("r-dept").innerHTML =
+    S.products.map(p => `<option ${p.name === r.dept ? "selected" : ""}>${p.name}</option>`).join("");
   openModal("req-modal");
 }
 async function createReq() {
   const title = document.getElementById("r-title").value.trim();
   const requester = document.getElementById("r-requester").value.trim();
   if (!title || !requester) return alert("제목과 요청자는 필수입니다.");
-  await api("request/create", { title, requester,
+  const body = { title, requester,
     channel: document.getElementById("r-channel").value,
     dept: document.getElementById("r-dept").value,
-    note: document.getElementById("r-note").value.trim() });
-  closeModal("req-modal"); await load(); refreshGitChip();
+    note: document.getElementById("r-note").value.trim() };
+  await api(reqEditId ? "request/update" : "request/create",
+            reqEditId ? { ...body, id: reqEditId } : body);
+  closeModal("req-modal"); await load();
+}
+
+let reqMenuId = null;
+function openReqMenu(e, id) {
+  e.stopPropagation();
+  reqMenuId = id;
+  const m = document.getElementById("req-menu");
+  m.classList.add("open");
+  const r = e.currentTarget.getBoundingClientRect();
+  m.style.top = Math.min(r.bottom + 4, innerHeight - m.offsetHeight - 8) + "px";
+  m.style.left = Math.max(8, r.right - m.offsetWidth) + "px";
+}
+document.addEventListener("click", () => document.getElementById("req-menu").classList.remove("open"));
+function reqMenuEdit() { openReqEdit(reqMenuId); }
+async function reqMenuDelete() {
+  const r = S.requests.find(x => x.id === reqMenuId);
+  if (!r) return;
+  if (!confirm(`'${r.id}' 요청을 삭제할까요?\n처리 이력·첨부가 함께 삭제되며 되돌릴 수 없습니다.` +
+    (r.link ? `\n(전환으로 생성된 ${r.link}은(는) 유지됩니다)` : ""))) return;
+  await api("request/delete", { id: reqMenuId });
+  await load();
 }
 let cvId = null;
 function openConvert(id) {
@@ -228,13 +280,13 @@ async function doConvert() {
     projectId: document.getElementById("cv-project").value });
   closeModal("cv-modal");
   alert(`전환 완료 — ${r.link}`);
-  await load(); refreshGitChip();
+  await load();
 }
 async function doReturn(id) {
   const note = prompt("리턴 회신 메모 (선택):", "");
   if (note === null) return;
   await api("request/return", { id, note });
-  await load(); refreshGitChip();
+  await load();
   if (rdId === id && document.getElementById("rd-modal").classList.contains("open")) openReqDetail(id);
 }
 
@@ -294,7 +346,7 @@ async function applyStatus() {
     if (!reason.trim()) return alert("반려는 사유 입력이 필수입니다.");
   }
   await api("request/status", { id: rdId, status, reason: reason.trim() });
-  S = await api("state"); render(); refreshGitChip();
+  S = await api("state"); render();
   openReqDetail(rdId);                           // 배지·이력 즉시 갱신 (모달 유지)
 }
 async function uploadReqFile(file) {
@@ -302,7 +354,7 @@ async function uploadReqFile(file) {
   if (file.size > 10 * 1024 * 1024) return alert("10MB 이하 파일만 업로드할 수 있습니다.");
   await api("request/file", { id: rdId, name: file.name, data: await readFileB64(file) });
   document.getElementById("rd-file").value = "";
-  S = await api("state"); render(); refreshGitChip();
+  S = await api("state"); render();
   openReqDetail(rdId);
 }
 async function addReqLog() {

@@ -31,8 +31,29 @@ curl -s -m 2 "localhost:$PORT/api/state?lang=ko" > /dev/null && echo "서버 ON 
 | "…작업 추가해줘", 할 일 단위 | **Task** | 소속 프로젝트·스프린트(또는 백로그) 필요 |
 | "지표 등록/측정값 기록" | **KPI / 측정** | 측정값은 append-only |
 
-빠진 필수 정보(담당자, 소속 프로젝트, 기여 KPI 등)는 기본값으로 추측하지 말고
-사용자에게 묻는다. 단, 우선순위(P1)·마일스톤(M1)·시작일(오늘)은 관례 기본값 사용 가능.
+빠진 필드는 곧바로 묻지 말고 **먼저 등록된 Product & Goal·KPI 데이터에서 자동
+채움(1.5장)을 시도**한다. 그래도 못 채우는 필수 정보(담당자, 소속 프로젝트,
+기여 KPI 등)만 사용자에게 묻는다 — 근거 없는 추측은 금지.
+우선순위(P1)·마일스톤(M1)·시작일(오늘)은 관례 기본값 사용 가능.
+
+## 1.5 자동 채움 — KPI·Product & Goal에서 나머지 필드 유추
+
+`/setup`으로 등록한 데이터가 자동 채움의 원천이다. 서버 ON이면 `GET /api/state`,
+OFF면 `data/products/*.json`·`data/kpis/*.json`을 읽는다. 사용자가 KPI(또는 부문)만
+말해도 프로젝트 티켓의 나머지를 이렇게 채운다:
+
+| 필드 | 유추 규칙 |
+|---|---|
+| `dept` | 지목된 KPI에 기여 중인 기존 프로젝트들의 부문, 또는 Goal·`kpi` 요약 문장에 해당 지표가 언급된 부문 |
+| `owner` | 해당 부문 product의 `owner` (프로젝트 담당자를 따로 말하지 않았을 때 제안값) |
+| `ms` | 부문 마일스톤 중 프로젝트 목적과 맞고 `due`가 프로젝트 기간을 덮는 것 |
+| `kpiRole` | KPI `source`가 미연동이면 "연동", 이미 연동·측정 중이면 "개선" |
+| `start`·`end` | 오늘 · 선택한 마일스톤의 `due` 분기 말일 |
+| `impacts` | `docs/08-kpi-bp-catalog.md`의 상충 패턴(예: 인센티브 절감 ↔ 판매량) 참고해 후보 제시 |
+
+자동 채움한 값은 **확정으로 단정하지 말고 근거와 함께 제시**해 사용자 확인 후
+등록한다 (예: "dept=Sales — KPI-ASP 기여 프로젝트가 모두 Sales 소속"). 후보가
+여럿이거나 근거가 약하면 그때 묻는다.
 
 ## 2. API 모드 (서버 실행 중 — 표준 경로)
 
@@ -42,12 +63,14 @@ curl -s -m 2 "localhost:$PORT/api/state?lang=ko" > /dev/null && echo "서버 ON 
 |---|---|---|
 | 요청 접수 | `POST /api/request/create` | title, requester (+channel, dept, note) |
 | 요청 리턴/전환 | `POST /api/request/return` · `/convert` | id / id, to:"project"·projectId, owner |
+| 요청 수정/삭제 | `POST /api/request/update` · `/delete` | id (+변경 필드) / id — 삭제해도 전환된 프로젝트/태스크는 유지 |
 | 프로젝트 생성 | `POST /api/project/create` | name, dept, owner (+kpi, kpiRole:연동·개선, impacts[], ms, prio, start, end) |
 | 프로젝트 수정 | `POST /api/project/update` | id (+변경 필드) |
 | 스프린트 생성/시작/종료 | `POST /api/sprint/create` · `/start` · `/close` | projectId / sprintId / sprintId, carry:"next"·"backlog", retro |
 | 태스크 생성 | `POST /api/task/create` | projectId, title, owner (+sprintNo — 없으면 백로그, due, deliverable) |
 | 태스크 진행/이동 | `POST /api/task/advance` · `/move` | id (+note 산출물) / id, stage (되돌림은 reason 필수) |
 | KPI 정의/하위/측정 | `POST /api/kpi/save` · `/sub/save` · `/measure` | area·name / parent·name / code·value |
+| 측정 기록 삭제(정정) | `POST /api/kpi/measure/delete` | code·at·value — 상위 KPI 실측을 모두 지우면 하위 롤업으로 폴백 |
 
 서버가 강제하는 규칙(409·400 에러)은 `docs/09-ticket-guide.md` 4장 표 참고.
 에러가 나면 규칙 위반을 사용자에게 설명하고 대안(예: 진행중 스프린트 먼저 종료)을 제시.
@@ -92,5 +115,6 @@ curl -s -m 2 "localhost:$PORT/api/state?lang=ko" > /dev/null && echo "서버 ON 
 
 생성·변경한 티켓을 표로 보고한다: ID · 타입 · 제목 · 파일 경로 · 확인 화면
 (`/projects.html`, `/sprint.html?project=ID`, `/requests.html`, `/kpi.html`).
-커밋은 사용자가 요청할 때만 — 단, `data/`는 매일 자동 커밋된다는 점을 알린다.
+커밋·push는 사용자가 요청할 때만 한다 — 자동 커밋·push 기능은 없으므로, 변경분 보존이
+필요해 보이면 로컬 커밋을 제안만 하고 push는 사용자의 명시적 지시 없이 하지 않는다.
 태스크 관련 코드 작업 시 커밋 메시지에 `[DT-###]`를 넣으면 활동 로그에 자동 연결된다.
